@@ -44,9 +44,8 @@ public class GuardSight : MonoBehaviour
                 if(!Physics.Raycast(Sight, out ObstacleHit, SightDistance, ObstacleMask))
                 {
                     TargetOnSight = true;
+                    Enemy.PlayerSpotPosition = hitPlayer.point;
                 }
-                Enemy.PlayerSpotPosition = hitPlayer.point;
-
             }
         }
     }

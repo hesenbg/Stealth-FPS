@@ -116,6 +116,8 @@ public class GuardingEnemy : MonoBehaviour
             Origin = new Vector3(transform.position.x, 0, transform.position.z);
             UpdateStates();
         }
+
+        //Debug.Log(CurrentAlarmState);
     }
 
     // -------------------- State Machine --------------------
@@ -244,17 +246,13 @@ public class GuardingEnemy : MonoBehaviour
         {
             TrySwitchAlarmState(AlarmStates.Fighting);
         }
-        else if (!HasTakenPosition)
+        else if (!HasTakenPosition && !IsPeeking)
         {
             TrySwitchAlarmState(AlarmStates.Positioning);
         }
         else
         {
-            // Only allow Peeking if timer is ready
-            if (Time.time >= peekTimer)
-            {
-                TrySwitchAlarmState(AlarmStates.Peeking);
-            }
+            //TrySwitchAlarmState(AlarmStates.Peeking);
         }
 
         // --- EXECUTE SUB-STATE ---
@@ -320,26 +318,40 @@ public class GuardingEnemy : MonoBehaviour
         if (!HasTakenPosition && !IsPeeking)
         {
             ClosestBarrier = FindClosest();
+            if (ClosestBarrier == null)
+            {
+                return false;
+            }
             TriggerPosition = ClosestBarrier.FindClosestPosition(transform.position);
             EnemyBarricadeSide = (ClosestBarrier.IsRight) ? BarricadeSide.Right : BarricadeSide.Left;
-        }
-        if (ClosestBarrier == null)
-        {
             CurrentAlarmState = AlarmStates.Fighting;
+            if (Tracktarget(TriggerPosition))
+            {
+                Debug.Log("reached the position");
+                HasTakenPosition = true;
+                //EnemyNavMesh.enabled = false;
+                return true;
+            }
             return false ;
         }
+        else
+        {
+            if (PeekDelayValue < PeekDelay)
+            {
+                PeekDelayValue += Time.deltaTime;
+            }
+            else
+            {
+                PeekDelayValue = 0;
+                CurrentAlarmState = AlarmStates.Peeking;
+            }
+        }
 
+
+        UpdateRotation(PlayerSpotPosition);
         if (EnemyNavMesh.remainingDistance <= EnemyNavMesh.stoppingDistance)
             Debug.Log("Already at destination");
 
-        UpdateRotation(PlayerSpotPosition);
-        if (Tracktarget(TriggerPosition))
-        {
-            Debug.Log("reached the position");
-            HasTakenPosition = true;
-            //EnemyNavMesh.enabled = false;
-            return true;
-        }
 
         return false;
     }
@@ -379,6 +391,7 @@ public class GuardingEnemy : MonoBehaviour
 
         LeanCenter.transform.localRotation = originalRotation;
         IsPeeking = false;
+        CurrentAlarmState = AlarmStates.Positioning;
     }
     // -------------------- Triggered Behavior -------------------- 
     BarricadePositions FindClosest()

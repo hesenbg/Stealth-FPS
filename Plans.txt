@@ -1,0 +1,7 @@
+
+wander	
+	tracks certain positions( maybe add random positions around the enemy)
+
+
+trigger
+	executes only when enemy hears a sound
