@@ -28,6 +28,23 @@ public class EnemyAnimationLogic : MonoBehaviour
         {
             IsRunning = false;
         }
+
+        
+
+    }
+    private void LateUpdate()
+    {
+        if(BaseAI.IsPeeking && BaseAI.LeanDurationValue == 0)
+        {
+            if(BaseAI.EnemyBarricadeSide == GuardingEnemy.BarricadeSide.Left)
+            {
+                EnemyAnimator.SetTrigger("LeanL");
+            }
+            else if(BaseAI.EnemyBarricadeSide == GuardingEnemy.BarricadeSide.Right)
+            {
+                EnemyAnimator.SetTrigger("LeanR");
+            }
+        }
     }
 
 }

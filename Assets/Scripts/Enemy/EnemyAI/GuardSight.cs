@@ -9,7 +9,7 @@ public class GuardSight : MonoBehaviour
     [SerializeField] float SightDistance;
     [SerializeField] LayerMask TargetMask;
     [SerializeField] LayerMask ObstacleMask;
-    GuardingEnemy Enemy;
+    BaseAI Enemy;
     
     public bool TargetOnSight = false;
     Vector3 LocalShightDirection;
@@ -19,7 +19,7 @@ public class GuardSight : MonoBehaviour
         
 
         PlayerVisibility = GameObject.Find("PlayerVisibility").GetComponent<PlayerVisibility>();
-        Enemy = GetComponent<GuardingEnemy>();
+        Enemy = GetComponent<BaseAI>();
     }
     public bool CanSeePlayer() => TargetOnSight;
 

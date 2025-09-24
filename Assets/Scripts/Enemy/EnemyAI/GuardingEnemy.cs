@@ -64,7 +64,7 @@ public class GuardingEnemy : MonoBehaviour
     BarricadePositions lastAlarmBarrier = null;
     BarricadeSide lastAlarmBarricadeSide = BarricadeSide.Left;
 
-    bool IsPeeking;
+    [HideInInspector] public bool IsPeeking;
 
     // Raised for access across functions
     Vector3 sideDir;
@@ -252,7 +252,7 @@ public class GuardingEnemy : MonoBehaviour
         }
         else
         {
-            //TrySwitchAlarmState(AlarmStates.Peeking);
+            TrySwitchAlarmState(AlarmStates.Peeking);
         }
 
         // --- EXECUTE SUB-STATE ---
@@ -356,8 +356,10 @@ public class GuardingEnemy : MonoBehaviour
         return false;
     }
 
+    [HideInInspector] public float LeanDurationValue =0;
     IEnumerator PeekCycle()
     {
+        IsPeeking = false;
         if (LeanCenter == null) yield break;
         Debug.Log("peeking");
         if (Sight.CanSeePlayer())
@@ -365,32 +367,20 @@ public class GuardingEnemy : MonoBehaviour
             TrySwitchAlarmState(AlarmStates.Fighting);
         }
 
+
+
+        if (LeanDurationValue < LeanDuration)
+        {
+            LeanDurationValue += Time.deltaTime;
+        }
+        else
+        {
+            LeanDurationValue = 0;
+        }
+
+
+
         IsPeeking = true;
-
-        Quaternion originalRotation = LeanCenter.transform.localRotation;
-        Quaternion targetRotation = Quaternion.Euler(0, 0, EnemyBarricadeSide == BarricadeSide.Left ? PeekLeanAngle : -PeekLeanAngle);
-
-        // Lean out
-        float elapsed = 0;
-        while (elapsed < LeanDuration)
-        {
-            elapsed += Time.deltaTime;
-            LeanCenter.transform.localRotation = Quaternion.Slerp(originalRotation, targetRotation, elapsed / LeanDuration);
-            yield return null;
-        }
-
-
-        // Return to cover
-        elapsed = 0;
-        while (elapsed < ReturnDuration)
-        {
-            elapsed += Time.deltaTime;
-            LeanCenter.transform.localRotation = Quaternion.Slerp(LeanCenter.transform.localRotation, originalRotation, elapsed / ReturnDuration);
-            yield return null;
-        }
-
-        LeanCenter.transform.localRotation = originalRotation;
-        IsPeeking = false;
         CurrentAlarmState = AlarmStates.Positioning;
     }
     // -------------------- Triggered Behavior -------------------- 

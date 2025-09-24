@@ -40,12 +40,12 @@ public class ParentEnemy : MonoBehaviour
 
     void TriggerEnemy(Vector3 TriggerPosition,float MinDis)
     {
-        GuardingEnemy closest = closestEnemy.gameObject.GetComponent<GuardingEnemy>();
+        BaseAI closest = closestEnemy.gameObject.GetComponent<BaseAI>();
         if(MinDis < closest.DetectionRange)
         {
             closest.IsEnemyDistracted = true;
             closest.TriggerPosition = TriggerPosition;
-            closest.EnemyNavMesh.enabled = true;
+            closest.Agent.enabled = true;
         }
     }
 }
