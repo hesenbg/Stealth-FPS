@@ -21,27 +21,51 @@ public class Alarm : MonoBehaviour
     {
         Base = GetComponent<BaseAI>();
         Closest = null;
+        CurrentAlarmState = AlarmStates.Fighting;
     }
-    public void UpdateAlarm()
+    public void UpdateAlarm() // based on the enemy type,
     {
+        if (Base.Sight.TargetOnSight)
+        {
+            CurrentAlarmState = AlarmStates.Fighting;
+        }
+        else
+        {
+            CurrentAlarmState = AlarmStates.Defend;
+        }
+
         switch (CurrentAlarmState)
         {
             case AlarmStates.Fighting:
                 Fight();
                 break;
             case AlarmStates.Defend:
-                Defend();
+                Defence();
                 break;
         }
     }
 
     void Fight()
     {
-        Base.Tracktarget(Base.PlayerSpotPosition);
+        Base.UpdateRotation(Base.PlayerSpotPosition, 5f);
+        Shoot();
     }
-    void Defend()
+
+    void Defence()
     {
-        TakePosition();
+        if(OurEnemyType == EnemyType.defender)
+        {
+            TakePosition();
+        }
+        else
+        {
+            Base.Tracktarget(Base.PlayerSpotPosition);
+        }
+    }
+
+    void Shoot()
+    {
+        Debug.Log("shoot");
     }
 
     BarricadePositions FindClosest()
@@ -67,28 +91,28 @@ public class Alarm : MonoBehaviour
 
         return Closest;
     }
-    bool TakePosition()  // sreach up a barricade, 
+    bool HasFindPosition = false;
+    void TakePosition()  // sreach up a barricade, 
     {
-        DistanceFromBarrier = Mathf.Infinity;
-
-        Closest = FindClosest();
-
-        if(Closest == null)
+        if (!HasFindPosition)
         {
-            return false;
+            DistanceFromBarrier = Mathf.Infinity;
+
+            Closest = FindClosest();
+
+            if(Closest == null)
+            {
+                return;
+            }
         }
 
-
-        if( Closest != null)
-        {
-            ClosestBarricadePos = Closest.FindClosestPosition(transform.position);
-        }
+        HasFindPosition = true;
+        ClosestBarricadePos = Closest.FindClosestPosition(transform.position);
 
         if (Base.Tracktarget(ClosestBarricadePos))
         {
             HasTakenPosition = true;
         }
-        return true;
     }
 
 }

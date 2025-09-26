@@ -30,28 +30,43 @@ public class BaseAI : MonoBehaviour
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        // state classes
         WanderState = GetComponent<Wander>();
         Sight = GetComponent<GuardSight>();
+        AlarmState = GetComponent<Alarm>();
+
+        // components
+        rb = GetComponent<Rigidbody>();
         Agent = GetComponent<NavMeshAgent>();
         SuspiciousState = GetComponent<Suspicious>();
 
         // defoult state for start
         CurrentState = GuardState.Wander;
     }
+    private void LateUpdate()
+    {
+        
+    }
 
     private void FixedUpdate()
     {
-        UpdateStates();
+        RunCurrentState();
         UpdateLastState();
     }
 
-    void UpdateStates()
+    void RunCurrentState()
     {
-        // update current state (alarm and sus states can be switchable anytime except the wander state)
+        UpdateCurrentState();
+        ExecuteCurrentState();
+
+    }
+
+    void UpdateCurrentState()
+    {
         if (Sight.TargetOnSight)
         {
             CurrentState = GuardState.Alarmed;
+            return;
         }
         if (IsEnemyDistracted)
         {
@@ -61,9 +76,10 @@ public class BaseAI : MonoBehaviour
         {
             CurrentState = LastState;
         }
+    }
 
-
-        // execute current state
+    void ExecuteCurrentState()
+    {
         switch (CurrentState)
         {
             case GuardState.Wander:
@@ -81,6 +97,7 @@ public class BaseAI : MonoBehaviour
         }
     }
 
+
     void UpdateLastState()
     {
         if (CurrentState == GuardState.Wander || CurrentState == GuardState.Alarmed)
@@ -91,13 +108,15 @@ public class BaseAI : MonoBehaviour
 
     public bool Tracktarget(Vector3 position) // guide pathfinder to reach the given destination and return weather it reached or not
     {
-        Agent.SetDestination(position);
 
         if (IsOnTarget(position))
         {
             return true;
         }
-        return false;
+        else
+        {
+            Agent.SetDestination(position);
+            return false;        }
     }
 
     bool IsOnTarget(Vector3 destination) // checks if enemy's position mathc with the given position
@@ -106,5 +125,23 @@ public class BaseAI : MonoBehaviour
         Vector3 flatDestination = new(destination.x, 0, destination.z);
 
         return (flatEnemyPos - flatDestination).sqrMagnitude < 1f;
+    }
+    public void UpdateRotation(Vector3 target, float Speed)
+    {
+        Vector3 direction = target - transform.position;
+        direction.y = 0;
+
+        if (direction.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            Quaternion offsetRotation = Quaternion.Euler(0, 0, 0); // meaningless but looks cool
+            Quaternion finalRotation = targetRotation * offsetRotation;
+
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                finalRotation,
+                Time.deltaTime * Speed
+            );
+        }
     }
 }

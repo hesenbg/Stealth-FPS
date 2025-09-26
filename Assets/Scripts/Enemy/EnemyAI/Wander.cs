@@ -29,7 +29,7 @@ public class Wander : MonoBehaviour
     public void UpdateWander()  // defoult state that goes through certain positions(track - position)
     {
         CheckHasTrack();
-        UpdateRotation(Tracks[CurrentTrackIndex]);
+        Base.UpdateRotation(Tracks[CurrentTrackIndex],RotationSpeed);
     }
 
     void GetTrackIndex()  // gets the next index from list that will be the position
@@ -51,24 +51,7 @@ public class Wander : MonoBehaviour
             HasTrack = TrackPositionDirect(CurrentTrack);
     }
 
-    void UpdateRotation(Vector3 target)
-    {
-        Vector3 direction = target - transform.position;
-        direction.y = 0;
 
-        if (direction.sqrMagnitude > 0.01f)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            Quaternion offsetRotation = Quaternion.Euler(0, 0, 0); // meaningless but looks cool
-            Quaternion finalRotation = targetRotation * offsetRotation;
-
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                finalRotation,
-                Time.deltaTime * RotationSpeed
-            );
-        }
-    }
     bool TrackPositionDirect(Vector3 targetPosition) // gives velocity based on given position
     {
         Vector3 direction = new Vector3(targetPosition.x - transform.position.x, 0, targetPosition.z - transform.position.z);
