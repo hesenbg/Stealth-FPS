@@ -11,9 +11,9 @@ public class EnemyAnimationLogic : MonoBehaviour
 
     private void Start()
     {
-        EnemyAnimator = GameObject.Find("EnemyMesh").GetComponent<Animator>();
+        EnemyAnimator = GetComponent<Animator>();
 
-        BaseAI = gameObject.GetComponent< BaseAI>();
+        BaseAI = GameObject.Find("EnemyAI").gameObject.GetComponent<BaseAI>();
     }
 
     private void Update()
@@ -28,20 +28,16 @@ public class EnemyAnimationLogic : MonoBehaviour
         {
             IsRunning = false;
         }
-
-        if (BaseAI.AlarmState.IsLeaning)   // lean value 0 left 1 right
-        {
-            EnemyAnimator.SetBool("IsLeaning",BaseAI.AlarmState.IsLeaning);
-
-            if (BaseAI.AlarmState.IsRightBarricadeSide)
-            {
-                EnemyAnimator.SetFloat("LeanValue", 1f);
-            }
-            else
-            {
-                EnemyAnimator.SetFloat("LeanValue", 0f);
-            }
-        }
-
     }
+
+    public void LeanRight()
+    {
+        EnemyAnimator.SetTrigger("LeanRight");
+    }
+
+    public void LeanLeft()
+    {
+        EnemyAnimator.SetTrigger("LeanLeft");
+    }
+
 }

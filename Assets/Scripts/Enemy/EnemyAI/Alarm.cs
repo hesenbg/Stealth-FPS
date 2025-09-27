@@ -23,7 +23,7 @@ public class Alarm : MonoBehaviour
     private void Start()
     {
         Base = GetComponent<BaseAI>();
-        Animation  = GetComponent<EnemyAnimationLogic>();
+        Animation  = GetComponentInChildren<EnemyAnimationLogic>();
         Closest = null;
         CurrentAlarmState = AlarmStates.Fighting;
     }
@@ -99,6 +99,7 @@ public class Alarm : MonoBehaviour
                 Closest = c.GetComponent<BarricadePositions>();
             }
         }
+        IsRightBarricadeSide = Closest.IsRight;
 
         return Closest;
     }
@@ -141,7 +142,15 @@ public class Alarm : MonoBehaviour
         else
         {
             IsLeaning = true;
-            LeanDurationValue = 0;           
+            LeanDurationValue = 0;
+            if (IsRightBarricadeSide)
+            {
+                Animation.LeanRight();
+            }
+            else
+            {
+                Animation.LeanLeft();
+            }
         }
     }
 
