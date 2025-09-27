@@ -6016,6 +6016,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 6171308332078758941}
+  AlarmState: {fileID: 0}
   Sight: {fileID: 0}
   Agent: {fileID: 0}
   OurEnemyType: 0
@@ -6105,7 +6106,10 @@ MonoBehaviour:
   OurEnemyType: 0
   CurrentAlarmState: 0
   HasTakenPosition: 0
-  HalfExtend: {x: 0, y: 0, z: 0}
+  HalfExtend: {x: 3.87, y: 0.05, z: 5.92}
+  IsRightBarricadeSide: 0
+  IsLeaning: 0
+  LeanDuration: 3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ public class EnemyAnimationLogic : MonoBehaviour
 {
     Animator EnemyAnimator;
 
-    GuardingEnemy BaseAI;
+    BaseAI BaseAI;
 
     bool IsRunning;
 
@@ -13,14 +13,14 @@ public class EnemyAnimationLogic : MonoBehaviour
     {
         EnemyAnimator = GameObject.Find("EnemyMesh").GetComponent<Animator>();
 
-        BaseAI = gameObject.GetComponent<GuardingEnemy>();
+        BaseAI = gameObject.GetComponent< BaseAI>();
     }
 
     private void Update()
     {
         EnemyAnimator.SetBool("IsRunning", IsRunning);
 
-        if(BaseAI.currentState == GuardingEnemy.GuardState.Wander || BaseAI.currentState == GuardingEnemy.GuardState.Triggered)
+        if(BaseAI.CurrentState == BaseAI.GuardState.Wander || BaseAI.CurrentState == BaseAI.GuardState.Suspicious)
         {
             IsRunning = true;
         }
@@ -29,22 +29,19 @@ public class EnemyAnimationLogic : MonoBehaviour
             IsRunning = false;
         }
 
-        
-
-    }
-    private void LateUpdate()
-    {
-        if(BaseAI.IsPeeking && BaseAI.LeanDurationValue == 0)
+        if (BaseAI.AlarmState.IsLeaning)   // lean value 0 left 1 right
         {
-            if(BaseAI.EnemyBarricadeSide == GuardingEnemy.BarricadeSide.Left)
+            EnemyAnimator.SetBool("IsLeaning",BaseAI.AlarmState.IsLeaning);
+
+            if (BaseAI.AlarmState.IsRightBarricadeSide)
             {
-                EnemyAnimator.SetTrigger("LeanL");
+                EnemyAnimator.SetFloat("LeanValue", 1f);
             }
-            else if(BaseAI.EnemyBarricadeSide == GuardingEnemy.BarricadeSide.Right)
+            else
             {
-                EnemyAnimator.SetTrigger("LeanR");
+                EnemyAnimator.SetFloat("LeanValue", 0f);
             }
         }
-    }
 
+    }
 }

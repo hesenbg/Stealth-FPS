@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using static BaseAI;
 
@@ -5,6 +6,7 @@ using static BaseAI;
 public class Alarm : MonoBehaviour
 {
     BarricadePositions Closest;
+    EnemyAnimationLogic Animation;
     BaseAI Base;
     public EnemyType OurEnemyType;
     public enum AlarmStates { Fighting, Defend, Null }
@@ -16,10 +18,12 @@ public class Alarm : MonoBehaviour
     public bool HasTakenPosition;
     [SerializeField] Vector3 HalfExtend;
     Vector3 ClosestBarricadePos;
+    [HideInInspector] public bool IsRightBarricadeSide;
 
     private void Start()
     {
         Base = GetComponent<BaseAI>();
+        Animation  = GetComponent<EnemyAnimationLogic>();
         Closest = null;
         CurrentAlarmState = AlarmStates.Fighting;
     }
@@ -34,6 +38,8 @@ public class Alarm : MonoBehaviour
             CurrentAlarmState = AlarmStates.Defend;
         }
 
+        Base.UpdateRotation(Base.PlayerSpotPosition, 5f);
+
         switch (CurrentAlarmState)
         {
             case AlarmStates.Fighting:
@@ -47,15 +53,20 @@ public class Alarm : MonoBehaviour
 
     void Fight()
     {
-        Base.UpdateRotation(Base.PlayerSpotPosition, 5f);
         Shoot();
     }
 
     void Defence()
     {
+
+        Debug.Log(LeanDurationValue);
         if(OurEnemyType == EnemyType.defender)
         {
             TakePosition();
+            if (HasTakenPosition)
+            {
+                Lean();
+            }
         }
         else
         {
@@ -72,10 +83,10 @@ public class Alarm : MonoBehaviour
     {
         // get the colliders of close barricades
         Barricades = Physics.OverlapBox(
-        transform.position,
-        HalfExtend,
-        Quaternion.identity,
-        LayerMask.GetMask("Barricade")
+            transform.position,
+            HalfExtend,
+            Quaternion.identity,
+            LayerMask.GetMask("Barricade")
         );
 
         // find the closest one 
@@ -113,6 +124,31 @@ public class Alarm : MonoBehaviour
         {
             HasTakenPosition = true;
         }
+    }
+
+    public bool IsLeaning = false;
+
+    [SerializeField] float LeanDuration;
+    float LeanDurationValue = 0;
+
+    void Lean()
+    {
+        if (LeanDurationValue < LeanDuration)
+        {
+            IsLeaning = false;
+            LeanDurationValue += Time.deltaTime;
+        }
+        else
+        {
+            IsLeaning = true;
+            LeanDurationValue = 0;           
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(transform.position, HalfExtend * 2);
     }
 
 }

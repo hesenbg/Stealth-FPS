@@ -26,8 +26,4 @@ public class BarricadePositions : MonoBehaviour
 
         return Closest.transform.position;
     }
-
-
-
-
 }

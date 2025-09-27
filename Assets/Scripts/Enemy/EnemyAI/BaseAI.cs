@@ -7,7 +7,7 @@ public class BaseAI : MonoBehaviour
     [HideInInspector] public Rigidbody rb;
     Wander WanderState;
     Suspicious SuspiciousState;
-    Alarm AlarmState;
+    [HideInInspector] public Alarm AlarmState;
     [HideInInspector] public GuardSight Sight;
     [HideInInspector] public NavMeshAgent Agent;
 
@@ -28,6 +28,8 @@ public class BaseAI : MonoBehaviour
     public bool IsEnemyDistracted;
     public Vector3 TriggerPosition;
 
+    float StateSwitchDelayValue;
+
     private void Start()
     {
         // state classes
@@ -42,6 +44,7 @@ public class BaseAI : MonoBehaviour
 
         // defoult state for start
         CurrentState = GuardState.Wander;
+        StateSwitchDelayValue = 0;
     }
     private void LateUpdate()
     {
@@ -143,5 +146,19 @@ public class BaseAI : MonoBehaviour
                 Time.deltaTime * Speed
             );
         }
+    }
+
+    public void SwitchState(GuardState Current, GuardState Desired,float Delay)
+    {
+        if (StateSwitchDelayValue < Delay)
+        {
+            StateSwitchDelayValue += Time.deltaTime;
+        }
+        else
+        {
+            StateSwitchDelayValue = 0;
+            Current = Desired;
+        }
+
     }
 }
