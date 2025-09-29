@@ -26,16 +26,19 @@ public class ParentEnemy : MonoBehaviour
 
         foreach (Transform enemy in transform)
         {
-            float distance = Vector3.Distance(position, enemy.position);
-
-            if (distance < minDistance)
+            if(transform.gameObject.layer == 8)
             {
-                minDistance = distance;
-                closestEnemy = enemy;
+                float distance = Vector3.Distance(position, enemy.position);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestEnemy = enemy;
+                }
             }
         }
-        if( closestEnemy != null )
-            TriggerEnemy(position, minDistance);
+        if(closestEnemy != null )
+           TriggerEnemy(position, minDistance);
     }
 
     void TriggerEnemy(Vector3 TriggerPosition,float MinDis)

@@ -17,10 +17,11 @@ public class Suspicious : MonoBehaviour
         Base = GetComponent<BaseAI>();
     }
 
+    [SerializeField] float SuspiciousSpeed;
     public void UpdateSuspicious() // checks position and goes back 
     {
         Base.UpdateRotation(Base.TriggerPosition,RotationSpeed);
-        if (Base.Tracktarget(Base.TriggerPosition))
+        if (Base.Tracktarget(Base.TriggerPosition,SuspiciousSpeed))
         {
             if (InvestigationTimeValue < InvestigationTime)
             {

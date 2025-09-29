@@ -98,7 +98,7 @@ public class Grenade : MonoBehaviour
 
         foreach (Collider hit in HitEnemies)
         {
-            hit.gameObject.GetComponent<BaseEnemy>().GetGrenadeDamage(CalculateDamageDropout(transform.position,hit.transform.position));
+            hit.gameObject.GetComponent<EnemyHealthManager>().GetGrenadeDamage(CalculateDamageDropout(transform.position,hit.transform.position));
         }  
     }
     private bool CheckPlayerVisibility()

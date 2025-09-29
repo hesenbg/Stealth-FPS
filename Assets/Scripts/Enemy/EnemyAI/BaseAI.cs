@@ -16,9 +16,6 @@ public class BaseAI : MonoBehaviour
     public enum AlarmStates { Fighting, Positioning, Peeking, Null }
 
     public enum EnemyType { defender, rusher}
-
-    public EnemyType OurEnemyType;
-
     public GuardState CurrentState;
     public GuardState LastState;
 
@@ -45,10 +42,6 @@ public class BaseAI : MonoBehaviour
         // defoult state for start
         CurrentState = GuardState.Wander;
         StateSwitchDelayValue = 0;
-    }
-    private void LateUpdate()
-    {
-        
     }
 
     private void FixedUpdate()
@@ -109,7 +102,7 @@ public class BaseAI : MonoBehaviour
         }
     }
 
-    public bool Tracktarget(Vector3 position) // guide pathfinder to reach the given destination and return weather it reached or not
+    public bool Tracktarget(Vector3 position, float Speed) // guide pathfinder to reach the given destination and return weather it reached or not
     {
 
         if (IsOnTarget(position))
@@ -119,7 +112,9 @@ public class BaseAI : MonoBehaviour
         else
         {
             Agent.SetDestination(position);
-            return false;        }
+            Agent.speed = Speed;
+            return false;        
+        }
     }
 
     bool IsOnTarget(Vector3 destination) // checks if enemy's position mathc with the given position

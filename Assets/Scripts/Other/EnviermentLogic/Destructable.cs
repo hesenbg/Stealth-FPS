@@ -9,24 +9,11 @@ public class Destructable : MonoBehaviour
     [SerializeField] DestructableType ObjectType;
     [SerializeField] NavMeshSurface meshSurface;
 
-    private void Start()
-    {
-        //meshSurface = GameObject.Find("Terrain").GetComponent<NavMeshSurface>();
-    }
-    private void FixedUpdate()
-    {
-        if (IsDestroyed)
-        {
-
-        }
-    }
     public void DestroyObject()
     {
-        if (!IsDestroyed)
-        {
-            EffectSound(ObjectType);
-            Destroy(gameObject);
-        }
+        EffectSound(ObjectType);
+        Destroy(gameObject);
+        Debug.Log("destroyed");
     }
 
     void EffectSound(DestructableType Type)

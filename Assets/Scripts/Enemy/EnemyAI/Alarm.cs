@@ -56,10 +56,9 @@ public class Alarm : MonoBehaviour
         Shoot();
     }
 
+    [SerializeField] float RushSpeed;
     void Defence()
     {
-
-        Debug.Log(LeanDurationValue);
         if(OurEnemyType == EnemyType.defender)
         {
             TakePosition();
@@ -68,9 +67,9 @@ public class Alarm : MonoBehaviour
                 Lean();
             }
         }
-        else
+        else if(OurEnemyType == EnemyType.rusher)
         {
-            Base.Tracktarget(Base.PlayerSpotPosition);
+            Base.Tracktarget(Base.PlayerSpotPosition,RushSpeed);
         }
     }
 
@@ -104,6 +103,7 @@ public class Alarm : MonoBehaviour
         return Closest;
     }
     bool HasFindPosition = false;
+    [SerializeField] float TakePosSpeed;
     void TakePosition()  // sreach up a barricade, 
     {
         if (!HasFindPosition)
@@ -121,7 +121,7 @@ public class Alarm : MonoBehaviour
         HasFindPosition = true;
         ClosestBarricadePos = Closest.FindClosestPosition(transform.position);
 
-        if (Base.Tracktarget(ClosestBarricadePos))
+        if (Base.Tracktarget(ClosestBarricadePos, TakePosSpeed))
         {
             HasTakenPosition = true;
         }
