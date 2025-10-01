@@ -10,7 +10,7 @@ public class ShootLogic : MonoBehaviour
     [SerializeField] float RayLength = 100f;
     [SerializeField] LayerMask HitMask;
     [SerializeField] GameObject Origin;
-    [SerializeField] GameObject BulletImpact;
+    [SerializeField] BulletHoleBehaviour BulletImpact;
 
     [Header("Ammo Settings")]
     [SerializeField] int MagazineSize = 30;
@@ -103,6 +103,8 @@ public class ShootLogic : MonoBehaviour
         {
             if (hit.collider.CompareTag("Obstacle"))
             {
+                BulletImpact.ApplyRandomTexture();
+                Instantiate(BulletImpact, hit.point+(hit.normal*0.01f), Quaternion.FromToRotation(Vector3.up,hit.normal));
                 return;
             }
 

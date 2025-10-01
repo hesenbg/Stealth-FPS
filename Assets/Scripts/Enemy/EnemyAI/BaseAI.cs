@@ -80,16 +80,16 @@ public class BaseAI : MonoBehaviour
         switch (CurrentState)
         {
             case GuardState.Wander:
-                WanderState.UpdateWander();
                 Agent.enabled = false;
+                WanderState.UpdateWander();
                 break;
             case GuardState.Alarmed:
-                AlarmState.UpdateAlarm();
                 Agent.enabled = true;
+                AlarmState.UpdateAlarm();
                 break;
             case GuardState.Suspicious:
-                SuspiciousState.UpdateSuspicious();
                 Agent.enabled = true;
+                SuspiciousState.UpdateSuspicious();
                 break;
         }
     }
