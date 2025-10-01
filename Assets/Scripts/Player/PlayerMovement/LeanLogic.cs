@@ -7,21 +7,6 @@ public class LeanLogic : MonoBehaviour
 
     public bool IsLeaning= false;
     [SerializeField] bool CanLean;
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.layer == 8)
-        {
-            CanLean = true;
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.layer == 8)
-        {
-            CanLean = true;
-        }
-    }
     private void Update()
     {
         if (Input.GetKey(KeyCode.Q) && CanLean)

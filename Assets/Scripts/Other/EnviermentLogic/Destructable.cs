@@ -13,7 +13,6 @@ public class Destructable : MonoBehaviour
     {
         EffectSound(ObjectType);
         Destroy(gameObject);
-        Debug.Log("destroyed");
     }
 
     void EffectSound(DestructableType Type)

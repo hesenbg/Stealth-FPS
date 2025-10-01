@@ -24,9 +24,10 @@ public class BaseAI : MonoBehaviour
     public float DetectionRange;
     public bool IsEnemyDistracted;
     public Vector3 TriggerPosition;
-
     float StateSwitchDelayValue;
 
+    [SerializeField] float SuspiciousStateDelay;
+    [SerializeField] float AlarmStateDelay;
     private void Start()
     {
         // state classes
@@ -54,19 +55,19 @@ public class BaseAI : MonoBehaviour
     {
         UpdateCurrentState();
         ExecuteCurrentState();
-
     }
 
     void UpdateCurrentState()
     {
         if (Sight.TargetOnSight)
         {
-            CurrentState = GuardState.Alarmed;
+            //CurrentState = GuardState.Alarmed;
+            CurrentState= SwitchStateDelay(CurrentState, GuardState.Alarmed, AlarmStateDelay);
             return;
         }
         if (IsEnemyDistracted)
         {
-            CurrentState = GuardState.Suspicious;
+            CurrentState = SwitchStateDelay(CurrentState,GuardState.Suspicious, SuspiciousStateDelay);
         }
         else
         {
@@ -143,16 +144,17 @@ public class BaseAI : MonoBehaviour
         }
     }
 
-    public void SwitchState(GuardState Current, GuardState Desired,float Delay)
+    public GuardState SwitchStateDelay(GuardState Current, GuardState Desired,float Delay)
     {
         if (StateSwitchDelayValue < Delay)
         {
             StateSwitchDelayValue += Time.deltaTime;
+            return Current;
         }
         else
         {
             StateSwitchDelayValue = 0;
-            Current = Desired;
+            return Desired;
         }
 
     }

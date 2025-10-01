@@ -69,7 +69,7 @@ public class Alarm : MonoBehaviour
         }
         else if(OurEnemyType == EnemyType.rusher)
         {
-            Base.Tracktarget(Base.PlayerSpotPosition,RushSpeed);
+            //Base.Tracktarget(Base.PlayerSpotPosition,RushSpeed);
         }
     }
 
