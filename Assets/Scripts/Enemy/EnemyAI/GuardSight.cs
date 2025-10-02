@@ -16,8 +16,6 @@ public class GuardSight : MonoBehaviour
     PlayerVisibility PlayerVisibility;
     private void Start()
     {
-        
-
         PlayerVisibility = GameObject.Find("PlayerVisibility").GetComponent<PlayerVisibility>();
         Enemy = GetComponent<BaseAI>();
     }

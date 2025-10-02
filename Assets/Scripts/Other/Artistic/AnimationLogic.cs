@@ -4,8 +4,7 @@ public class AnimationLogic : MonoBehaviour
 {
     [SerializeField] Animator PlayerAnimator;
     [SerializeField] ShootLogic ShootLogic;
-    [SerializeField] Animator EnemyAnimator; 
-    [SerializeField] GameObject EnemyParentObject;
+    [SerializeField] PlayerMovement PlayerMovement;
     public bool IsRunning;
 
     private void Start()
@@ -15,18 +14,30 @@ public class AnimationLogic : MonoBehaviour
 
     private void Update()
     {
-        PlayerAnimator.SetBool("IsRunning",IsRunning);
-    }
+        IsRunning = PlayerMovement.IsRunning;
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            PlayerAnimator.SetTrigger("MoveLeft");
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            PlayerAnimator.SetTrigger("MoveRight");
+        }
+        PlayerAnimator.SetBool("IsRunning",PlayerMovement.IsMoving);
+        PlayerAnimator.SetFloat("MoveDirection",PlayerMovement.Velocity.x);
+        PlayerAnimator.SetBool("IsReloading",ShootLogic.isReloading);
+    }   
 
     public void PlayReloadAnimation(bool IsMagEmpty)
     {
         if (IsMagEmpty)
         {
-            PlayerAnimator.SetFloat("ReloadVal", 0);
+            PlayerAnimator.SetFloat("ReloadValue", 0);
         }
         else
         {
-            PlayerAnimator.SetFloat("ReloadVal", 1);
+            PlayerAnimator.SetFloat("ReloadValue", 1);
         }
         PlayerAnimator.SetTrigger("Reload");
     }

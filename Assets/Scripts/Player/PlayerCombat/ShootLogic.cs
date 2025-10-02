@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class ShootLogic : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class ShootLogic : MonoBehaviour
     [SerializeField] LayerMask HitMask;
     [SerializeField] GameObject Origin;
     [SerializeField] BulletHoleBehaviour BulletImpact;
+    Vector3 ShootDirection;
 
     [Header("Ammo Settings")]
     [SerializeField] int MagazineSize = 30;
@@ -21,11 +23,22 @@ public class ShootLogic : MonoBehaviour
 
     [Header("References")]
     [SerializeField] AnimationLogic AnimationLogic;
+    [SerializeField] PlayerMovement Movement;
+    [SerializeField] CameraPowLogic CameraPowLogic;
+
+
+    [Header("Recoil")]
+    [SerializeField] Vector3 TotalRecoil;
+    [SerializeField] float BaseRecoil = 0.02f;   // base recoil offset per shot
+    [SerializeField] float MoveRecoilFactor = 0.02f;
+    [SerializeField] float ShootRecoilFactor = 0.05f;
+    [SerializeField] float RecoilRecoverySpeed = 2f; // how fast recoil fades back
+
 
     // -------------------- Private State --------------------
-    bool isReloading = false;
+    [HideInInspector] public bool isReloading = false;
     bool IsShootable = true;
-    bool IsShooting = false;
+    [HideInInspector] public bool IsShooting = false;
     float shootCooldown = 0f;
 
     // -------------------- Unity Methods --------------------
@@ -36,17 +49,28 @@ public class ShootLogic : MonoBehaviour
 
     private void Update()
     {
+        UpdateShootDirection();
+
         TakeReloadInput();
         ShootInput();
         UpdateShootUI();
+
+        ResetRecoil();
     }
+
+    void ResetRecoil()
+    {
+        if (!IsShooting)
+            TotalRecoil = Vector3.Slerp(TotalRecoil, Vector3.zero, Time.deltaTime * RecoilRecoverySpeed);
+    }
+
 
     private void OnDrawGizmos()
     {
         if (Origin != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawRay(Origin.transform.position, Origin.transform.forward * RayLength);
+            Gizmos.DrawRay(Origin.transform.position, ShootDirection * RayLength);
         }
     }
 
@@ -80,9 +104,14 @@ public class ShootLogic : MonoBehaviour
         {
             // play sound
             SoundManager.Instance.PlayGunShot(transform.position);
-
+            // play animation
             AnimationLogic.PlayeRecoilAnimation();
+            // aplly logic
             Shoot();
+
+            // recoil
+            CameraPowLogic.ApllyRecoilMoation(CalculateRecoil());
+
             shootCooldown = ShootingDelay;
             IsShooting = true;
         }
@@ -97,14 +126,14 @@ public class ShootLogic : MonoBehaviour
     {
         currentAmmo--;
 
-        Ray ray = new Ray(Origin.transform.position, Origin.transform.forward);
+        Ray ray = new Ray(Origin.transform.position, ShootDirection);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, RayLength))
         {
             if (hit.collider.CompareTag("Obstacle"))
             {
                 BulletImpact.ApplyRandomTexture();
-                Instantiate(BulletImpact, hit.point+(hit.normal*0.01f), Quaternion.FromToRotation(Vector3.up,hit.normal));
+                Instantiate(BulletImpact, hit.point + (hit.normal * 0.01f), Quaternion.FromToRotation(Vector3.up, hit.normal));
                 return;
             }
 
@@ -137,6 +166,44 @@ public class ShootLogic : MonoBehaviour
         TotalAmmo -= toLoad;
 
         isReloading = false;
+    }
+
+    float CalculateRecoil()
+    {
+        Vector3 recoil = Vector3.zero;
+
+        // More recoil if moving
+        if (Movement.IsMoving)
+            recoil += new Vector3(
+                Random.Range(-MoveRecoilFactor, MoveRecoilFactor),
+                Random.Range(-MoveRecoilFactor, MoveRecoilFactor),
+                0f
+            );
+
+        // Base recoil per shot
+        recoil += new Vector3(
+            Random.Range(-BaseRecoil, BaseRecoil),
+            Random.Range(BaseRecoil * 0.5f, BaseRecoil), // mostly upward bias
+            0f
+        );
+
+        // Extra if you’re holding fire (rapid shots)
+        if (IsShooting)
+            recoil += new Vector3(
+                Random.Range(-ShootRecoilFactor, ShootRecoilFactor),
+                ShootRecoilFactor,
+                0f
+            );
+
+        // accumulate
+        TotalRecoil += recoil;
+
+        return recoil.y * 10f; // return vertical kick for camera (CameraPowLogic)
+    }
+
+    void UpdateShootDirection()
+    {
+        ShootDirection = Origin.transform.forward + TotalRecoil;      
     }
 
     // -------------------- UI --------------------

@@ -3,13 +3,13 @@ public class PlayerMovement : MonoBehaviour
 {
     // --- Movement Parameters ---
     [SerializeField] float JumpForce;
-    [SerializeField] float MaxVelocityGround;
+    [SerializeField] public float MaxVelocityGround;
     [SerializeField] float MaxVelocityAir;
     [SerializeField] float GroundAcc;
     [SerializeField] float AirAcc;
     [SerializeField] float CurrMaxVelocity;
     [SerializeField] float CurrAcc;
-    [SerializeField] Vector3 Velocity;
+    [SerializeField] public Vector3 Velocity;
 
     // --- State ---
     [SerializeField] bool IsGround = false;
@@ -178,7 +178,6 @@ public class PlayerMovement : MonoBehaviour
         {
            //SoundManager.Instance.PlayPlayerFootSteps(transform.position);
         }
-        AnimationLogic.IsRunning = IsRunning;
 
         // is pressing ground
         IsGround = gm.IsPressingGround;
