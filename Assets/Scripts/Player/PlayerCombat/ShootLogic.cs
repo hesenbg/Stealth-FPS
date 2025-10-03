@@ -58,10 +58,12 @@ public class ShootLogic : MonoBehaviour
         ResetRecoil();
     }
 
+    [SerializeField] float MinFloat;
+
     void ResetRecoil()
     {
-        if (!IsShooting)
-            TotalRecoil = Vector3.Slerp(TotalRecoil, Vector3.zero, Time.deltaTime * RecoilRecoverySpeed);
+        if (!IsShooting && TotalRecoil.magnitude>MinFloat)
+            TotalRecoil = Vector3.Lerp(TotalRecoil, Vector3.zero, Time.deltaTime * RecoilRecoverySpeed);
     }
 
 
@@ -130,13 +132,14 @@ public class ShootLogic : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, RayLength))
         {
+            // when hits an objects stop raycasting and apply impact
             if (hit.collider.CompareTag("Obstacle"))
             {
                 BulletImpact.ApplyRandomTexture();
                 Instantiate(BulletImpact, hit.point + (hit.normal * 0.01f), Quaternion.FromToRotation(Vector3.up, hit.normal));
                 return;
             }
-
+            // damage certain points of enemy
             if (hit.collider.CompareTag("Head"))
             {
                 SoundManager.Instance.PlayHeadShotIndicator(transform.position);
@@ -146,6 +149,7 @@ public class ShootLogic : MonoBehaviour
             {
                 hit.collider.gameObject.GetComponent<EnemyHealthManager>().GetDamage(40, false, hit.point, hit.normal);
             }
+            // specificly for destructable objects 
             else if (hit.collider.gameObject.layer == 9) // destructibles
             {
                 hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
@@ -201,6 +205,7 @@ public class ShootLogic : MonoBehaviour
         return recoil.y * 10f; // return vertical kick for camera (CameraPowLogic)
     }
 
+    // shoot direction is the sum of camera's forward and recoil
     void UpdateShootDirection()
     {
         ShootDirection = Origin.transform.forward + TotalRecoil;      

@@ -1302,6 +1302,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 65000011853629088, guid: 46132fa6877a42947bf1f7f15c09f435, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 13400000, guid: cf3ae8ac38e41334fab478205aa2b836, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1594,11 +1598,12 @@ MonoBehaviour:
   CameraPowLogic: {fileID: 330585548}
   TotalRecoil: {x: 0, y: 0, z: 0}
   BaseRecoil: 0.02
-  MoveRecoilFactor: 0.02
-  ShootRecoilFactor: 0.05
-  RecoilRecoverySpeed: 2
+  MoveRecoilFactor: 0.06
+  ShootRecoilFactor: 0.03
+  RecoilRecoverySpeed: 1.2
   isReloading: 0
   IsShooting: 0
+  MinFloat: 0.01
 --- !u!4 &803418491
 Transform:
   m_ObjectHideFlags: 0
