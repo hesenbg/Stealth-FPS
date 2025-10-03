@@ -1600,7 +1600,7 @@ MonoBehaviour:
   BaseRecoil: 0.02
   MoveRecoilFactor: 0.06
   ShootRecoilFactor: 0.03
-  RecoilRecoverySpeed: 1.2
+  RecoilRecoverySpeed: 2
   isReloading: 0
   IsShooting: 0
   MinFloat: 0.01
@@ -2808,15 +2808,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.31
+      value: -4.19
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.09806449
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.46
+      value: -1.95
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3290,9 +3290,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1376801623}
     m_Modifications:
+    - target: {fileID: 2557566720190703480, guid: c0817c3d67af39347a661659a29f0e54, type: 3}
+      propertyPath: m_Range
+      value: 3.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3268465502811047973, guid: c0817c3d67af39347a661659a29f0e54, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.8223734
+      value: -6.19
       objectReference: {fileID: 0}
     - target: {fileID: 3268465502811047973, guid: c0817c3d67af39347a661659a29f0e54, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3300,7 +3304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3268465502811047973, guid: c0817c3d67af39347a661659a29f0e54, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.6817465
+      value: 1.67
       objectReference: {fileID: 0}
     - target: {fileID: 3268465502811047973, guid: c0817c3d67af39347a661659a29f0e54, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3777,15 +3781,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.42
+      value: -4.91
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.098063536
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.19
+      value: 1.13
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5574,11 +5578,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Tracks:
-  - {x: 11.1, y: 0, z: -12.4}
   - {x: 16.3, y: 0, z: -12.4}
-  - {x: 13, y: 0, z: -11.7}
+  - {x: 13.1, y: 0, z: -12.4}
+  - {x: 13.1, y: 0, z: -9.9}
+  Current: 1
   Speed: 0.7
   RotationSpeed: 10
+  CheckDuration: 0.5
+  RotationDegree: 45
 --- !u!195 &4193677860943957049
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -5900,15 +5907,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.14
+      value: 2.26
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.098063536
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.85
+      value: -2.03
       objectReference: {fileID: 0}
     - target: {fileID: 3680473073826553900, guid: 8c90e735e8b16084db8e6e40d4684ef7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6126,6 +6133,7 @@ MonoBehaviour:
   AlarmState: {fileID: 0}
   Sight: {fileID: 0}
   Agent: {fileID: 0}
+  AnimationLogic: {fileID: 0}
   CurrentState: 0
   LastState: 0
   PlayerSpotPosition: {x: 0, y: 0, z: 0}

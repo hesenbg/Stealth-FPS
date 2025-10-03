@@ -1,10 +1,11 @@
 using UnityEngine;
 using static UnityEngine.UI.Image;
 
-public class Wander : MonoBehaviour
+public class Wonder : MonoBehaviour
 {
     [SerializeField] Vector3[] Tracks;
-
+    public enum WonderType { Walk , Still}
+    public WonderType Current;
     int CurrentTrackIndex;
     int MaxTrackIndex;
     Vector3 CurrentTrack;
@@ -28,8 +29,74 @@ public class Wander : MonoBehaviour
 
     public void UpdateWander()  // defoult state that goes through certain positions(track - position)
     {
+        switch (Current) {
+            case WonderType.Walk:
+                Walk();
+                break;
+            case WonderType.Still:
+                Still();
+                break;
+
+        }
+    }
+
+    void Walk()
+    {
         CheckHasTrack();
         Base.UpdateRotation(Tracks[CurrentTrackIndex],RotationSpeed);
+    }
+
+    bool isStillCoroutineRunning = false;
+
+    void Still()
+    {
+        if (!isStillCoroutineRunning)
+            StartCoroutine(StillRoutine());
+    }
+    [SerializeField] float CheckDuration;
+    [SerializeField] float RotationDegree;
+
+    System.Collections.IEnumerator StillRoutine()
+    {
+        isStillCoroutineRunning = true;
+
+        while (Current == WonderType.Still)
+        {
+            yield return RotateByAngle(-RotationDegree);
+
+            yield return new WaitForSeconds(CheckDuration);
+
+            yield return RotateByAngle(RotationDegree*2);
+
+            yield return new WaitForSeconds(CheckDuration);
+
+            yield return RotateByAngle(-RotationDegree);
+
+            yield return new WaitForSeconds(1f);
+        }
+
+        isStillCoroutineRunning = false;
+    }
+
+    // Smooth rotation coroutine
+    System.Collections.IEnumerator RotateByAngle(float angle)
+    {
+        float targetY = transform.eulerAngles.y + angle;
+        float elapsed = 0f;
+        float duration = 0.5f; // adjust rotation speed here
+
+        float startY = transform.eulerAngles.y;
+
+        while (elapsed < duration)
+        {
+            float newY = Mathf.LerpAngle(startY, targetY, elapsed / duration);
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, newY, transform.eulerAngles.z);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // aplly the rotation
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, targetY, transform.eulerAngles.z);
     }
 
     void GetTrackIndex()  // gets the next index from list that will be the position

@@ -5,11 +5,12 @@ public class BaseAI : MonoBehaviour
 {
     // components
     [HideInInspector] public Rigidbody rb;
-    Wander WanderState;
+    Wonder WanderState;
     Suspicious SuspiciousState;
     [HideInInspector] public Alarm AlarmState;
     [HideInInspector] public GuardSight Sight;
     [HideInInspector] public NavMeshAgent Agent;
+    [HideInInspector] public EnemyAnimationLogic AnimationLogic;
 
     // enums && states
     public enum GuardState { Wander, Alarmed, Suspicious }
@@ -31,7 +32,7 @@ public class BaseAI : MonoBehaviour
     private void Start()
     {
         // state classes
-        WanderState = GetComponent<Wander>();
+        WanderState = GetComponent<Wonder>();
         Sight = GetComponent<GuardSight>();
         AlarmState = GetComponent<Alarm>();
 
@@ -39,6 +40,7 @@ public class BaseAI : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Agent = GetComponent<NavMeshAgent>();
         SuspiciousState = GetComponent<Suspicious>();
+        AnimationLogic = GameObject.Find("EnemyMesh").GetComponent<EnemyAnimationLogic>();
 
         // defoult state for start
         CurrentState = GuardState.Wander;
