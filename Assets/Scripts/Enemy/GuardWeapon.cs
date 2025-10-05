@@ -35,8 +35,6 @@ public class GuardWeapon : MonoBehaviour
 
     private void Shoot()
     {
-        //Debug.Log("damage given");
-
         HealthManager.GotDamage(15);
 
         Ray ray = new Ray(Origin.transform.position,transform.forward);

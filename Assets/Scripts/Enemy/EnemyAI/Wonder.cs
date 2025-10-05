@@ -131,7 +131,7 @@ public class Wonder : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (Tracks == null || Tracks.Length == 0) return;
+        if (Tracks == null || Tracks.Length == 0 || Current== WonderType.Still) return;
 
         Gizmos.color = Color.green;
 

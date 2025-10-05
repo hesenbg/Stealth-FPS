@@ -158,6 +158,11 @@ public class BaseAI : MonoBehaviour
             StateSwitchDelayValue = 0;
             return Desired;
         }
+    }
+
+
+    void SwitchToAlarm()
+    {
 
     }
 }

@@ -1,45 +1,123 @@
 using System;
 using UnityEngine;
-using UnityEngine.Analytics;
-/// casts sets of rays and returns weather player on sight or not.player cant be detected if there is no light illuminates it(light can smoehow illuminates the player cuz i cant communicate with gpu
-/// sight is 135 euler degeers.(i am not sure)
+using UnityEngine.Rendering.Universal;
+
 public class GuardSight : MonoBehaviour
 {
-    [SerializeField] Vector3[] SightDirections;
+
+    [SerializeField]
+    Vector3[] SightDirections = new Vector3[]
+    {
+        new Vector3(0, 0, 1).normalized,
+        new Vector3(1, 0, 1).normalized,
+        new Vector3(-1, 0, 1).normalized,
+        new Vector3(-1, 0, 0.5f).normalized,
+        new Vector3(1, 0, 0.5f).normalized,
+        new Vector3(0.5f, 0, 1).normalized,
+        new Vector3(-0.5f, 0, 1).normalized,
+        new Vector3(-0.25f, 0, 1).normalized,
+        new Vector3(0.25f, 0, 1).normalized,
+        new Vector3(1.5f, 0, 1).normalized,
+        new Vector3(-1.5f, 0, 1).normalized,
+        new Vector3(-0.75f, 0, 1).normalized,
+        new Vector3(0.75f, 0, 1).normalized,
+        new Vector3(0.125f, 0, 1).normalized,
+        new Vector3(-0.125f, 0, 1).normalized,
+        new Vector3(-1.25f, 0, 1).normalized,
+        new Vector3(1.25f, 0, 1).normalized,
+        new Vector3(0.625f, 0, 1).normalized,
+        new Vector3(-0.625f, 0, 1).normalized,
+        new Vector3(-0.25f, 0, 0.7f).normalized,
+        new Vector3(0.25f, 0, 0.7f).normalized,
+        new Vector3(0.125f, 0, 0.7f).normalized,
+        new Vector3(-0.125f, 0, 0.7f).normalized,
+        new Vector3(-0.125f, 0, 1.8f).normalized,
+        new Vector3(0.07f, 0, 1).normalized,
+        new Vector3(1, 0, 2.4f).normalized,
+        new Vector3(-1, 0, 2.4f).normalized,
+        new Vector3(-1, 0, 1.16f).normalized,
+        new Vector3(1, 0, 1.16f).normalized
+    };
+
+    Vector3[] WorldSightDirections;               // runtime world-space
+    [SerializeField] float[] YOffsets;           // scanning offsets
+
     [SerializeField] float SightDistance;
     [SerializeField] LayerMask TargetMask;
     [SerializeField] LayerMask ObstacleMask;
+    [SerializeField] GameObject Origin;
+
     BaseAI Enemy;
-    
-    public bool TargetOnSight = false;
-    Vector3 LocalShightDirection;
     PlayerVisibility PlayerVisibility;
+
+    public bool TargetOnSight = false;
+
+    [SerializeField] float SightLowerIncrement = 1f;
+    [SerializeField] Vector3 SightOrigin;
+    [SerializeField] float MaxSightLowerValue;
+    [SerializeField] float LowerCheckSightDistance;
+
     private void Start()
     {
         PlayerVisibility = GameObject.Find("PlayerVisibility").GetComponent<PlayerVisibility>();
         Enemy = GetComponent<BaseAI>();
+        WorldSightDirections = new Vector3[SightDirections.Length];
+        YOffsets = new float[SightDirections.Length];
     }
+
     public bool CanSeePlayer() => TargetOnSight;
+
+    void UpdateWorldSightDirections()
+    {
+        if (SightDirections == null) return;
+
+        for (int i = 0; i < SightDirections.Length; i++)
+        {
+            // transform the base local direction
+            Vector3 dir = transform.TransformDirection(SightDirections[i]);
+
+            // apply Y offset (scanning downward)
+            dir.y += YOffsets[i]*Time.deltaTime;
+
+            WorldSightDirections[i] = dir.normalized;
+        }
+    }
 
     void LookAround()
     {
         TargetOnSight = false;
 
-        foreach (var SightDirection in SightDirections)
+        for (int i = 0; i < WorldSightDirections.Length; i++)
         {
-            LocalShightDirection = transform.TransformDirection(SightDirection);
+            Vector3 dir = WorldSightDirections[i];
+            Ray ray = new Ray(SightOrigin, dir);
 
-            Ray Sight = new Ray(SightOrigin, LocalShightDirection);
-            RaycastHit hitPlayer;
-            RaycastHit ObstacleHit;
+            // check dead body
+            // check ground
+            if (Physics.Raycast(ray, out RaycastHit DeadBodyHit, SightDistance))
+            {
+                if (DeadBodyHit.collider.gameObject.layer == 6) // ground layer
+                {
 
-            if (Physics.Raycast(Sight, out hitPlayer,SightDistance,TargetMask) && PlayerVisibility.visible) // 
-            {              
-                float distanceToPlayer = hitPlayer.distance;
+                }
+            }
 
-                TargetOnSight = false;
+            // check ground
+            if (Physics.Raycast(ray, out RaycastHit groundHit, LowerCheckSightDistance))
+            {                                  // ground layer groundHit.collider.gameObject.layer == 6 ||
+                if ( Mathf.Abs(YOffsets[i])>MaxSightLowerValue) 
+                {
+                    YOffsets[i] = 0;
+                    continue; // skip player
+                }
+            }
 
-                if(!Physics.Raycast(Sight, out ObstacleHit, SightDistance, ObstacleMask))
+            YOffsets[i] -= Time.deltaTime * SightLowerIncrement;
+
+            // check player visibility
+            if (Physics.Raycast(ray, out RaycastHit hitPlayer, SightDistance, TargetMask) && PlayerVisibility.visible)
+            {
+                if (!Physics.Raycast(ray, SightDistance, ObstacleMask))
                 {
                     TargetOnSight = true;
                     Enemy.PlayerSpotPosition = hitPlayer.point;
@@ -47,45 +125,35 @@ public class GuardSight : MonoBehaviour
             }
         }
     }
-    bool IsInLayerMask(GameObject obj, LayerMask mask)
-    {
-        return ((1 << obj.layer) & mask) != 0;
-    }
 
-
-    public bool IsPlayerClose()
-    {
-        Collider[] AroundColliders;
-        AroundColliders= Physics.OverlapSphere(transform.position, 2f);
-        foreach (Collider collider in AroundColliders)
-        {
-            if (collider.gameObject.layer == 10)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    public void HasSeenDeadbody()
-    {
-        
-    }
-
+    [SerializeField] float SightOriginIncrement;
     private void FixedUpdate()
     {
+        SightOrigin =  new Vector3(Origin.transform.position.x,
+            Origin.transform.position.y+SightOriginIncrement,
+            Origin.transform.position.z
+            );
+        SightOrigin = Origin.transform.position;
+        UpdateWorldSightDirections();
         LookAround();
-        SightOrigin = transform.position;
+
     }
-    [SerializeField] Vector3 SightOrigin;
-    Vector3 LocalGizmo;
+
     private void OnDrawGizmos()
     {
-        if (SightDirections == null) return;
-        Gizmos.color = Color.yellow;
-        foreach (var dir in SightDirections)
+        if (WorldSightDirections == null || WorldSightDirections.Length == 0) return;
+
+        Gizmos.color = Color.black;
+        for (int i = 0; i < WorldSightDirections.Length; i++)
         {
-            LocalGizmo = transform.TransformDirection(dir);
-            Gizmos.DrawRay(SightOrigin, LocalGizmo.normalized * SightDistance);
+            Gizmos.DrawRay(Origin.transform.position, WorldSightDirections[i] * SightDistance);
+            Gizmos.color = Color.white;
+            Gizmos.DrawRay(Origin.transform.position, WorldSightDirections[i] * LowerCheckSightDistance);
+
         }
     }
+
+
+
+
 }
