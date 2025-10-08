@@ -1,36 +1,53 @@
+using System.Linq;
+using System.Threading;
+using Unity.AppUI.Core;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
+using static UnityEditor.PlayerSettings;
+using static UnityEngine.Rendering.DebugUI.Table;
 public class FloodLightLogic : MonoBehaviour
 {
     public enum MoveDirection { x, y }
     public MoveDirection direction;
+    [SerializeField] Vector3[] rays;
 
     [SerializeField] float Speed;
 
     [SerializeField] float MaxDegree;
     [SerializeField] float MinDegree;
 
-    [SerializeField] GameObject LightSource;
-
     [SerializeField] Vector3 ro;
     [SerializeField] float LightRotateDirection;
+
+    [SerializeField] Light spotLight;
+
+    GameObject Player;
 
     private void Start()
     {
         ro = transform.eulerAngles;
+        Player = GameObject.Find("Player");
     }
     private void Update()
     {
-        if(direction == MoveDirection.x)
+        MoveLight();
+        CheckEnemy();
+    }
+
+    void MoveLight()
+    {
+        if (direction == MoveDirection.x)
         {
-            if(ro.x >= MaxDegree )
+            if (ro.x >= MaxDegree)
             {
-                LightRotateDirection= -1f;
+                LightRotateDirection = -1f;
             }
             if (ro.x <= MinDegree)
             {
                 LightRotateDirection = 1f;
             }
-            ro.x += Speed * Time.deltaTime* LightRotateDirection;
+            ro.x += Speed * Time.deltaTime * LightRotateDirection;
 
         }
         else
@@ -47,45 +64,55 @@ public class FloodLightLogic : MonoBehaviour
 
         }
         gameObject.transform.eulerAngles = ro;
-
-
-        DrawWireCapsule(CapsuleStart,CapsuleEnd,Radius,Color.black);
     }
 
-    [SerializeField] Vector3 CapsuleStart;
-    [SerializeField] Vector3 CapsuleEnd;
-    [SerializeField] float Radius;
+
+
+    [SerializeField] float Range;
 
     void CheckEnemy()
     {
-        Physics.CheckCapsule(CapsuleStart, CapsuleEnd, Radius);
+        Vector3 pos = spotLight.transform.position;
+        Vector3 dir = spotLight.transform.forward;
+        float angle = spotLight.spotAngle * 0.5f;
+        float range = spotLight.range;
+
+        float radius = Mathf.Tan(angle * Mathf.Deg2Rad) * range;
+        Quaternion rot;
+
+        for (int i = 0; i < rays.Length; i++)
+        {
+            rot = Quaternion.AngleAxis(angle, transform.TransformDirection(rays[i]));
+            Vector3 right = rot * dir;
+
+            if(Physics.Raycast(pos, right*range, out RaycastHit hit))
+            {
+                if(hit.collider.gameObject.layer == 3)
+                {
+                    Debug.Log("player seen");
+                }
+            }
+        }
     }
 
-
-
-    public static void DrawWireCapsule(Vector3 start, Vector3 end, float radius, Color color)
+    private void OnDrawGizmos()
     {
-        Gizmos.color = color;
+        Vector3 pos = spotLight.transform.position;
+        Vector3 dir = spotLight.transform.forward;
+        float angle = spotLight.spotAngle * 0.5f;
+        float range = spotLight.range;
 
-        // Draw end spheres
-        Gizmos.DrawWireSphere(start, radius);
-        Gizmos.DrawWireSphere(end, radius);
+        float radius = Mathf.Tan(angle * Mathf.Deg2Rad) * range;
 
-        // Direction between spheres
-        Vector3 up = (end - start).normalized;
-        Vector3 right = Vector3.Cross(up, Vector3.up);
-        if (right == Vector3.zero) // handle degenerate case
-            right = Vector3.Cross(up, Vector3.forward);
-        right.Normalize();
-        Vector3 forward = Vector3.Cross(up, right);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawRay(pos, dir * range);
 
-        // Four lines connecting spheres
-        Gizmos.DrawLine(start + right * radius, end + right * radius);
-        Gizmos.DrawLine(start - right * radius, end - right * radius);
-        Gizmos.DrawLine(start + forward * radius, end + forward * radius);
-        Gizmos.DrawLine(start - forward * radius, end - forward * radius);
+        Quaternion rot;
+        for (int i = 0; i < rays.Length; i++)
+        {
+            rot = Quaternion.AngleAxis(angle, transform.TransformDirection(rays[i]));
+            Vector3 right = rot * dir;
+            Gizmos.DrawRay(pos, right * range);
+        }
     }
-    
-
-
 }
