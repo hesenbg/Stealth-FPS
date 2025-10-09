@@ -75,7 +75,7 @@ public class Alarm : MonoBehaviour
 
     void Shoot()
     {
-        Debug.Log("shoot");
+        //Debug.Log("shoot");
     }
 
     BarricadePositions FindClosest()
@@ -98,6 +98,12 @@ public class Alarm : MonoBehaviour
                 Closest = c.GetComponent<BarricadePositions>();
             }
         }
+        if(Closest == null)
+        {
+            OurEnemyType = EnemyType.rusher;
+            return Closest;
+        }
+
         IsRightBarricadeSide = Closest.IsRight;
 
         return Closest;

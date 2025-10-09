@@ -12,14 +12,17 @@ public class Knife : MonoBehaviour
     [SerializeField] KeyCode AttackKey;
 
     [SerializeField] AnimationLogic Logic;
+    Collider[] AttackedEnemies;
 
-    public bool Attack()
+    public void Attack()
     {
-        if (Physics.CheckBox(transform.position, HitBoxhalfExtend, transform.rotation, AffectObjects, QueryTriggerInteraction.Ignore))
+        AttackedEnemies = Physics.OverlapBox(transform.position, HitBoxhalfExtend, transform.rotation, AffectObjects);
+
+        foreach (Collider c in AttackedEnemies)
         {
-            return true;    
+            c.gameObject.GetComponent<EnemyHealthManager>().GetKnifeDamage();
+            return;
         }
-        return false;
     }
 
     private void Update()
@@ -36,6 +39,13 @@ public class Knife : MonoBehaviour
         {
             AttackDelayValue += Time.deltaTime;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+
+        Gizmos.DrawWireCube(transform.position, HitBoxhalfExtend * 2);
     }
 
 

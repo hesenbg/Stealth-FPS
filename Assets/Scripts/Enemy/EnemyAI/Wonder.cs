@@ -36,7 +36,6 @@ public class Wonder : MonoBehaviour
             case WonderType.Still:
                 Still();
                 break;
-
         }
     }
 

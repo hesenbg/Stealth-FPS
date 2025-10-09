@@ -1,14 +1,9 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
-
 public class Suspicious : MonoBehaviour
 {
     BaseAI Base;
     float RotationSpeed;
-
     public bool IsInvestigates;
-
     [SerializeField] float InvestigationTime;
     float InvestigationTimeValue;
 
@@ -34,6 +29,4 @@ public class Suspicious : MonoBehaviour
             }
         }
     }
-
-
 }

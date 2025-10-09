@@ -160,9 +160,4 @@ public class BaseAI : MonoBehaviour
         }
     }
 
-
-    void SwitchToAlarm()
-    {
-
-    }
 }
