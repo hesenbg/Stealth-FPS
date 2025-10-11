@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] public Vector3 Velocity;
 
     // --- State ---
-    [SerializeField] bool IsGround = false;
+    public bool IsGround = false;
     public bool IsMoving = false;
 
     // --- References ---

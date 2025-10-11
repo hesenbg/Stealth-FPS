@@ -5971,9 +5971,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d1231c8254bc51409f408357fe58418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Sway: 8
-  Speed: 2
-  MouseMovement: {x: 0, y: 0, z: 0}
+  Sway: 12
+  Speed: 3
+  MaxSway: 8
+  MoveSwayAmount: 0.1
+  MaxMoveSway: 0.3
+  BobFrequency: 6
+  bobSpeed: 0
 --- !u!1 &9196192376760395708
 GameObject:
   m_ObjectHideFlags: 0
