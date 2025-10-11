@@ -2,52 +2,47 @@ using UnityEngine;
 
 public class Knife : MonoBehaviour
 {
-    [SerializeField] float AttackDistance;
+    [Header("Attack Settings")]
+    [SerializeField] float AttackDistance = 2f;
     [SerializeField] LayerMask AffectObjects;
-    [SerializeField] Vector3 HitBoxhalfExtend;
+    [SerializeField] float AttackDelay = 0.5f;
+    [SerializeField] KeyCode AttackKey = KeyCode.Mouse0;
 
-    [SerializeField] float AttackDelay;
-    float AttackDelayValue = 0;
-
-    [SerializeField] KeyCode AttackKey;
-
+    [Header("References")]
     [SerializeField] AnimationLogic Logic;
-    Collider[] AttackedEnemies;
 
-    public void Attack()
-    {
-        AttackedEnemies = Physics.OverlapBox(transform.position, HitBoxhalfExtend, transform.rotation, AffectObjects);
-
-        foreach (Collider c in AttackedEnemies)
-        {
-            c.gameObject.GetComponent<EnemyHealthManager>().GetKnifeDamage();
-            return;
-        }
-    }
+    float AttackDelayTimer;
 
     private void Update()
     {
-        if (Input.GetKeyDown(AttackKey) && AttackDelayValue>=AttackDelay)
+        AttackDelayTimer += Time.deltaTime;
+
+        if (Input.GetKeyDown(AttackKey) && AttackDelayTimer >= AttackDelay)
         {
             Logic.PlayKnifeAttackAnimation();
-
-            Attack();
-
-            AttackDelayValue = 0;
+            DetectAndApplyDamage();
+            AttackDelayTimer = 0;
         }
-        else
+    }
+
+    public void DetectAndApplyDamage()
+    {
+        Ray ray = new Ray(transform.position, transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, AttackDistance, AffectObjects))
         {
-            AttackDelayValue += Time.deltaTime;
+            EnemyHealthManager enemy = hit.collider.GetComponent<EnemyHealthManager>();
+            if (enemy != null)
+            {
+                enemy.GetKnifeDamage();
+            }
         }
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
+        Gizmos.color = Color.blue;
 
-        Gizmos.DrawWireCube(transform.position, HitBoxhalfExtend * 2);
+        Gizmos.DrawLine(transform.position,transform.position+ transform.forward.normalized*AttackDistance);
+
     }
-
-
-
 }

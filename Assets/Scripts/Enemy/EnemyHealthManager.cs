@@ -66,19 +66,9 @@ public class EnemyHealthManager : MonoBehaviour
             LayDown(DeathDirection);
             Destroy(EnemyAI);
 
-            // Get rotation that looks towards death direction
-            Quaternion lookRot = Quaternion.LookRotation(DeathDirection, Vector3.up);
-
-            // Force X to -90 while keeping Y/Z from lookRot
-            Vector3 euler = lookRot.eulerAngles;
-            euler.x = -90f;
-            Quaternion finalRot = Quaternion.Euler(euler);
-
-            // Offset the position upwards a little
-            Vector3 spawnPos = transform.position + new Vector3(0f, 0.1f, 0f);
 
             // Spawn the dead enemy
-            Instantiate(DeadEnemy, spawnPos, finalRot);
+            Instantiate(DeadEnemy, transform.position, transform.rotation);
 
             HasLayDown = true;
         }

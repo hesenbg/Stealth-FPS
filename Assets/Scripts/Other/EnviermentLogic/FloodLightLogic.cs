@@ -37,7 +37,7 @@ public class FloodLightLogic : MonoBehaviour
         range = spotLight.range;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         MoveLight();
         CheckEnemy();

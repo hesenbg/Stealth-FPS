@@ -88,7 +88,7 @@ MonoBehaviour:
   HSmultipler: 3
   EnemyAI: {fileID: 7808090384498380190}
   Target: {fileID: 0}
-  DeadEnemy: {fileID: 8919102997525808865, guid: ba9dda7684f95a44bb78ad37e9ba2c0e, type: 3}
+  DeadEnemy: {fileID: 1045220572742142245, guid: ba9dda7684f95a44bb78ad37e9ba2c0e, type: 3}
   DeathForce: 0
   DeathDirection: {x: 0, y: 0, z: 0}
   DeathPoint: {x: 0, y: 0, z: 0}
@@ -1237,7 +1237,7 @@ Transform:
   m_GameObject: {fileID: 7808090384498380190}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.57, y: 1.0685153, z: 1.71}
+  m_LocalPosition: {x: 0, y: 1.0685153, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1332,10 +1332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9a08d1981224904c88dc1d7c80d50b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tracks:
-  - {x: 16.3, y: 0, z: -12.4}
-  - {x: 13.1, y: 0, z: -12.4}
-  - {x: 13.1, y: 0, z: -9.9}
+  Tracks: []
   Current: 1
   Speed: 0.7
   RotationSpeed: 10
@@ -1398,6 +1395,7 @@ MonoBehaviour:
   - {x: -0.125, y: 0, z: 0.3}
   - {x: -0.125, y: 0, z: 0.145}
   - {x: 0.125, y: 0, z: 0.145}
+  YOffsets: []
   SightDistance: 7.5
   TargetMask:
     serializedVersion: 2
@@ -1409,6 +1407,8 @@ MonoBehaviour:
   TargetOnSight: 0
   SightLowerIncrement: 3
   SightOrigin: {x: 0, y: 0, z: 0}
+  MaxSightLowerValue: 0
+  LowerCheckSightDistance: 0
   SightOriginIncrement: 0
 --- !u!114 &6367593055849975524
 MonoBehaviour:
