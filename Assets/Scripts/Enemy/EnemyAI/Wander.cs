@@ -1,7 +1,5 @@
 using UnityEngine;
-using static UnityEngine.UI.Image;
-
-public class Wonder : MonoBehaviour
+public class Wander : MonoBehaviour
 {
     [SerializeField] Vector3[] Tracks;
     public enum WonderType { Walk , Still}
@@ -41,8 +39,9 @@ public class Wonder : MonoBehaviour
 
     void Walk()
     {
-        CheckHasTrack();
+        GetTrack();
         Base.UpdateRotation(Tracks[CurrentTrackIndex],RotationSpeed);
+        TrackPositionDirect(CurrentTrack); // gives velocity to proceed given position
     }
 
     bool isStillCoroutineRunning = false;
@@ -109,22 +108,20 @@ public class Wonder : MonoBehaviour
         HasTrack = true;
     }
 
-    void CheckHasTrack()  // forward enemy to the next track and checks it of reached
+    void GetTrack()  // forward enemy to the next track and checks it of reached
     {
         if (!HasTrack)
             GetTrackIndex();
-        else
-            HasTrack = TrackPositionDirect(CurrentTrack);
     }
 
 
-    bool TrackPositionDirect(Vector3 targetPosition) // gives velocity based on given position
+    void TrackPositionDirect(Vector3 targetPosition) // gives velocity based on given position
     {
         Vector3 direction = new Vector3(targetPosition.x - transform.position.x, 0, targetPosition.z - transform.position.z);
         Velocity = direction.normalized;
         Base.rb.linearVelocity = new Vector3(Velocity.x * Speed, 0, Velocity.z * Speed);
 
-        return direction.magnitude >= 0.2f;
+        HasTrack = (direction.magnitude >= 0.2f);
     }
 
 

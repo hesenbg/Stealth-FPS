@@ -53,8 +53,8 @@ public class ProceduralArms : MonoBehaviour
     void MoveSway()
     {
         // Calculate how much input is being pressed
-        float moveX = Mathf.Clamp(PhysicalMovement.x * MoveSwayAmount, -MaxMoveSway, MaxMoveSway);
-        float moveZ = Mathf.Clamp(PhysicalMovement.y * MoveSwayAmount, -MaxMoveSway, MaxMoveSway);
+        float moveX = Mathf.Clamp(PhysicalMovement.x * MoveSwayAmount*Time.deltaTime, -MaxMoveSway, MaxMoveSway);
+        float moveZ = Mathf.Clamp(PhysicalMovement.y * MoveSwayAmount*Time.deltaTime, -MaxMoveSway, MaxMoveSway);
 
 
         Vector3 targetPos = startPos + new Vector3(-moveX, 0, -moveZ);

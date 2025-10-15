@@ -1,11 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
-
 public class BaseAI : MonoBehaviour
 {
     // components
     [HideInInspector] public Rigidbody rb;
-    Wonder WanderState;
+    Wander WanderState;
     Suspicious SuspiciousState;
     [HideInInspector] public Alarm AlarmState;
     [HideInInspector] public GuardSight Sight;
@@ -32,7 +31,7 @@ public class BaseAI : MonoBehaviour
     private void Start()
     {
         // state classes
-        WanderState = GetComponent<Wonder>();
+        WanderState = GetComponent<Wander>();
         Sight = GetComponent<GuardSight>();
         AlarmState = GetComponent<Alarm>();
 
@@ -61,13 +60,13 @@ public class BaseAI : MonoBehaviour
 
     void UpdateCurrentState()
     {
-        if (Sight.TargetOnSight)
+        if (Sight.TargetOnSight && CurrentState != GuardState.Alarmed)
         {
-            //CurrentState = GuardState.Alarmed;
+            EnterAlarmState(CurrentState);
             CurrentState= SwitchStateDelay(CurrentState, GuardState.Alarmed, AlarmStateDelay);
             return;
         }
-        if (IsEnemyDistracted)
+        if (IsEnemyDistracted && CurrentState != GuardState.Suspicious)
         {
             CurrentState = SwitchStateDelay(CurrentState,GuardState.Suspicious, SuspiciousStateDelay);
         }
@@ -160,4 +159,11 @@ public class BaseAI : MonoBehaviour
         }
     }
 
+    public void EnterAlarmState(GuardState Current)
+    {
+        if(Current == GuardState.Wander)
+        {
+            rb.linearVelocity = Vector3.zero;
+        }
+    }
 }
