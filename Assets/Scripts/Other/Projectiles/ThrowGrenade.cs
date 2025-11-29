@@ -21,7 +21,7 @@ public class ThrowGrenade : MonoBehaviour
             SmokeCount--;
             Smoke.Force = Force;
             Smoke.ThrowDirection = MainCamera.transform.forward;    
-            Instantiate(Smoke,transform.position,transform.rotation);
+            Instantiate(Smoke,transform.position,transform.rotation);   
         }
 
         if (Input.GetKeyDown(KeyCode.G) && ExplosiveCount >0)

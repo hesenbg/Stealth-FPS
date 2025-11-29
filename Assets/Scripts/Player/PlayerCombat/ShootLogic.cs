@@ -54,6 +54,8 @@ public class ShootLogic : MonoBehaviour
         UpdateShootUI();
 
         ResetRecoil();
+
+
     }
 
     [SerializeField] float MinFloat;
@@ -100,6 +102,8 @@ public class ShootLogic : MonoBehaviour
 
     void ShootInput()
     {
+        Debug.Log("shoot");
+
         if (Input.GetMouseButtonDown(0) && IsShootable && currentAmmo > 0 && !isReloading)
         {
             // play sound

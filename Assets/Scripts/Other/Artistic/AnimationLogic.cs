@@ -14,7 +14,6 @@ public class AnimationLogic : MonoBehaviour
 
     private void Update()
     {
-        IsRunning = PlayerMovement.IsRunning;
 
         if (Input.GetKeyDown(KeyCode.A))
         {
