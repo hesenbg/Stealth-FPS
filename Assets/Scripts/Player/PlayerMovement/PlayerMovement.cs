@@ -19,13 +19,12 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody rb;
     [SerializeField] AnimationLogic AnimationLogic;
     [SerializeField] BoxCollider PlayerHitbox;
-    [SerializeField] GroundCheck gm;
-    [SerializeField] GameObject LowerStep;
-    [SerializeField] GameObject UpperStep;
+    [SerializeField] GroundCheck GroundCheck;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        PlayerHitbox = GetComponent<BoxCollider>();
 
         BaseHitBoxSize = PlayerHitbox.size;
         Cursor.lockState = CursorLockMode.Locked;
@@ -190,46 +189,21 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void HandleMovement() {
-        ClimbStair();
         HandleHorizontalMovement();
         HandleVerticalMovement();
         ApplyVelocity();
     }
+
     private void Update()
     {
         UpdateMovementParameters();
         HandleMovement();
         SetSituations();
     }
-    [SerializeField] float MaxStep;
-    [SerializeField] LayerMask StairLayer;
-    void ClimbStair()
-    {
-        if (Physics.CheckBox(LowerStep.transform.position, StairCheckExtend, transform.rotation, StairLayer, QueryTriggerInteraction.Ignore))
-        {
-            if (!Physics.CheckBox(UpperStep.transform.position, StairCheckExtend, transform.rotation, StairLayer, QueryTriggerInteraction.Ignore))
-            {
-                rb.position -= new Vector3(0,-MaxStep, 0);
-            }
-        } 
-    }
-    [SerializeField] Vector3 StairCheckExtend;
+
     private void OnDrawGizmos()
     {
-        if (LowerStep == null || UpperStep == null) return;
 
-        Gizmos.color = Color.yellow;
-
-        // Draw LowerStep cast box
-        Matrix4x4 oldMatrix = Gizmos.matrix;
-        Gizmos.matrix = Matrix4x4.TRS(LowerStep.transform.position, transform.rotation, Vector3.one);
-        Gizmos.DrawWireCube(Vector3.zero, StairCheckExtend * 2f);
-        Gizmos.matrix = oldMatrix;
-
-        // Draw UpperStep cast box
-        Gizmos.matrix = Matrix4x4.TRS(UpperStep.transform.position, transform.rotation, Vector3.one);
-        Gizmos.DrawWireCube(Vector3.zero, StairCheckExtend * 2f);
-        Gizmos.matrix = oldMatrix;
     }
 
 }

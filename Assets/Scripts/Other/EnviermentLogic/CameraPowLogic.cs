@@ -27,11 +27,11 @@ public class CameraPowLogic : MonoBehaviour
     void UpdateRotation()
     {
         // horizontal rotation (yaw)
-        PlayerTransform.Rotate(Vector3.up * MouseX);
+        PlayerTransform.Rotate(Vector3.up * MouseX);  // horizontal
 
         // vertical rotation (pitch)
         Xrotation -= MouseY;
-        Xrotation = Mathf.Clamp(Xrotation, -90f, 90f);
+        Xrotation = Mathf.Clamp(Xrotation, -90f, 90f);  // vertical
 
         TargetLocation.x = Xrotation + recoilX; // add recoil effect
     }
