@@ -20,17 +20,17 @@ public  class PlayerMovement : MonoBehaviour
     [SerializeField] float CrouchAcceleration;
     [SerializeField] float JumpAcceleration;
 
-    [Header("Crouch Hitbox sizes")]
-    Vector3 BaseHitBoxSize;
-    Vector3 BaseHitBoxPos;                                 
-    Vector3 BaseGroundCheckPosition;
+    [Header("Crouch Hitbox (Capsule)")]
 
-    [SerializeField] Vector3 TargetGroundCheckPosition;
-    [SerializeField] Vector3 TargetHitBoxSize;
-    [SerializeField] Vector3 TargetHitBoxPos;
+    float TargetHeight;
+    float BaseHeight;
+    [SerializeField] float CrouchHitboxHeight;
 
-    [SerializeField] float CrouchLerpSpeed;
+    [SerializeField] float CrouchLerpSpeed = 10f;
 
+    Vector3 StandGroundCheck;
+    Vector3 TargetGroundCheck;
+    [SerializeField] Vector3 CrouchGroundCheck;
 
     public bool IsGround = false;
     public bool IsOnSlope = false;
@@ -41,8 +41,9 @@ public  class PlayerMovement : MonoBehaviour
     [Header("References")]
     Rigidbody rb;
     [SerializeField] AnimationLogic AnimationLogic;
-    [SerializeField] BoxCollider PlayerHitbox;
+    [SerializeField] CapsuleCollider PlayerHitbox;
     [SerializeField] BoxCollider GroundTrigger; // detects if player on slope, ground or on air
+    GameObject Surface;
     /// <movement keybinds>
     /// 
     /// w a s d alone means running
@@ -53,24 +54,14 @@ public  class PlayerMovement : MonoBehaviour
     /// 
     /// spacebar means jumping
 
-    private void Start()
+    void Start()
     {
-        InitilizeHitboxAndGroundCheckParams();
-
         rb = GetComponent<Rigidbody>();
-        PlayerHitbox = GetComponent<BoxCollider>();
+        PlayerHitbox = GetComponent<CapsuleCollider>();
 
-        BaseHitBoxSize = PlayerHitbox.size;
-        Cursor.lockState = CursorLockMode.Locked;
+        BaseHeight = PlayerHitbox.height;
 
-        PlayerData.SetMovement(this);
-    }
-    void InitilizeHitboxAndGroundCheckParams()
-    {
-        BaseHitBoxPos = PlayerHitbox.center;
-        BaseHitBoxSize = PlayerHitbox.size;
-
-        BaseGroundCheckPosition = GroundTrigger.center;
+        StandGroundCheck = GroundTrigger.center;
     }
 
     void HandleHorizontalMovement() // calcuates the velocity based on the imput
@@ -78,29 +69,52 @@ public  class PlayerMovement : MonoBehaviour
         Velocity = rb.linearVelocity;
         if (Input.GetKey(KeyCode.W))
         {
-            Velocity += (transform.forward * CurrAcc * Time.deltaTime) ;
+            Velocity += (CurrentForwardDirection * CurrAcc * Time.deltaTime) ;
         }
         if (Input.GetKey(KeyCode.S))
         {
-            Velocity -= (transform.forward * CurrAcc * Time.deltaTime) ;
+            Velocity -= (CurrentForwardDirection * CurrAcc * Time.deltaTime) ;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            Velocity += (transform.right * CurrAcc * Time.deltaTime) ;
+            Velocity += (CurrentRightDirection * CurrAcc * Time.deltaTime) ;
         }
         if (Input.GetKey(KeyCode.A))
         {
-            Velocity -= (transform.right * CurrAcc * Time.deltaTime) ;
+            Velocity -= (CurrentRightDirection * CurrAcc * Time.deltaTime) ;
         }
         Clamp();
+
+        UpdateDirection();
     }
+
+    Vector3 CurrentForwardDirection;
+    Vector3 CurrentRightDirection;
+
+    // updates directions (forward and right) based on the nomral of surface
+    void UpdateDirection()
+    {
+        if (IsOnSlope)
+        {
+
+        }
+    }
+
 
     // slecect the current state
     void UpdateCurrentMovementState()
     {
         if (IsOnSlope)
         {
-
+            rb.useGravity = false;
+            CurrentForwardDirection = Surface.transform.forward;
+            CurrentRightDirection = Surface.transform.right;
+        }
+        else
+        {
+            rb.useGravity = true;
+            CurrentForwardDirection = transform.forward;
+            CurrentRightDirection = transform.right;
         }
 
         // jump
@@ -184,21 +198,22 @@ public  class PlayerMovement : MonoBehaviour
 
     void Crouch()
     {
-        bool crouching = Input.GetKey(KeyCode.LeftControl);
+        bool isCrouch = Input.GetKey(KeyCode.LeftControl);
 
-        // Select targets based on crouch state
-        Vector3 targetSize = crouching ? TargetHitBoxSize : BaseHitBoxSize;
-        Vector3 targetCenter = crouching ? TargetHitBoxPos : BaseHitBoxPos;
-        Vector3 targetGround = crouching ? TargetGroundCheckPosition : BaseGroundCheckPosition;
+        if (isCrouch)
+        {
+            TargetGroundCheck = CrouchGroundCheck;
+            TargetHeight = CrouchHitboxHeight;
+        }
+        else
+        {
+            TargetHeight = BaseHeight;
+            TargetGroundCheck = StandGroundCheck;
+        }
 
-        // Lerp collider
-        PlayerHitbox.size = Vector3.Lerp(PlayerHitbox.size, targetSize, Time.deltaTime * CrouchLerpSpeed);
-        PlayerHitbox.center = Vector3.Lerp(PlayerHitbox.center, targetCenter, Time.deltaTime * CrouchLerpSpeed);
-
-        // Lerp ground detector
-        GroundTrigger.center = Vector3.Lerp(GroundTrigger.center, targetGround, Time.deltaTime * CrouchLerpSpeed);
+        PlayerHitbox.height = Mathf.Lerp(PlayerHitbox.height, TargetHeight, CrouchLerpSpeed * Time.deltaTime);
+        GroundTrigger.center = Vector3.Lerp(GroundTrigger.center, TargetGroundCheck, CrouchLerpSpeed * Time.deltaTime);
     }
-
 
     // this should start a coroutine and increase Y velocity with the acceleration
     void HandleVerticalMovement()
@@ -255,11 +270,16 @@ public  class PlayerMovement : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (rb == null) return;
 
+           Gizmos.color = Color.yellow;
+           Gizmos.DrawLine(rb.position, rb.position + rb.linearVelocity);
     }
 
     private void OnTriggerStay(Collider other)
     {
+        Surface = other.gameObject;
+
         if(other.gameObject.layer== 13)
         {
             IsOnSlope = true;
@@ -270,8 +290,11 @@ public  class PlayerMovement : MonoBehaviour
             IsGround = true;
         }
     }
+
     private void OnTriggerExit(Collider other)
     {
+        Surface = null;
+
         if (other.gameObject.layer == 6)
         {
             IsGround = false;
