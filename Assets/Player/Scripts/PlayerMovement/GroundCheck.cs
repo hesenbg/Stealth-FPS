@@ -14,7 +14,7 @@ public class GroundCheck : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (PlayerMovement.IsCrouching)
+        if (PlayerData.GetMovement().CurrentMovementState == PlayerMovement.MovementState.Crouch)
         {
             GroundTrigger.center = new Vector3(0, -0.5f, 0);
         }

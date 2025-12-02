@@ -1,36 +1,79 @@
+using System.Collections;
 using UnityEngine;
-public class PlayerMovement : MonoBehaviour
+public  class PlayerMovement : MonoBehaviour
 {
-    // --- Movement Parameters ---
-    [SerializeField] float JumpForce;
-    [SerializeField] public float MaxVelocityGround;
-    [SerializeField] float MaxVelocityAir;
-    [SerializeField] float GroundAcc;
-    [SerializeField] float AirAcc;
+    [Header("General Paramaters")]
     [SerializeField] float CurrMaxVelocity;
     [SerializeField] float CurrAcc;
     [SerializeField] public Vector3 Velocity;
+    [SerializeField] float JumpMass;
+    [SerializeField] float JumpForce;
 
-    // --- State ---
+    [Header("Max movementState Speeds")]
+    [SerializeField] float WalkSpeed;
+    [SerializeField] float RunSpeed;
+    [SerializeField] float CrouchSpeed;
+
+    [Header("movement state Accelerations")]
+    [SerializeField] float WalkAcceleartion;
+    [SerializeField] float RunAcceleration;
+    [SerializeField] float CrouchAcceleration;
+    [SerializeField] float JumpAcceleration;
+
+    [Header("Crouch Hitbox sizes")]
+    Vector3 BaseHitBoxSize;
+    Vector3 BaseHitBoxPos;                                 
+    Vector3 BaseGroundCheckPosition;
+
+    [SerializeField] Vector3 TargetGroundCheckPosition;
+    [SerializeField] Vector3 TargetHitBoxSize;
+    [SerializeField] Vector3 TargetHitBoxPos;
+
+    [SerializeField] float CrouchLerpSpeed;
+
+
     public bool IsGround = false;
-    public bool IsMoving = false;
+    public bool IsOnSlope = false;
+    [Header("Movement States")]
+    public MovementState CurrentMovementState;
+    public enum MovementState {Walk, Run, Crouch, Jump, Idle}
 
-    // --- References ---
+    [Header("References")]
     Rigidbody rb;
     [SerializeField] AnimationLogic AnimationLogic;
     [SerializeField] BoxCollider PlayerHitbox;
-    [SerializeField] GroundCheck GroundCheck;
+    [SerializeField] BoxCollider GroundTrigger; // detects if player on slope, ground or on air
+    /// <movement keybinds>
+    /// 
+    /// w a s d alone means running
+    ///  
+    /// w a d d + shift means walking
+    /// 
+    /// ctrl means crouching
+    /// 
+    /// spacebar means jumping
 
     private void Start()
     {
+        InitilizeHitboxAndGroundCheckParams();
+
         rb = GetComponent<Rigidbody>();
         PlayerHitbox = GetComponent<BoxCollider>();
 
         BaseHitBoxSize = PlayerHitbox.size;
         Cursor.lockState = CursorLockMode.Locked;
+
+        PlayerData.SetMovement(this);
     }
-    [SerializeField] float CurrentVelocity = 0;
-    void HandleHorizontalMovement()
+    void InitilizeHitboxAndGroundCheckParams()
+    {
+        BaseHitBoxPos = PlayerHitbox.center;
+        BaseHitBoxSize = PlayerHitbox.size;
+
+        BaseGroundCheckPosition = GroundTrigger.center;
+    }
+
+    void HandleHorizontalMovement() // calcuates the velocity based on the imput
     {
         Velocity = rb.linearVelocity;
         if (Input.GetKey(KeyCode.W))
@@ -51,25 +94,82 @@ public class PlayerMovement : MonoBehaviour
         }
         Clamp();
     }
-    Vector3 BaseHitBoxSize;
-    public bool IsCrouching= false;
-    [SerializeField] float CrouchSpeed = 5f; 
-    Vector3 TargetHitBoxSize;
 
-    void Crouch()
+    // slecect the current state
+    void UpdateCurrentMovementState()
     {
+        if (IsOnSlope)
+        {
+
+        }
+
+        // jump
+        if (!IsGround)
+        {
+            CurrentMovementState = MovementState.Jump;
+            return;
+        }
+
+        // crouch
         if (Input.GetKey(KeyCode.LeftControl))
         {
-            TargetHitBoxSize = new Vector3(0.7f, 1, 0.7f);
-            IsCrouching = true;
+            CurrentMovementState = MovementState.Crouch;
+            return;
         }
-        else
+
+        // Check if any movement key is pressed
+        bool moving =
+            Input.GetKey(KeyCode.W) ||
+            Input.GetKey(KeyCode.A) ||
+            Input.GetKey(KeyCode.S) ||
+            Input.GetKey(KeyCode.D);
+
+        if (moving)
         {
-            TargetHitBoxSize = BaseHitBoxSize;
-            IsCrouching = false;
+            if (Input.GetKey(KeyCode.LeftShift))
+                CurrentMovementState = MovementState.Walk;
+            else
+                CurrentMovementState = MovementState.Run;
+
+            return;
         }
-        PlayerHitbox.size = Vector3.Lerp(PlayerHitbox.size, TargetHitBoxSize, Time.deltaTime * CrouchSpeed);
+
+        // 4. If no movement input  Idle
+        CurrentMovementState = MovementState.Idle;
     }
+
+
+    void SetMovementParametersFromState()
+    {
+        switch (CurrentMovementState)
+        {
+            case MovementState.Walk:
+                CurrAcc = WalkAcceleartion;
+                CurrMaxVelocity = WalkSpeed;
+                break;
+
+            case MovementState.Run:
+                CurrAcc = RunAcceleration;
+                CurrMaxVelocity = RunSpeed;
+                break;
+
+            case MovementState.Crouch:
+                CurrAcc = CrouchAcceleration;
+                CurrMaxVelocity = CrouchSpeed;
+                break;
+
+            case MovementState.Jump:
+                // Keep your horizontal movement while in the air
+                CurrAcc = JumpAcceleration;
+                break;
+
+            default: // Idle
+                CurrAcc = 0f;
+                CurrMaxVelocity = 0f;
+                break;
+        }
+    }
+
     void Clamp()
     {
         // clamp horizontal speed to CurrMaxVelocity
@@ -81,74 +181,57 @@ public class PlayerMovement : MonoBehaviour
             Velocity.z = horizontal.z;
         }
     }
-    void SetCurrAcc()
+
+    void Crouch()
     {
-        if (IsGround)
-        {
-            CurrAcc = GroundAcc;
-        }
-        else
-        {
-            CurrAcc = AirAcc;
-        }
-    }
-    void SetVelocityBorders()
-    {
-        if (IsGround)
-        {
-            CurrMaxVelocity = MaxVelocityGround;
-            if (IsCrouching)
-            {
-                CurrMaxVelocity = MaxVelocityGround / 2;
-            }
-        }
-        else
-        {
-            CurrMaxVelocity = MaxVelocityAir;
-        }
+        bool crouching = Input.GetKey(KeyCode.LeftControl);
+
+        // Select targets based on crouch state
+        Vector3 targetSize = crouching ? TargetHitBoxSize : BaseHitBoxSize;
+        Vector3 targetCenter = crouching ? TargetHitBoxPos : BaseHitBoxPos;
+        Vector3 targetGround = crouching ? TargetGroundCheckPosition : BaseGroundCheckPosition;
+
+        // Lerp collider
+        PlayerHitbox.size = Vector3.Lerp(PlayerHitbox.size, targetSize, Time.deltaTime * CrouchLerpSpeed);
+        PlayerHitbox.center = Vector3.Lerp(PlayerHitbox.center, targetCenter, Time.deltaTime * CrouchLerpSpeed);
+
+        // Lerp ground detector
+        GroundTrigger.center = Vector3.Lerp(GroundTrigger.center, targetGround, Time.deltaTime * CrouchLerpSpeed);
     }
 
-    void UpdateMovementParameters()
-    {
-        //SetCurrentVelocity();
-        SetCurrAcc();
-        SetVelocityBorders();
-        Crouch();
-    }
+
+    // this should start a coroutine and increase Y velocity with the acceleration
     void HandleVerticalMovement()
     {
         if (Input.GetKey(KeyCode.Space) && IsGround)
         {
             Velocity.y = JumpForce;
         }
+        if (IsGround)
+        {
+            rb.mass = 1;
+        }
+        else
+        {
+            rb.mass = JumpMass;
+        }
     }
-    public bool IsRunning;
+
+    IEnumerator Jump()
+    {
+
+        yield return null;
+    }
+
+    void UpdateMovementParameters()
+    {
+        UpdateCurrentMovementState();
+        SetMovementParametersFromState();
+        Crouch();
+    }
     void SetSituations()
     {
-        // is running
-        if ((Velocity.z >0.5f || Velocity.z<-0.5f) || (Velocity.x >0.5f || Velocity.x<-0.5f))
-        {
-            IsMoving = true;
-        }
-        else
-        {
-            IsMoving= false;
-        }
-        if ((Velocity.z > 2f || Velocity.z < -2f) || (Velocity.x > 2f || Velocity.x < -2f))
-        {
-            IsRunning = true;
-        }
-        else
-        {
-            IsRunning = false;
-        }
 
-        if (IsRunning && !IsCrouching)
-        {
-           //SoundManager.Instance.PlayPlayerFootSteps(transform.position);
-        }
-
-        // is pressing ground
     }
     void ApplyVelocity()
     {
@@ -175,4 +258,28 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    private void OnTriggerStay(Collider other)
+    {
+        if(other.gameObject.layer== 13)
+        {
+            IsOnSlope = true;
+        }
+
+        if(other.gameObject.layer == 6)
+        {
+            IsGround = true;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == 6)
+        {
+            IsGround = false;
+        }
+
+        if (other.gameObject.layer == 13)
+        {
+            IsOnSlope = false;
+        }
+    }
 }

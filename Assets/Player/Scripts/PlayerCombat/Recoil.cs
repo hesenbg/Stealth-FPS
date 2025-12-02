@@ -37,7 +37,7 @@ public class Recoil : MonoBehaviour
 
     public float CalculateMoveRecoil()
     {
-        if (movement.IsMoving && MoveRecoil<MaxMoveRecoil)
+        if (PlayerData.GetMovement().CurrentMovementState == PlayerMovement.MovementState.Idle && MoveRecoil<MaxMoveRecoil)
         {
             MoveRecoil += MoveRecoilIncrement * Time.deltaTime;
         }

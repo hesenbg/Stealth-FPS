@@ -54,8 +54,6 @@ public class ShootLogic : MonoBehaviour
         UpdateShootUI();
 
         ResetRecoil();
-
-
     }
 
     [SerializeField] float MinFloat;
@@ -107,13 +105,14 @@ public class ShootLogic : MonoBehaviour
         {
             // play sound
             SoundManager.Instance.PlayGunShot(transform.position);
-            // play animation
-            AnimationLogic.PlayeRecoilAnimation();
+            // play animation 
+            // ShootType float 0 shoot 0.5 shoodry 1 shootlast
+            PlayerData.GetAnimationLogic().PlayeRecoilAnimation();
             // aplly logic
             Shoot();
 
             // recoil
-            CameraPowLogic.ApllyRecoilMoation(CalculateRecoil());
+            //CameraPowLogic.ApllyRecoilMoation(CalculateRecoil());
 
             shootCooldown = ShootingDelay;
             IsShooting = true;
@@ -173,12 +172,12 @@ public class ShootLogic : MonoBehaviour
         isReloading = false;
     }
 
-    float CalculateRecoil()
+    float CalculateRecoil() // todo fix it
     {
         Vector3 recoil = Vector3.zero;
 
         // More recoil if moving
-        if (Movement.IsMoving)
+        //if (Movement.IsMoving)
             recoil += new Vector3(
                 Random.Range(-MoveRecoilFactor, MoveRecoilFactor),
                 Random.Range(-MoveRecoilFactor, MoveRecoilFactor),
@@ -215,6 +214,6 @@ public class ShootLogic : MonoBehaviour
     // -------------------- UI --------------------
     void UpdateShootUI()
     {
-        BulletCount.text = $"{currentAmmo}/{TotalAmmo}";
+        //BulletCount.text = $"{currentAmmo}/{TotalAmmo}";
     }
 }
