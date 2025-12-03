@@ -27,7 +27,7 @@ public class CameraPowLogic : MonoBehaviour
     void UpdateRotation()
     {
         // horizontal rotation (yaw)
-        PlayerTransform.Rotate(Vector3.up * MouseX);  // horizontal
+        PlayerTransform.Rotate(Vector3.up*MouseX);  // horizontal
 
         // vertical rotation (pitch)
         Xrotation -= MouseY;

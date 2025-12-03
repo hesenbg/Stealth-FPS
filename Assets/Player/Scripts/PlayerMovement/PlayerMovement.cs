@@ -56,6 +56,9 @@ public  class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         rb = GetComponent<Rigidbody>();
         PlayerHitbox = GetComponent<CapsuleCollider>();
 
@@ -67,6 +70,7 @@ public  class PlayerMovement : MonoBehaviour
     void HandleHorizontalMovement() // calcuates the velocity based on the imput
     {
         Velocity = rb.linearVelocity;
+
         if (Input.GetKey(KeyCode.W))
         {
             Velocity += (CurrentForwardDirection * CurrAcc * Time.deltaTime) ;
@@ -85,7 +89,10 @@ public  class PlayerMovement : MonoBehaviour
         }
         Clamp();
 
+        Debug.Log(CurrentForwardDirection);
+
         UpdateDirection();
+
     }
 
     Vector3 CurrentForwardDirection;
@@ -96,7 +103,13 @@ public  class PlayerMovement : MonoBehaviour
     {
         if (IsOnSlope)
         {
-
+            CurrentForwardDirection = Vector3.ProjectOnPlane(transform.forward, Surface.transform.up).normalized;
+            CurrentRightDirection = Vector3.ProjectOnPlane(transform.right, Surface.transform.up).normalized;
+        }
+        else
+        {
+            CurrentRightDirection = transform.right;
+            CurrentForwardDirection = transform.forward;
         }
     }
 
@@ -104,21 +117,8 @@ public  class PlayerMovement : MonoBehaviour
     // slecect the current state
     void UpdateCurrentMovementState()
     {
-        if (IsOnSlope)
-        {
-            rb.useGravity = false;
-            CurrentForwardDirection = Surface.transform.forward;
-            CurrentRightDirection = Surface.transform.right;
-        }
-        else
-        {
-            rb.useGravity = true;
-            CurrentForwardDirection = transform.forward;
-            CurrentRightDirection = transform.right;
-        }
-
         // jump
-        if (!IsGround)
+        if (!IsGround && !IsOnSlope)
         {
             CurrentMovementState = MovementState.Jump;
             return;
@@ -177,7 +177,7 @@ public  class PlayerMovement : MonoBehaviour
                 CurrAcc = JumpAcceleration;
                 break;
 
-            default: // Idle
+            case MovementState.Idle: // Idle
                 CurrAcc = 0f;
                 CurrMaxVelocity = 0f;
                 break;
@@ -186,8 +186,17 @@ public  class PlayerMovement : MonoBehaviour
 
     void Clamp()
     {
+
+        Vector3 horizontal = Velocity;
+        if (IsOnSlope)
+        {
+            
+
+            return;
+        }
+
         // clamp horizontal speed to CurrMaxVelocity
-        Vector3 horizontal = new Vector3(Velocity.x, 0, Velocity.z);
+        horizontal = new Vector3(Velocity.x, 0, Velocity.z);
         if (horizontal.magnitude > CurrMaxVelocity && CurrMaxVelocity!=0)
         {
             horizontal = horizontal.normalized * CurrMaxVelocity;
@@ -283,9 +292,10 @@ public  class PlayerMovement : MonoBehaviour
         if(other.gameObject.layer== 13)
         {
             IsOnSlope = true;
+            IsGround = true;
         }
 
-        if(other.gameObject.layer == 6)
+        if (other.gameObject.layer == 6)
         {
             IsGround = true;
         }
@@ -293,8 +303,6 @@ public  class PlayerMovement : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        Surface = null;
-
         if (other.gameObject.layer == 6)
         {
             IsGround = false;
@@ -303,6 +311,7 @@ public  class PlayerMovement : MonoBehaviour
         if (other.gameObject.layer == 13)
         {
             IsOnSlope = false;
+            IsGround = false;
         }
     }
 }
