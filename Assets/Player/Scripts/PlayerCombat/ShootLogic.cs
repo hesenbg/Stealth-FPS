@@ -20,9 +20,6 @@ public class ShootLogic : MonoBehaviour
     [SerializeField] int currentAmmo;
 
     [Header("References")]
-    [SerializeField] AnimationLogic AnimationLogic;
-    [SerializeField] PlayerMovement Movement;
-    [SerializeField] CameraPowLogic CameraPowLogic;
 
 
     [Header("Recoil")]
@@ -94,20 +91,19 @@ public class ShootLogic : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagazineSize && TotalAmmo > 0)
         {
             StartCoroutine(Reload());
-            AnimationLogic.PlayReloadAnimation(currentAmmo == 0);
+            PlayerData.GetAnimationLogic().PlayReloadAnimation(currentAmmo == 0);
         }
     }
 
     void ShootInput()
     {
-
         if (Input.GetMouseButtonDown(0) && IsShootable && currentAmmo > 0 && !isReloading)
         {
             // play sound
             SoundManager.Instance.PlayGunShot(transform.position);
             // play animation 
             // ShootType float 0 shoot 0.5 shoodry 1 shootlast
-            PlayerData.GetAnimationLogic().PlayeRecoilAnimation();
+            PlayerData.GetAnimationLogic().PlayShootAnimation(currentAmmo);
             // aplly logic
             Shoot();
 

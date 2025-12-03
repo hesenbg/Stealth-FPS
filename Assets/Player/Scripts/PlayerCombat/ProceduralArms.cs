@@ -10,11 +10,12 @@ public class ProceduralArms : MonoBehaviour
     [Header("Movement Bobbing")]
     [SerializeField] float MoveSwayAmount;
     [SerializeField] float MaxMoveSway ;
-    [SerializeField] float BobFrequency ;
     [SerializeField] float bobSpeed;
 
+    [SerializeField] float JumpBobMultipler;
+
     Vector2 MouseMovement;
-    Vector2 PhysicalMovement;
+    Vector3 PhysicalMovement;
 
     Vector3 startPos;
 
@@ -55,11 +56,12 @@ public class ProceduralArms : MonoBehaviour
         // Calculate how much input is being pressed
         float moveX = Mathf.Clamp(PhysicalMovement.x * MoveSwayAmount*Time.deltaTime, -MaxMoveSway, MaxMoveSway);
         float moveZ = Mathf.Clamp(PhysicalMovement.y * MoveSwayAmount*Time.deltaTime, -MaxMoveSway, MaxMoveSway);
+        float moveY = Mathf.Clamp((PlayerData.GetMovement().Velocity.y / PlayerData.GetMovement().JumpForce) * MoveSwayAmount*JumpBobMultipler * Time.deltaTime, -MaxMoveSway, MaxMoveSway);
 
-
-        Vector3 targetPos = startPos + new Vector3(-moveX, 0, -moveZ);
+        Vector3 targetPos = startPos + new Vector3(-moveX, moveY, -moveZ);
 
         transform.localPosition = Vector3.Lerp(transform.localPosition, targetPos, Time.deltaTime * bobSpeed);
+        
     }
 
 }

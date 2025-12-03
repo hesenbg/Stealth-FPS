@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class ADS : MonoBehaviour
 {
     [SerializeField] Transform ADSposition;
@@ -20,7 +19,6 @@ public class ADS : MonoBehaviour
     {
         if (Input.GetMouseButton(1))
         {
-            PlayerData.GetAnimationLogic().PlayerAnimator.enabled = false;
             // move toward ADS
             transform.localPosition = Vector3.Lerp(
                 transform.localPosition,
@@ -34,7 +32,6 @@ public class ADS : MonoBehaviour
         }
         else
         {
-            PlayerData.GetAnimationLogic().PlayerAnimator.enabled = true;
             // return to original saved values
             transform.localPosition = Vector3.Lerp(
                 transform.localPosition,

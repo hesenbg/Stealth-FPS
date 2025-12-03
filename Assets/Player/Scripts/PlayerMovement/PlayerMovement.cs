@@ -7,7 +7,7 @@ public  class PlayerMovement : MonoBehaviour
     [SerializeField] float CurrAcc;
     [SerializeField] public Vector3 Velocity;
     [SerializeField] float JumpMass;
-    [SerializeField] float JumpForce;
+    [SerializeField] public float JumpForce;
 
     [Header("Max movementState Speeds")]
     [SerializeField] float WalkSpeed;
@@ -63,6 +63,8 @@ public  class PlayerMovement : MonoBehaviour
         PlayerHitbox = GetComponent<CapsuleCollider>();
 
         BaseHeight = PlayerHitbox.height;
+
+        PlayerData.SetMovement(this);
 
         StandGroundCheck = GroundTrigger.center;
     }
