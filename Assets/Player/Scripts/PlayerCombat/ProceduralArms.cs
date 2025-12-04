@@ -16,7 +16,6 @@ public class ProceduralArms : MonoBehaviour
 
     Vector2 MouseMovement;
     Vector3 PhysicalMovement;
-
     Vector3 startPos;
 
     void Start()

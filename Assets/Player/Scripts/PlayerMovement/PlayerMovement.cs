@@ -1,4 +1,6 @@
 using System.Collections;
+using Unity.AppUI.UI;
+using Unity.VisualScripting;
 using UnityEngine;
 public  class PlayerMovement : MonoBehaviour
 {
@@ -21,7 +23,6 @@ public  class PlayerMovement : MonoBehaviour
     [SerializeField] float JumpAcceleration;
 
     [Header("Crouch Hitbox (Capsule)")]
-
     float TargetHeight;
     float BaseHeight;
     [SerializeField] float CrouchHitboxHeight;
@@ -38,6 +39,14 @@ public  class PlayerMovement : MonoBehaviour
     public MovementState CurrentMovementState;
     public enum MovementState {Walk, Run, Crouch, Jump, Idle}
 
+    [Header("Obstacle Avoidance")]
+    [SerializeField] Transform LowerPos;
+    [SerializeField] Transform UpperPos;
+    [SerializeField] Vector3 HalfExtend;
+    [SerializeField] Vector3 RigidbodyUp;
+    [SerializeField] LayerMask ObstacleMask;
+
+
     [Header("References")]
     Rigidbody rb;
     [SerializeField] AnimationLogic AnimationLogic;
@@ -53,6 +62,8 @@ public  class PlayerMovement : MonoBehaviour
     /// ctrl means crouching
     /// 
     /// spacebar means jumping
+
+
 
     void Start()
     {
@@ -90,9 +101,6 @@ public  class PlayerMovement : MonoBehaviour
             Velocity -= (CurrentRightDirection * CurrAcc * Time.deltaTime) ;
         }
         Clamp();
-
-        Debug.Log(CurrentForwardDirection);
-
         UpdateDirection();
 
     }
@@ -192,7 +200,7 @@ public  class PlayerMovement : MonoBehaviour
         Vector3 horizontal = Velocity;
         if (IsOnSlope)
         {
-            
+            // todo add clamp to the slope
 
             return;
         }
@@ -265,6 +273,16 @@ public  class PlayerMovement : MonoBehaviour
         
         //Velocity = Vector3.zero;
     }
+    void CheckObstacle()
+    {
+        if(Physics.OverlapBox(LowerPos.position, HalfExtend,transform.rotation,ObstacleMask).Length >= 1)
+        {
+            if (Physics.OverlapBox(UpperPos.position, HalfExtend, transform.rotation, ObstacleMask).Length == 0)
+            {
+                rb.position = Vector3.Lerp(rb.position, rb.position + RigidbodyUp, Time.deltaTime * CrouchLerpSpeed);
+            }
+        }
+    }
 
     void HandleMovement() {
         HandleHorizontalMovement();
@@ -277,12 +295,14 @@ public  class PlayerMovement : MonoBehaviour
         UpdateMovementParameters();
         HandleMovement();
         SetSituations();
+        CheckObstacle();
     }
 
     private void OnDrawGizmos()
     {
+           Gizmos.DrawCube(LowerPos.position, HalfExtend);
+           Gizmos.DrawCube(UpperPos.position, HalfExtend);
         if (rb == null) return;
-
            Gizmos.color = Color.yellow;
            Gizmos.DrawLine(rb.position, rb.position + rb.linearVelocity);
     }
@@ -294,26 +314,19 @@ public  class PlayerMovement : MonoBehaviour
         if(other.gameObject.layer== 13)
         {
             IsOnSlope = true;
-            IsGround = true;
         }
 
-        if (other.gameObject.layer == 6)
-        {
-            IsGround = true;
-        }
+        IsGround = true;
+
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == 6)
-        {
-            IsGround = false;
-        }
+        IsGround = false;
 
         if (other.gameObject.layer == 13)
         {
             IsOnSlope = false;
-            IsGround = false;
         }
     }
 }

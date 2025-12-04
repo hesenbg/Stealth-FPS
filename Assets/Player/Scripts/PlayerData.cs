@@ -9,6 +9,8 @@ public static class PlayerData
     public static HealthManager healthManager;
     public static GroundCheck groundCheck;
 
+    
+
     // Movement
     public static void SetMovement(PlayerMovement value)
     {
