@@ -40,6 +40,7 @@ public class ShootLogic : MonoBehaviour
     private void Start()
     {
         currentAmmo = MagazineSize;
+        PlayerData.SetShootLogic(this);
     }
 
     private void Update()

@@ -1,46 +1,54 @@
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
+
 public class ADS : MonoBehaviour
 {
     [SerializeField] Transform ADSposition;
+    [SerializeField] float Speed ;
 
-    [SerializeField] float Speed = 10f;
-
-    // Store VALUES, not the transform
     Vector3 originalLocalPos;
-    Quaternion originalLocalRot;
+
+    [SerializeField] Rig ADSRig;
 
     void Start()
     {
-        originalLocalPos = transform.localPosition;
-        originalLocalRot = transform.localRotation;
+        PlayerData.SetADSrig(ADSRig);
+        // initialize once
+        originalLocalPos = transform.position;
     }
 
     void Update()
     {
-        if (Input.GetMouseButton(1))
-        {
-            // move toward ADS
-            transform.localPosition = Vector3.Lerp(
-                transform.localPosition,
-                ADSposition.localPosition,
-                Speed * Time.deltaTime);
 
-            transform.localRotation = Quaternion.Slerp(
-                transform.localRotation,
-                ADSposition.localRotation,
+
+        if (!PlayerData.GetAnimationLogic().canADS)
+        {
+            ADSRig.weight = 0f;
+            return;
+        }
+
+        bool aiming = Input.GetMouseButton(1);
+
+        if (!aiming)
+        {
+            // while NOT aiming  update the default position continuously
+            originalLocalPos = transform.position;
+
+            ADSRig.weight = 0;
+
+            transform.position = Vector3.Lerp(
+                transform.position,
+                originalLocalPos,  // effectively stays where it is
                 Speed * Time.deltaTime);
         }
         else
         {
-            // return to original saved values
-            transform.localPosition = Vector3.Lerp(
-                transform.localPosition,
-                originalLocalPos,
-                Speed * Time.deltaTime);
+            // aiming  freeze original position
+            ADSRig.weight = Mathf.Lerp(ADSRig.weight, 1, Speed*Time.deltaTime);
 
-            transform.localRotation = Quaternion.Slerp(
-                transform.localRotation,
-                originalLocalRot,
+            transform.position = Vector3.Lerp(
+                transform.position,
+                ADSposition.position,
                 Speed * Time.deltaTime);
         }
     }

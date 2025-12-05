@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public static class PlayerData
 {
@@ -8,8 +9,18 @@ public static class PlayerData
     public static ShootLogic shootLogic;
     public static HealthManager healthManager;
     public static GroundCheck groundCheck;
+    public static Rig ADSrig;
 
-    
+    // ADS rig
+    public static void SetADSrig(Rig rig)
+    {
+        ADSrig = rig;
+    }
+
+    public static Rig GetADSrig()
+    {
+        return ADSrig;
+    }
 
     // Movement
     public static void SetMovement(PlayerMovement value)

@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.AppUI.UI;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 public  class PlayerMovement : MonoBehaviour
 {
     [Header("General Paramaters")]
@@ -214,9 +215,9 @@ public  class PlayerMovement : MonoBehaviour
             Velocity.z = horizontal.z;
         }
     }
-
     void Crouch()
     {
+        
         bool isCrouch = Input.GetKey(KeyCode.LeftControl);
 
         if (isCrouch)
