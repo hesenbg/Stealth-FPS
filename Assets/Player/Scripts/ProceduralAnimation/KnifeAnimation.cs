@@ -1,15 +1,27 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using System.Collections;
+using System.Collections.Generic;
 
 public class KnifeAnimation : MonoBehaviour
 {
-    [SerializeField] Transform constraintParent; // Parent containing all knife constraints
+    Transform constraintParent; 
     [SerializeField] Rig knifeRig;               // Knife rig
     [SerializeField] float transitionDuration ; // Duration of each state transition
     [SerializeField] float holdDuration ;       // How long each state stays active
 
+    [SerializeField] Transform KnifeHand;
+
     private bool isAnimating = false;
+
+    [SerializeField] List<Transform> States;
+
+    public MultiParentConstraint constraint;
+
+    private void Start()
+    {
+        constraintParent = GetComponent<Transform>();
+    }
 
     private void Update()
     {
@@ -25,56 +37,56 @@ public class KnifeAnimation : MonoBehaviour
 
         // Enable Rig
         knifeRig.weight = 1f;
-
-        // Get all child constraints
-        MultiParentConstraint[] constraints = constraintParent.GetComponentsInChildren<MultiParentConstraint>();
-
-        // Define the sequence of states
-        string[] sequence = { "Release", "Slash", "Pull" };
-
-        foreach (string state in sequence)
+        foreach (Transform state in States)
         {
-            // Capture current weights
-            float[] startWeights = new float[constraints.Length];
-            for (int i = 0; i < constraints.Length; i++)
-                startWeights[i] = constraints[i].weight;
+            constraint = state.gameObject.GetComponent<MultiParentConstraint>();
+            // enable this state's constraint
+            if (constraint != null)
+                constraint.weight = 1f;
 
-            // Determine target weights
-            float[] targetWeights = new float[constraints.Length];
-            for (int i = 0; i < constraints.Length; i++)
-            {
-                string lowerName = constraints[i].name.ToLower();
-                targetWeights[i] = lowerName.Contains(state.ToLower()) ? 1f : 0f;
-            }
+            yield return StartCoroutine(
+                LerpTransformLocal(
+                    KnifeHand,
+                    state.transform.position,
+                    state.transform.rotation,
+                    transitionDuration
+                )
+            );
 
-            // Lerp weights
-            float elapsed = 0f;
-            while (elapsed < transitionDuration)
-            {
-                elapsed += Time.deltaTime;
-                float t = elapsed / transitionDuration;
-                for (int i = 0; i < constraints.Length; i++)
-                {
-                    constraints[i].weight = Mathf.Lerp(startWeights[i], targetWeights[i], t);
-                }
-                yield return null;
-            }
-
-            // Ensure final weights
-            for (int i = 0; i < constraints.Length; i++)
-                constraints[i].weight = targetWeights[i];
-
-            // Hold the state for a short duration
             yield return new WaitForSeconds(holdDuration);
         }
 
-        // Reset Rig weight at the end
-        knifeRig.weight = 0f;
-
-        // Reset all constraints to 0
-        foreach (var constraint in constraints)
-            constraint.weight = 0f;
-
+        knifeRig.weight = 0;
         isAnimating = false;
+
     }
+    GameObject PrevObject;
+
+    // Smoothly lerps position and rotation
+    private IEnumerator LerpTransformLocal(
+        Transform target,
+        Vector3 targetLocalPos,
+        Quaternion targetLocalRot,
+        float duration)
+    {
+        Vector3 startLocalPos = target.position;
+        Quaternion startLocalRot = target.rotation;
+
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            target.position = Vector3.Lerp(startLocalPos, targetLocalPos, t);
+            target.rotation = Quaternion.Slerp(startLocalRot, targetLocalRot, t);
+
+            yield return null;
+        }
+
+        target.position = targetLocalPos;
+        target.rotation = targetLocalRot;
+    }
+
 }

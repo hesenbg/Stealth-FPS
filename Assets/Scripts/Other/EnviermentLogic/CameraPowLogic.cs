@@ -18,6 +18,11 @@ public class CameraPowLogic : MonoBehaviour
     [SerializeField] float recoilKick ;       // how much the camera jumps each shot
     [SerializeField] float recoilReturnSpeed ; // how fast recoil returns
 
+    private void Awake()
+    {
+        Camera camera = GetComponent<Camera>();
+        PlayerData.SetPlayerCam(camera);
+    }
     void GetMouseCoordinates()
     {
         MouseX = Input.GetAxis("Mouse X") * MouseSensitivity * Time.deltaTime;

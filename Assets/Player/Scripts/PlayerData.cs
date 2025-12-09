@@ -4,12 +4,24 @@ using UnityEngine.Animations.Rigging;
 
 public static class PlayerData
 {
-    public static PlayerMovement movement;
-    public static AnimationLogic animationLogic;
-    public static ShootLogic shootLogic;
-    public static HealthManager healthManager;
-    public static GroundCheck groundCheck;
-    public static Rig ADSrig;
+    static PlayerMovement movement;
+    static AnimationLogic animationLogic;
+    static ShootLogic shootLogic;
+    static HealthManager healthManager;
+    static GroundCheck groundCheck;
+    static Rig ADSrig;
+    static Camera PlayerMainCamera;
+
+    // plyaer camera
+    public static void SetPlayerCam(Camera cam)
+    {
+        PlayerMainCamera = cam;
+    }
+
+    public static Camera GetCamera()
+    {
+        return PlayerMainCamera;
+    }
 
     // ADS rig
     public static void SetADSrig(Rig rig)

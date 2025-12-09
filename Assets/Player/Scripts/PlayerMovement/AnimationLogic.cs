@@ -38,6 +38,8 @@ public class AnimationLogic : MonoBehaviour
         PlayerAnimator.SetBool("IsRunning", movement == PlayerMovement.MovementState.Run);
 
 
+        
+
         bool isWalking = (movement == PlayerMovement.MovementState.Walk);
 
 
@@ -53,6 +55,8 @@ public class AnimationLogic : MonoBehaviour
         if ((isWalking || isShooting || isIdle || isCrouching) && !isReloading && !isRunning)
         {
             canADS = true;
+            if (Input.GetKeyDown(KeyCode.Y))
+                PlayerAnimator.SetTrigger("Inspect");
         }
         else
         {

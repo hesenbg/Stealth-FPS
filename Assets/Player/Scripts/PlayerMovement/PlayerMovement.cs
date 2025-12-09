@@ -1,8 +1,5 @@
 using System.Collections;
-using Unity.AppUI.UI;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 public  class PlayerMovement : MonoBehaviour
 {
     [Header("General Paramaters")]
@@ -46,7 +43,6 @@ public  class PlayerMovement : MonoBehaviour
     [SerializeField] Vector3 HalfExtend;
     [SerializeField] Vector3 RigidbodyUp;
     [SerializeField] LayerMask ObstacleMask;
-
 
     [Header("References")]
     Rigidbody rb;
@@ -101,24 +97,24 @@ public  class PlayerMovement : MonoBehaviour
         {
             Velocity -= (CurrentRightDirection * CurrAcc * Time.deltaTime) ;
         }
-        Clamp();
         UpdateDirection();
-
     }
 
-    Vector3 CurrentForwardDirection;
-    Vector3 CurrentRightDirection;
+    [SerializeField]Vector3 CurrentForwardDirection;
+    [SerializeField] Vector3 CurrentRightDirection;
 
     // updates directions (forward and right) based on the nomral of surface
     void UpdateDirection()
     {
         if (IsOnSlope)
         {
+            rb.useGravity = false;
             CurrentForwardDirection = Vector3.ProjectOnPlane(transform.forward, Surface.transform.up).normalized;
             CurrentRightDirection = Vector3.ProjectOnPlane(transform.right, Surface.transform.up).normalized;
         }
         else
         {
+            rb.useGravity = true;
             CurrentRightDirection = transform.right;
             CurrentForwardDirection = transform.forward;
         }
@@ -197,15 +193,24 @@ public  class PlayerMovement : MonoBehaviour
 
     void Clamp()
     {
-
-        Vector3 horizontal = Velocity;
-        if (IsOnSlope)
+        Vector3 horizontal;
+        if (IsOnSlope && IsGround)
         {
-            // todo add clamp to the slope
+            Vector3 vertical = new Vector3(0, Velocity.y, 0);
+            horizontal = new Vector3(Velocity.x, 0, Velocity.z);
+
+            // clamp only horizontal
+            if (horizontal.magnitude > CurrMaxVelocity)
+            {
+                horizontal = horizontal.normalized * CurrMaxVelocity;
+            }
+
+            Velocity = horizontal + vertical;
 
             return;
         }
 
+        horizontal = Velocity;
         // clamp horizontal speed to CurrMaxVelocity
         horizontal = new Vector3(Velocity.x, 0, Velocity.z);
         if (horizontal.magnitude > CurrMaxVelocity && CurrMaxVelocity!=0)
@@ -213,6 +218,7 @@ public  class PlayerMovement : MonoBehaviour
             horizontal = horizontal.normalized * CurrMaxVelocity;
             Velocity.x = horizontal.x;
             Velocity.z = horizontal.z;
+
         }
     }
     void Crouch()
@@ -238,9 +244,9 @@ public  class PlayerMovement : MonoBehaviour
     // this should start a coroutine and increase Y velocity with the acceleration
     void HandleVerticalMovement()
     {
-        if (Input.GetKey(KeyCode.Space) && IsGround)
+        if (Input.GetKeyDown(KeyCode.Space) && IsGround)
         {
-            Velocity.y = JumpForce;
+            Velocity += JumpForce * transform.up ;
         }
         if (IsGround)
         {
@@ -285,11 +291,15 @@ public  class PlayerMovement : MonoBehaviour
         }
     }
 
-    void HandleMovement() {
+    void HandleMovement()
+    {
+        UpdateDirection();
         HandleHorizontalMovement();
         HandleVerticalMovement();
+        Clamp();
         ApplyVelocity();
     }
+
 
     private void Update()
     {
