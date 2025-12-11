@@ -50,8 +50,7 @@ public  class PlayerMovement : MonoBehaviour
     [SerializeField] CapsuleCollider PlayerHitbox;
     [SerializeField] BoxCollider GroundTrigger; // detects if player on slope, ground or on air
     GameObject Surface;
-    /// <movement keybinds>
-    /// 
+
     /// w a s d alone means running
     ///  
     /// w a d d + shift means walking
@@ -59,7 +58,7 @@ public  class PlayerMovement : MonoBehaviour
     /// ctrl means crouching
     /// 
     /// spacebar means jumping
-
+    /// 
 
 
     void Start()
@@ -109,6 +108,7 @@ public  class PlayerMovement : MonoBehaviour
         if (IsOnSlope)
         {
             rb.useGravity = false;
+            rb.linearDamping = 4f;
             CurrentForwardDirection = Vector3.ProjectOnPlane(transform.forward, Surface.transform.up).normalized;
             CurrentRightDirection = Vector3.ProjectOnPlane(transform.right, Surface.transform.up).normalized;
         }
@@ -181,43 +181,49 @@ public  class PlayerMovement : MonoBehaviour
 
             case MovementState.Jump:
                 // Keep your horizontal movement while in the air
+                CurrMaxVelocity = JumpForce;
                 CurrAcc = JumpAcceleration;
                 break;
 
             case MovementState.Idle: // Idle
                 CurrAcc = 0f;
-                CurrMaxVelocity = 0f;
+                //CurrMaxVelocity = 0f;
                 break;
         }
     }
 
     void Clamp()
     {
-        Vector3 horizontal;
-        if (IsOnSlope && IsGround)
+
+        // while jumping movement doesnt clamp
+        if(CurrentMovementState == MovementState.Jump)
         {
-            Vector3 vertical = new Vector3(0, Velocity.y, 0);
-            horizontal = new Vector3(Velocity.x, 0, Velocity.z);
+            return;
+        }
+        Vector3 ClampVelocity;
+        if (IsOnSlope )
+        {
+            ClampVelocity = Velocity;
 
             // clamp only horizontal
-            if (horizontal.magnitude > CurrMaxVelocity)
+            if (ClampVelocity.magnitude > CurrMaxVelocity)
             {
-                horizontal = horizontal.normalized * CurrMaxVelocity;
+                ClampVelocity = ClampVelocity.normalized * CurrMaxVelocity;
+                
             }
 
-            Velocity = horizontal + vertical;
-
+            Velocity = ClampVelocity;
             return;
         }
 
-        horizontal = Velocity;
+        ClampVelocity = Velocity;
         // clamp horizontal speed to CurrMaxVelocity
-        horizontal = new Vector3(Velocity.x, 0, Velocity.z);
-        if (horizontal.magnitude > CurrMaxVelocity && CurrMaxVelocity!=0)
+        ClampVelocity = new Vector3(Velocity.x, 0, Velocity.z);
+        if (ClampVelocity.magnitude > CurrMaxVelocity && CurrMaxVelocity!=0)
         {
-            horizontal = horizontal.normalized * CurrMaxVelocity;
-            Velocity.x = horizontal.x;
-            Velocity.z = horizontal.z;
+            ClampVelocity = ClampVelocity.normalized * CurrMaxVelocity;
+            Velocity.x = ClampVelocity.x;
+            Velocity.z = ClampVelocity.z;
 
         }
     }
@@ -270,16 +276,19 @@ public  class PlayerMovement : MonoBehaviour
         SetMovementParametersFromState();
         Crouch();
     }
+
     void SetSituations()
     {
 
     }
+
     void ApplyVelocity()
     {
         rb.linearVelocity = Velocity;
         
         //Velocity = Vector3.zero;
     }
+
     void CheckObstacle()
     {
         if(Physics.OverlapBox(LowerPos.position, HalfExtend,transform.rotation,ObstacleMask).Length >= 1)
@@ -308,7 +317,6 @@ public  class PlayerMovement : MonoBehaviour
         SetSituations();
         CheckObstacle();
     }
-
     private void OnDrawGizmos()
     {
            Gizmos.DrawCube(LowerPos.position, HalfExtend);
@@ -328,7 +336,6 @@ public  class PlayerMovement : MonoBehaviour
         }
 
         IsGround = true;
-
     }
 
     private void OnTriggerExit(Collider other)
