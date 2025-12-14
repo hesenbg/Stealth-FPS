@@ -4,6 +4,7 @@ using UnityEngine.Animations.Rigging;
 public class ADS : MonoBehaviour
 {
     [SerializeField] Transform ADSposition;
+    [SerializeField] Transform RightHand;
     [SerializeField] float Speed ;
 
     Vector3 originalLocalPos;
@@ -18,7 +19,7 @@ public class ADS : MonoBehaviour
         OriginalZoomField = PlayerData.GetCamera().fieldOfView;
         PlayerData.SetADSrig(ADSRig);
         // initialize once
-        originalLocalPos = transform.position;
+        originalLocalPos = RightHand.position;
     }
     [SerializeField] bool aiming;
 
