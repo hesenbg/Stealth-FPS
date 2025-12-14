@@ -6,6 +6,22 @@ public class AnimationLogic : MonoBehaviour
     public Animator PlayerAnimator;
     public bool canADS;
 
+    public enum GunState {ADS, Pulled, Idle, Shoot, Reload , Inspect }
+    public GunState CurrentGunState;
+
+    // in ADS
+        // can shoot
+    // in Pulled
+        // cant do anything
+    // in idle
+        // can do anything
+    // in shoot 
+        // cant do anything
+    // in reload
+        // cant do anything
+    // in inspect
+        // can 
+
     // Helper to track reloading state without complex animation events
     public bool isReloading = false;
 
@@ -17,11 +33,11 @@ public class AnimationLogic : MonoBehaviour
 
     private void Update()
     {
-        // 1. Check if the reload animation has finished playing
         CheckReloadState();
 
-        // 2. Update logic
         UpdateAnimationVariables();
+
+        PlayMovementAnimations();  
     }
 
     void CheckReloadState()
@@ -29,19 +45,15 @@ public class AnimationLogic : MonoBehaviour
         isReloading =PlayerData.GetShootLogic().isReloading;
     }
 
+    PlayerMovement.MovementState movement;
+
     void UpdateAnimationVariables()
     {
-        var movement = PlayerData.GetMovement().CurrentMovementState;
+        movement = PlayerData.GetMovement().CurrentMovementState;
 
         // Update movement animations
-        PlayerAnimator.SetBool("IsWalking", movement == PlayerMovement.MovementState.Walk);
-        PlayerAnimator.SetBool("IsRunning", movement == PlayerMovement.MovementState.Run);
-
-
-        
 
         bool isWalking = (movement == PlayerMovement.MovementState.Walk);
-
 
         bool isShooting = PlayerData.GetShootLogic().IsShooting;
 
@@ -62,6 +74,12 @@ public class AnimationLogic : MonoBehaviour
         {
             canADS = false;
         }
+    }
+
+    void PlayMovementAnimations()
+    {
+        PlayerAnimator.SetBool("IsWalking", movement == PlayerMovement.MovementState.Walk);
+        PlayerAnimator.SetBool("IsRunning", movement == PlayerMovement.MovementState.Run);
     }
 
     public void PlayReloadAnimation(bool IsMagEmpty)
@@ -100,5 +118,4 @@ public class AnimationLogic : MonoBehaviour
         }
     }
 
-    public void UpdateEnemyAnimations() { }
 }
