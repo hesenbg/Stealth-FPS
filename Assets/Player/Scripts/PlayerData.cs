@@ -8,9 +8,19 @@ public static class PlayerData
     static AnimationLogic animationLogic;
     static ShootLogic shootLogic;
     static HealthManager healthManager;
-    static GroundCheck groundCheck;
     static Rig ADSrig;
     static Camera PlayerMainCamera;
+    static WeaponPullLogic pullLogic;
+    // pull logic
+    public static void SetPlayerPullLogiv(WeaponPullLogic pull)
+    {
+        pullLogic = pull;
+    }
+
+    public static WeaponPullLogic GetPullLogic()
+    {
+        return pullLogic;
+    }
 
     // plyaer camera
     public static void SetPlayerCam(Camera cam)
@@ -78,14 +88,4 @@ public static class PlayerData
         return healthManager;
     }
 
-    // GroundCheck
-    public static void SetGroundCheck(GroundCheck value)
-    {
-        groundCheck = value;
-    }
-
-    public static GroundCheck GetGroundCheck()
-    {
-        return groundCheck;
-    }
 }

@@ -25,15 +25,21 @@ public class WeaponPullLogic : MonoBehaviour
     Quaternion rightDefaultRotation;
     Quaternion leftDefaultRotation;
 
+    public bool blocked;
+
     void Awake()
     {
+        PlayerData.SetPlayerPullLogiv(this);
+
         rightDefaultRotation = rightHand.localRotation;
         leftDefaultRotation = leftHand.localRotation;
     }
 
     void Update()
     {
-        bool blocked = Physics.Raycast(
+        
+
+        blocked = Physics.Raycast(
             Source.position,
             Source.forward,
             out RaycastHit hit,
