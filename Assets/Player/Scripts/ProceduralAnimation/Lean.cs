@@ -1,5 +1,5 @@
 using UnityEngine;
-public class LeanLogic : MonoBehaviour
+public class Lean : MonoBehaviour
 {
     [SerializeField] float RotationSpeed = 100f;
     [SerializeField] float MaxLean = 15f;        

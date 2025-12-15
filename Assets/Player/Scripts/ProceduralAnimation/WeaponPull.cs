@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
-public class WeaponPullLogic : MonoBehaviour
+public class WeaponPull : MonoBehaviour
 {
     [Header("Raycast")]
     [SerializeField] float threshold = 1.0f;

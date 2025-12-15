@@ -10538,6 +10538,7 @@ GameObject:
   - component: {fileID: 5137218126299391532}
   - component: {fileID: 5003879422382141501}
   - component: {fileID: 9017678571096186680}
+  - component: {fileID: 9017678571096186681}
   m_Layer: 0
   m_Name: PhysicalPlayer
   m_TagString: Untagged
@@ -12359,6 +12360,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.35, y: 0.1, z: 0.35}
   m_Center: {x: 0, y: -1.5, z: 0}
+--- !u!114 &9017678571096186681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7411187968762141588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28319abc35f0bb5498add2ba1603a7cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CurrentCombatState: 0
 --- !u!1 &9030254118374726506
 GameObject:
   m_ObjectHideFlags: 0

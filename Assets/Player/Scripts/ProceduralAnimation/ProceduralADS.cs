@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
-public class ADS : MonoBehaviour
+public class ProceduralADS : MonoBehaviour
 {
     [SerializeField] Transform ADSposition;
     [SerializeField] Transform RightHand;

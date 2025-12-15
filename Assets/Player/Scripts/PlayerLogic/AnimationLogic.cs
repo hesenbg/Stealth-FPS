@@ -9,18 +9,14 @@ public class AnimationLogic : MonoBehaviour
     public enum GunState {ADS, Pulled, Idle, Shoot, Reload , Inspect }
     public GunState CurrentGunState;
 
-    // in ADS
-        // can shoot
-    // in Pulled
-        // cant do anything
-    // in idle
-        // can do anything
-    // in shoot 
-        // cant do anything
-    // in reload
-        // cant do anything
-    // in inspect
-        // can 
+    /// annimation
+    /// 
+    /// 
+    /// 
+    ///
+    /// 
+    /// 
+    /// </summary>
 
     // Helper to track reloading state without complex animation events
     public bool isReloading = false;

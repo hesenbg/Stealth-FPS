@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Recoil : MonoBehaviour
+public class ProceduralRecoil : MonoBehaviour
 {
     [SerializeField] PlayerMovement movement;
     [SerializeField] ShootLogic shoot;

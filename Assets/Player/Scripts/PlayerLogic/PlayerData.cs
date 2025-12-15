@@ -10,14 +10,14 @@ public static class PlayerData
     static HealthManager healthManager;
     static Rig ADSrig;
     static Camera PlayerMainCamera;
-    static WeaponPullLogic pullLogic;
+    static WeaponPull pullLogic;
     // pull logic
-    public static void SetPlayerPullLogiv(WeaponPullLogic pull)
+    public static void SetPlayerPullLogiv(WeaponPull pull)
     {
         pullLogic = pull;
     }
 
-    public static WeaponPullLogic GetPullLogic()
+    public static WeaponPull GetPullLogic()
     {
         return pullLogic;
     }

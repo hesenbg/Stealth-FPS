@@ -1,5 +1,5 @@
 using UnityEngine;
-public class CameraPowLogic : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
     public float MouseX;
     public float MouseY;
