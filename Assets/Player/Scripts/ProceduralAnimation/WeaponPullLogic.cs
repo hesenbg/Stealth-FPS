@@ -6,11 +6,14 @@ public class WeaponPullLogic : MonoBehaviour
     [Header("Raycast")]
     [SerializeField] float threshold = 1.0f;
     [SerializeField] LayerMask hitMask;
+    [SerializeField] Transform Source;
 
     [Header("Rig")]
     [SerializeField] Rig weaponPullRig;
     [SerializeField] Transform rightHand;
     [SerializeField] Transform leftHand;
+    float TargetRigWeight;
+    [SerializeField] float WeightSpeed;
 
     [Header("Tuning")]
     [SerializeField] float maxPullAngle = 25f;
@@ -31,8 +34,8 @@ public class WeaponPullLogic : MonoBehaviour
     void Update()
     {
         bool blocked = Physics.Raycast(
-            transform.position,
-            transform.forward,
+            Source.position,
+            Source.forward,
             out RaycastHit hit,
             threshold,
             hitMask
@@ -72,7 +75,7 @@ public class WeaponPullLogic : MonoBehaviour
         // Decide rig weight AFTER rotation update
         if (blocked)
         {
-            weaponPullRig.weight = 1f;
+            weaponPullRig.weight = Mathf.Lerp(weaponPullRig.weight,1f, Time.deltaTime*WeightSpeed);
         }
         else
         {
@@ -83,7 +86,11 @@ public class WeaponPullLogic : MonoBehaviour
                 rightAngle <= returnToleranceDegrees &&
                 leftAngle <= returnToleranceDegrees;
 
-            weaponPullRig.weight = handsReturned ? 0f : 1f;
+            TargetRigWeight = handsReturned ? 0f : 1f;
+
+            weaponPullRig.weight = Mathf.Lerp(weaponPullRig.weight, TargetRigWeight, Time.deltaTime * WeightSpeed);
+
         }
     }
+
 }

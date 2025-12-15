@@ -24,7 +24,7 @@ public class AnimationLogic : MonoBehaviour
 
     // Helper to track reloading state without complex animation events
     public bool isReloading = false;
-
+ 
     private void Start()
     {
         PlayerAnimator = GetComponent<Animator>();
@@ -38,6 +38,7 @@ public class AnimationLogic : MonoBehaviour
         UpdateAnimationVariables();
 
         PlayMovementAnimations();  
+
     }
 
     void CheckReloadState()
