@@ -16,7 +16,7 @@ public class WeaponPull : MonoBehaviour
     [SerializeField] float WeightSpeed;
 
     [Header("Tuning")]
-    [SerializeField] float maxPullAngle = 25f;
+    [SerializeField] Vector3 maxPullAngle ;
     [SerializeField] float rotationSpeed = 10f;
     [SerializeField] float maxPullDistance = 1.0f;
     [SerializeField] float minPullDistance = 0.2f;
@@ -27,6 +27,8 @@ public class WeaponPull : MonoBehaviour
 
     public bool blocked;
 
+    [SerializeField] ArmRotationRigController Pull;
+
     void Awake()
     {
         PlayerData.SetPlayerPullLogiv(this);
@@ -35,18 +37,8 @@ public class WeaponPull : MonoBehaviour
         leftDefaultRotation = leftHand.localRotation;
     }
 
-    void Update()
+    void UpdatePull(RaycastHit hit)
     {
-        
-
-        blocked = Physics.Raycast(
-            Source.position,
-            Source.forward,
-            out RaycastHit hit,
-            threshold,
-            hitMask
-        );
-
         Quaternion rightTarget = rightDefaultRotation;
         Quaternion leftTarget = leftDefaultRotation;
 
@@ -59,10 +51,10 @@ public class WeaponPull : MonoBehaviour
 
             t = Mathf.Clamp01(t);
 
-            float pullAngle = t * maxPullAngle;
+            Vector3 pullAngle = t * maxPullAngle;
 
-            rightTarget = Quaternion.Euler(-pullAngle, 0f, 0f) * rightDefaultRotation;
-            leftTarget = Quaternion.Euler(-pullAngle, 0f, 0f) * leftDefaultRotation;
+            rightTarget = Quaternion.Euler(pullAngle) * rightDefaultRotation;
+            leftTarget = Quaternion.Euler(pullAngle) * leftDefaultRotation;
         }
 
         // Rotate hands first
@@ -81,7 +73,7 @@ public class WeaponPull : MonoBehaviour
         // Decide rig weight AFTER rotation update
         if (blocked)
         {
-            weaponPullRig.weight = Mathf.Lerp(weaponPullRig.weight,1f, Time.deltaTime*WeightSpeed);
+            weaponPullRig.weight = Mathf.Lerp(weaponPullRig.weight, MaxWeight, Time.deltaTime * WeightSpeed);
         }
         else
         {
@@ -92,11 +84,27 @@ public class WeaponPull : MonoBehaviour
                 rightAngle <= returnToleranceDegrees &&
                 leftAngle <= returnToleranceDegrees;
 
-            TargetRigWeight = handsReturned ? 0f : 1f;
+            TargetRigWeight = handsReturned ? MinWeight : MaxWeight;
 
             weaponPullRig.weight = Mathf.Lerp(weaponPullRig.weight, TargetRigWeight, Time.deltaTime * WeightSpeed);
-
         }
     }
 
+    void Update()
+    {
+        blocked = Physics.Raycast(
+            Source.position,
+            Source.forward,
+            out RaycastHit hit,
+            threshold,
+            hitMask
+        );
+
+        //UpdatePull(hit);
+
+        Pull.RotateArms(blocked, maxPullAngle, rotationSpeed, 1, 0);
+    }
+
+    [SerializeField] float MinWeight;
+    [SerializeField] float MaxWeight;
 }

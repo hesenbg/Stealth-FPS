@@ -14,12 +14,17 @@ public class ProceduralADS : MonoBehaviour
 
     [SerializeField] Rig ADSRig;
 
+    ArmsPositionRigController ADSController;
+
     void Start()
     {
         OriginalZoomField = PlayerData.GetCamera().fieldOfView;
         PlayerData.SetADSrig(ADSRig);
         // initialize once
-        originalLocalPos = RightHand.position;
+        originalLocalPos = RightHand.localPosition;
+
+        ADSController = GetComponent<ArmsPositionRigController>();
+
     }
     [SerializeField] bool aiming;
 
@@ -31,7 +36,6 @@ public class ProceduralADS : MonoBehaviour
             ADSRig.weight = Mathf.Lerp(ADSRig.weight, 0f, Speed * Time.deltaTime);
             return;
         }
-
         aiming = Input.GetMouseButton(1);
     }
 
@@ -39,25 +43,24 @@ public class ProceduralADS : MonoBehaviour
     {
         if (!aiming)
         {
-            // FOW
-            PlayerData.GetCamera().fieldOfView = Mathf.Lerp(PlayerData.GetCamera().fieldOfView, OriginalZoomField, Time.deltaTime * Speed);
+            PlayerData.GetCamera().fieldOfView =
+                Mathf.Lerp(PlayerData.GetCamera().fieldOfView, OriginalZoomField, Speed * Time.deltaTime);
 
-            // while NOT aiming  update the default position continuously
-            originalLocalPos = transform.position;
-            ADSRig.weight = 0;
+            ADSRig.weight =
+                Mathf.Lerp(ADSRig.weight, 0f, Speed * Time.deltaTime);
 
-            transform.position = Vector3.Lerp(
-                transform.position,
-                originalLocalPos,  // effectively stays where it is
+            transform.localPosition = Vector3.Lerp(
+                transform.localPosition,
+                originalLocalPos,
                 Speed * Time.deltaTime);
         }
         else
         {
-            // FOW
-            PlayerData.GetCamera().fieldOfView = Mathf.Lerp(PlayerData.GetCamera().fieldOfView, ZoomField, Time.deltaTime * Speed);
+            PlayerData.GetCamera().fieldOfView =
+                Mathf.Lerp(PlayerData.GetCamera().fieldOfView, ZoomField, Speed * Time.deltaTime);
 
-            // aiming  freeze original position
-            ADSRig.weight = Mathf.Lerp(ADSRig.weight, 1, Speed * Time.deltaTime);
+            ADSRig.weight =
+                Mathf.Lerp(ADSRig.weight, 1f, Speed * Time.deltaTime);
 
             transform.position = Vector3.Lerp(
                 transform.position,
@@ -66,10 +69,13 @@ public class ProceduralADS : MonoBehaviour
         }
     }
 
+
     void Update()
     {
         TakeInput();
-        UpdateADS();
+        //UpdateADS();
+
+        ADSController.MoveArms(Speed,ADSposition.position,aiming,1,0);
 
     }
 }

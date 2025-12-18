@@ -7,7 +7,6 @@ public class ShootLogic : MonoBehaviour
     [Header("Shooting Settings")]
     [SerializeField] float ShootingDelay;
     [SerializeField] float RayLength = 100f;
-    [SerializeField] LayerMask HitMask;
     [SerializeField] GameObject Origin;
     [SerializeField] BulletHoleBehaviour BulletImpact;
     Vector3 ShootDirection;
@@ -18,9 +17,6 @@ public class ShootLogic : MonoBehaviour
     [SerializeField] float ReloadTime = 2f;
     [SerializeField] TextMeshProUGUI BulletCount;
     [SerializeField] int currentAmmo;
-
-    [Header("References")]
-
 
     [Header("Recoil")]
     [SerializeField] Vector3 TotalRecoil;
