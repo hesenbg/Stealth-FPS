@@ -11,6 +11,19 @@ public static class PlayerData
     static Rig ADSrig;
     static Camera PlayerMainCamera;
     static WeaponPull pullLogic;
+    static ArmsPositionRigController armRigLogic;
+    
+    public static void SetArmRigLogic(ArmsPositionRigController arms)
+    {
+        armRigLogic = arms;
+    }
+
+    public static ArmsPositionRigController GetArmRigLogic()
+    {
+        return armRigLogic; 
+    }
+
+
     // pull logic
     public static void SetPlayerPullLogiv(WeaponPull pull)
     {

@@ -79,11 +79,6 @@ public class AnimationLogic : MonoBehaviour
 
     public void PlayReloadAnimation(bool IsMagEmpty)
     {
-        if (PlayerData.GetPullLogic().blocked)
-        {
-            return;
-        }
-
         // We set the trigger, the Update loop will detect the state change
         if (IsMagEmpty)
         {
@@ -101,11 +96,6 @@ public class AnimationLogic : MonoBehaviour
 
     public void PlayShootAnimation(int CurrentAmmo)
     {
-        if (PlayerData.GetPullLogic().blocked)
-        {
-            return;
-        }
-
         if (CurrentAmmo == 1)
         {
             PlayerAnimator.SetFloat("ShootType", 0.5f);

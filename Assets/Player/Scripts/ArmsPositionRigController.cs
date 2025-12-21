@@ -9,20 +9,17 @@ public class ArmsPositionRigController : MonoBehaviour
     [SerializeField] Rig PositionRig;
 
     Vector3 RightHandOriginalPosition;
-    Vector3 LeftHandOriginalPosition;
 
     void Start()
     {
         RightHandOriginalPosition = RightHandJoint.localPosition;
-        LeftHandOriginalPosition = LeftHandJoint.localPosition;
-
-        //PositionRig = GetComponent<Rig>();
+        PlayerData.SetArmRigLogic(this);
     }
 
     public void MoveArms(float Speed, Vector3 Position, bool IsActive, float MaxWeight, float MinWeight)
     {
         if (IsActive)
-        {//
+        {
             // adjust weight
             PositionRig.weight = Mathf.Lerp(PositionRig.weight, MaxWeight, Speed*Time.deltaTime);
 
@@ -37,5 +34,10 @@ public class ArmsPositionRigController : MonoBehaviour
             // interpolate the position
             RightHandJoint.localPosition = Vector3.Lerp(RightHandJoint.localPosition, RightHandOriginalPosition, Speed * Time.deltaTime);
         }
+    }
+
+    public void MoveArms()
+    {
+
     }
 }
