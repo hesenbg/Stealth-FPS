@@ -61,5 +61,4 @@ public class SoundManager : MonoBehaviour
     {
         AudioSource.PlayClipAtPoint(PlayerGunReload, position);
     }
-
 }

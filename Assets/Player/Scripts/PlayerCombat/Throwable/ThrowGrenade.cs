@@ -4,8 +4,8 @@ using TMPro;
 
 public class ThrowGrenade : MonoBehaviour
 {
-    [SerializeField] Grenade Smoke;
-    [SerializeField] Grenade Explosive;
+    [SerializeField] ThrowAbleLogic Smoke;
+    [SerializeField] ThrowAbleLogic Explosive;
     [SerializeField] Transform Player;
     [HideInInspector] public TextMeshProUGUI GrenadeCountUI;
     [SerializeField] Camera MainCamera;

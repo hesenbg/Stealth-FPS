@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Grenade : MonoBehaviour
+public class ThrowAbleLogic : MonoBehaviour
 {
     // Grenade components and properties
     Rigidbody rb;

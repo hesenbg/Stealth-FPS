@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
-public class WeaponPull : MonoBehaviour
+public class WeaponWallBlock : MonoBehaviour
 {
     [Header("Raycast")]
     [SerializeField] float threshold = 1.0f;

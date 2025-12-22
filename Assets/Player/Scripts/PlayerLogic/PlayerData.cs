@@ -10,7 +10,7 @@ public static class PlayerData
     static HealthManager healthManager;
     static Rig ADSrig;
     static Camera PlayerMainCamera;
-    static WeaponPull pullLogic;
+    static WeaponWallBlock pullLogic;
     static ArmsPositionRigController armRigLogic;
     
     public static void SetArmRigLogic(ArmsPositionRigController arms)
@@ -25,12 +25,12 @@ public static class PlayerData
 
 
     // pull logic
-    public static void SetPlayerPullLogiv(WeaponPull pull)
+    public static void SetPlayerPullLogiv(WeaponWallBlock pull)
     {
         pullLogic = pull;
     }
 
-    public static WeaponPull GetPullLogic()
+    public static WeaponWallBlock GetPullLogic()
     {
         return pullLogic;
     }
