@@ -10,7 +10,7 @@ public class ShootLogic : MonoBehaviour
     [SerializeField] GameObject Origin;
     [SerializeField] BulletHoleBehaviour BulletImpact;
     Vector3 ShootDirection;
-
+    
     [Header("Ammo Settings")]
     [SerializeField] int MagazineSize = 30;
     [SerializeField] int TotalAmmo = 90;
@@ -24,7 +24,6 @@ public class ShootLogic : MonoBehaviour
     [SerializeField] float MoveRecoilFactor = 0.02f;
     [SerializeField] float ShootRecoilFactor = 0.05f;
     [SerializeField] float RecoilRecoverySpeed = 2f; // how fast recoil fades back
-
 
     // -------------------- Private State --------------------
     [HideInInspector] public bool isReloading = false;
@@ -98,14 +97,12 @@ public class ShootLogic : MonoBehaviour
         {
             // play sound
             SoundManager.Instance.PlayGunShot(transform.position);
+
             // play animation 
             // ShootType float 0 shoot 0.5 shoodry 1 shootlast
             PlayerData.GetAnimationLogic().PlayShootAnimation(currentAmmo);
             // aplly logic
             Shoot();
-
-            // recoil
-            //CameraPowLogic.ApllyRecoilMoation(CalculateRecoil());
 
             shootCooldown = ShootingDelay;
             IsShooting = true;
