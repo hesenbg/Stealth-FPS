@@ -585,7 +585,7 @@ Transform:
   m_GameObject: {fileID: 644575889}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.295, y: 1.1072577, z: 7}
+  m_LocalPosition: {x: -1.89, y: 1.1072577, z: 7}
   m_LocalScale: {x: 1, y: 2.14, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1829,16 +1829,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be241cbc1bcf32f4fb0d595de3641f85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knifeRig: {fileID: 3018991565663702530}
-  transitionDuration: 0.4
-  holdDuration: 0.2
-  KnifeHand: {fileID: 4013332710266614404}
-  States:
-  - {fileID: 5920590216461546244}
-  - {fileID: 7017328055756281475}
-  - {fileID: 5798025163022196441}
-  - {fileID: 3211595433751214733}
-  constraint: {fileID: 0}
 --- !u!114 &336441374924619136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2204,53 +2194,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &768058334656030524
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4530810449318551413}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdb90b913935e644baaa86c076d788e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Weight: 1
-  m_Data:
-    m_ConstrainedObject: {fileID: 4013332710266614404}
-    m_SourceObjects:
-      m_Length: 1
-      m_Item0:
-        transform: {fileID: 3698355987299278471}
-        weight: 1
-      m_Item1:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item2:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item3:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item4:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item5:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item6:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item7:
-        transform: {fileID: 0}
-        weight: 0
-    m_Offset: {x: 0, y: 0, z: 0}
-    m_ConstrainedAxes:
-      x: 1
-      y: 1
-      z: 1
-    m_MaintainOffset: 1
 --- !u!1 &778440816339136594
 GameObject:
   m_ObjectHideFlags: 0
@@ -4537,53 +4480,6 @@ Transform:
   - {fileID: 7662595033784407468}
   m_Father: {fileID: 2834495512745834287}
   m_LocalEulerAnglesHint: {x: 1.3467976, y: 1.7428629, z: -0.000037402948}
---- !u!114 &2289333189167095936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5704085315219135243}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdb90b913935e644baaa86c076d788e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Weight: 1
-  m_Data:
-    m_ConstrainedObject: {fileID: 3698355987299278471}
-    m_SourceObjects:
-      m_Length: 1
-      m_Item0:
-        transform: {fileID: 7110347479224891902}
-        weight: 1
-      m_Item1:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item2:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item3:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item4:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item5:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item6:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item7:
-        transform: {fileID: 0}
-        weight: 0
-    m_Offset: {x: 0, y: 0, z: 0}
-    m_ConstrainedAxes:
-      x: 1
-      y: 1
-      z: 1
-    m_MaintainOffset: 1
 --- !u!4 &2298280286618755175
 Transform:
   m_ObjectHideFlags: 0
@@ -7511,7 +7407,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5367216481394137803}
-  - component: {fileID: 768058334656030524}
+  - component: {fileID: 5367216481394137804}
   m_Layer: 0
   m_Name: LeftHand
   m_TagString: Untagged
@@ -8669,6 +8565,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1273435112118244722}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5367216481394137804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4530810449318551413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8935e03361a14ec4b8edc872f76bc822, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.MultiParentConstraint
+  m_Weight: 1
+  m_Data:
+    m_ConstrainedObject: {fileID: 4013332710266614404}
+    m_SourceObjects:
+      m_Length: 1
+      m_Item0:
+        transform: {fileID: 3698355987299278471}
+        weight: 1
+      m_Item1:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item2:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item3:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item4:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item5:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item6:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item7:
+        transform: {fileID: 0}
+        weight: 0
+    m_ConstrainedPositionAxes:
+      x: 1
+      y: 1
+      z: 1
+    m_ConstrainedRotationAxes:
+      x: 1
+      y: 1
+      z: 1
+    m_MaintainPositionOffset: 1
+    m_MaintainRotationOffset: 1
 --- !u!1 &5391449594833133267
 GameObject:
   m_ObjectHideFlags: 0
@@ -9053,7 +9000,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6433990190619063220}
-  - component: {fileID: 2289333189167095936}
+  - component: {fileID: 6433990190619063221}
   m_Layer: 0
   m_Name: RightHand
   m_TagString: Untagged
@@ -9152,7 +9099,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 540755296547713107}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: deff633bc2ddc7f4ea65b667665f11f2, type: 3}
   m_Name: 
@@ -9740,6 +9687,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1273435112118244722}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6433990190619063221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5704085315219135243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8935e03361a14ec4b8edc872f76bc822, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.MultiParentConstraint
+  m_Weight: 1
+  m_Data:
+    m_ConstrainedObject: {fileID: 3698355987299278471}
+    m_SourceObjects:
+      m_Length: 1
+      m_Item0:
+        transform: {fileID: 7110347479224891902}
+        weight: 1
+      m_Item1:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item2:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item3:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item4:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item5:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item6:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item7:
+        transform: {fileID: 0}
+        weight: 0
+    m_ConstrainedPositionAxes:
+      x: 1
+      y: 1
+      z: 1
+    m_ConstrainedRotationAxes:
+      x: 1
+      y: 1
+      z: 1
+    m_MaintainPositionOffset: 1
+    m_MaintainRotationOffset: 1
 --- !u!1 &6486804267365146472
 GameObject:
   m_ObjectHideFlags: 0
@@ -12487,7 +12485,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28319abc35f0bb5498add2ba1603a7cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentCombatState: 0
 --- !u!1 &9030254118374726506
 GameObject:
   m_ObjectHideFlags: 0

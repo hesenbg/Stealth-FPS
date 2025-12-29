@@ -159,7 +159,6 @@ public  class PlayerMovement : MonoBehaviour
         CurrentMovementState = MovementState.Idle;
     }
 
-
     void SetMovementParametersFromState()
     {
         switch (CurrentMovementState)
