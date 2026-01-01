@@ -57,7 +57,6 @@ public class ShootLogic : MonoBehaviour
             TotalRecoil = Vector3.Lerp(TotalRecoil, Vector3.zero, Time.deltaTime * RecoilRecoverySpeed);
     }
 
-
     private void OnDrawGizmos()
     {
         if (Origin != null)
@@ -87,6 +86,7 @@ public class ShootLogic : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R) && currentAmmo < MagazineSize && TotalAmmo > 0)
         {
             StartCoroutine(Reload());
+            SoundManager.Instance.PlayReload(transform.position);
             PlayerData.GetAnimationLogic().PlayReloadAnimation(currentAmmo == 0);
         }
     }
@@ -140,17 +140,16 @@ public class ShootLogic : MonoBehaviour
                 hit.collider.gameObject.GetComponent<EnemyHealthManager>().GetDamage(40, false, hit.point, hit.normal);
             }
             // specificly for destructable objects 
-            else if (hit.collider.gameObject.layer == 9) // destructibles
+            else if (hit.collider.CompareTag("Obstacle")) // destructibles
             {
                 hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
             }
         }
     }
 
-    private IEnumerator Reload()
+    public IEnumerator Reload()
     {
         isReloading = true;
-        SoundManager.Instance.PlayReload(transform.position);
         yield return new WaitForSeconds(ReloadTime);
 
         int needed = MagazineSize - currentAmmo;

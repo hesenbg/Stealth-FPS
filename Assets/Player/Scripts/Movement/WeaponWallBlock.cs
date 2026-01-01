@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
+// 
 public class WeaponWallBlock : MonoBehaviour
 {
     [Header("Raycast")]
@@ -18,6 +19,7 @@ public class WeaponWallBlock : MonoBehaviour
     [SerializeField] float MaXDistance; 
     [SerializeField] float MaxWeight;
     [SerializeField] float MinWeight;
+    [SerializeField] float Radius;
 
     public bool blocked;
 
@@ -33,6 +35,8 @@ public class WeaponWallBlock : MonoBehaviour
             hitMask
         );
 
+        blocked = Physics.SphereCast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f)), Radius, out var hitinfo, MaXDistance);
+
         float dynamicMaxWeight = MinWeight;
 
         float distance =0;
@@ -47,15 +51,14 @@ public class WeaponWallBlock : MonoBehaviour
             dynamicMaxWeight = Mathf.Lerp(MinWeight, MaxWeight*Ratio, weightSpeed);
         }
 
-        Debug.Log(distance);
+        weaponPullRig.weight = dynamicMaxWeight;
 
-        PlayerData.GetArmRigLogic().MoveArms(
-            weightSpeed,
-            PullBackPosition.position,
-            blocked,
-            dynamicMaxWeight,
-            MinWeight
-        );
+        Debug.Log(distance);
+    }
+
+    void MoveArm()
+    {
+       
     }
 
 

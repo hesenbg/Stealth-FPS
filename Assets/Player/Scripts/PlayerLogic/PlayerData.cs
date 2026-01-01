@@ -11,17 +11,7 @@ public static class PlayerData
     static Rig ADSrig;
     static Camera PlayerMainCamera;
     static WeaponWallBlock pullLogic;
-    static ArmsPositionRigController armRigLogic;
     
-    public static void SetArmRigLogic(ArmsPositionRigController arms)
-    {
-        armRigLogic = arms;
-    }
-
-    public static ArmsPositionRigController GetArmRigLogic()
-    {
-        return armRigLogic; 
-    }
 
 
     // pull logic

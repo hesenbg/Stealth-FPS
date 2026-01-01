@@ -3,46 +3,65 @@ using UnityEngine.Animations.Rigging;
 
 public class ADS : MonoBehaviour
 {
-    [SerializeField] Transform ADSposition;
-    [SerializeField] Transform RightHand;
-    [SerializeField] float Speed ;
+    [Header("References")]
+    [SerializeField] Transform rightHand;
+    [SerializeField] Transform adsPosition;
+    [SerializeField] Rig adsRig;
+
+    [Header("Settings")]
+    [SerializeField] float speed = 10f;
+    [SerializeField] float maxWeight = 1f;
+    [SerializeField] float minWeight = 0f;
+    [SerializeField] float zoomFOV = 40f;
 
     Vector3 originalLocalPos;
+    float originalFOV;
 
-    [SerializeField] float ZoomField;
-    float OriginalZoomField =60;
-
-    [SerializeField] Rig ADSRig;
-
-    ArmsPositionRigController ADSController;
-
-    [SerializeField] bool aiming;
-
-    void Start()
+    void Awake()
     {
-        OriginalZoomField = PlayerData.GetCamera().fieldOfView;
-        PlayerData.SetADSrig(ADSRig);
-        // initialize once
-        originalLocalPos = RightHand.localPosition;
-
-        ADSController = GetComponent<ArmsPositionRigController>();
+        originalLocalPos = rightHand.localPosition;
+        originalFOV = PlayerData.GetCamera().fieldOfView;
     }
 
-    void TakeInput()
+    public void ApplyADS()
     {
-        aiming = false;
-        if (!PlayerData.GetAnimationLogic().canADS)
-        {
-            ADSRig.weight = Mathf.Lerp(ADSRig.weight, 0f, Speed * Time.deltaTime);
-            return;
-        }
-        aiming = Input.GetMouseButton(1);
+        adsRig.weight = Mathf.Lerp(
+            adsRig.weight,
+            maxWeight,
+            speed * Time.deltaTime
+        );
+
+        rightHand.position = Vector3.Lerp(
+            rightHand.position,
+            adsPosition.position,
+            speed * Time.deltaTime
+        );
+
+        PlayerData.GetCamera().fieldOfView = Mathf.Lerp(
+            PlayerData.GetCamera().fieldOfView,
+            zoomFOV,
+            speed * Time.deltaTime
+        );
     }
 
-    void Update()
+    public void RevertADS()
     {
-        TakeInput();
+        adsRig.weight = Mathf.Lerp(
+            adsRig.weight,
+            minWeight,
+            speed * Time.deltaTime
+        );
 
-        ADSController.MoveArms(Speed,ADSposition.position,aiming,1,0);
+        rightHand.localPosition = Vector3.Lerp(
+            rightHand.localPosition,
+            originalLocalPos,
+            speed * Time.deltaTime
+        );
+
+        PlayerData.GetCamera().fieldOfView = Mathf.Lerp(
+            PlayerData.GetCamera().fieldOfView,
+            originalFOV,
+            speed * Time.deltaTime
+        );
     }
 }

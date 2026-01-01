@@ -1,8 +1,18 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
+    // events
+    //[Header("Events")]
+    // combat
+    public event EventHandler OnReloadInput;
+    public event EventHandler OnShootInput;
+    public event EventHandler OnADS;
+
+
+    // keys
     [Header("Movement")]
     [SerializeField] KeyCode MoveForward;
     [SerializeField] KeyCode MoveBackward;
@@ -19,16 +29,13 @@ public class PlayerInput : MonoBehaviour
     [Header("Gadgets")]
     [SerializeField] KeyCode Throw;
 
-
-    private void Update()
+    private void Start()
     {
         
     }
 
+    private void FixedUpdate()
+    {
 
-
-
-
-
-
+    }
 }

@@ -6,7 +6,6 @@ public class CameraController : MonoBehaviour
 
     [SerializeField] float MouseSensitivity;
     [SerializeField] Transform PlayerTransform;
-    [SerializeField] ShootLogic shoot;
 
     float Xrotation;
 
