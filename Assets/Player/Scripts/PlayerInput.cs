@@ -34,7 +34,7 @@ public class PlayerInput : MonoBehaviour
         
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
 
     }

@@ -5,7 +5,6 @@ public class ADS : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] Transform rightHand;
-    [SerializeField] Transform adsPosition;
     [SerializeField] Rig adsRig;
 
     [Header("Settings")]
@@ -19,6 +18,7 @@ public class ADS : MonoBehaviour
 
     void Awake()
     {
+
         originalLocalPos = rightHand.localPosition;
         originalFOV = PlayerData.GetCamera().fieldOfView;
     }
@@ -33,7 +33,7 @@ public class ADS : MonoBehaviour
 
         rightHand.position = Vector3.Lerp(
             rightHand.position,
-            adsPosition.position,
+            transform.position,
             speed * Time.deltaTime
         );
 

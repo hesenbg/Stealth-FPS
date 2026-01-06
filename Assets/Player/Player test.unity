@@ -886,9 +886,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c8ab63327467c346883402e80681fd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ADS
-  rightHand: {fileID: 0}
-  adsPosition: {fileID: 0}
-  adsRig: {fileID: 0}
+  rightHand: {fileID: 7110347479224891902}
+  adsRig: {fileID: 2178902186559408569}
   speed: 10
   maxWeight: 1
   minWeight: 0
@@ -2818,25 +2817,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1324625159884650340
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1328549632806792841}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c8ab63327467c346883402e80681fd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rightHand: {fileID: 0}
-  adsPosition: {fileID: 0}
-  adsRig: {fileID: 0}
-  speed: 10
-  maxWeight: 1
-  minWeight: 0
-  zoomFOV: 40
 --- !u!1 &1328549632806792841
 GameObject:
   m_ObjectHideFlags: 0
@@ -2846,8 +2826,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7110347479224891902}
-  - component: {fileID: 1324625159884650340}
-  - component: {fileID: 7110347479224891903}
   m_Layer: 12
   m_Name: RightHandJoint
   m_TagString: Untagged
@@ -7982,25 +7960,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 540755296547713107}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: deff633bc2ddc7f4ea65b667665f11f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  threshold: 0.34
   hitMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  rightHand: {fileID: 7110347479224891902}
+  maxDistance: 0.17
+  sphereRadius: 0.15
   weaponPullRig: {fileID: 2178902186559408569}
   weightSpeed: 6
-  PullBackPosition: {fileID: 339428690}
-  MaXDistance: 0
-  MaxWeight: 0
-  MinWeight: 0
-  Radius: 0
-  blocked: 0
-  TresholdForMaxBlock: 0
+  targetTransform: {fileID: 7110347479224891902}
+  maxPullbackOffset: {x: 0, y: 0.004, z: 0}
+  maxRotationOffset: {x: 0, y: 0, z: 0}
+  BlockTresholdLimit: 0
 --- !u!4 &5830846032634282497
 Transform:
   m_ObjectHideFlags: 0
@@ -8040,7 +8015,7 @@ Transform:
   m_GameObject: {fileID: 540755296547713107}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.041000035, y: 1.4620001, z: 0.40399995}
+  m_LocalPosition: {x: 0.039, y: 1.45, z: 0.355}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9045,22 +9020,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 367223108648413968}
   m_LocalEulerAnglesHint: {x: -63.001, y: -138.55, z: 58.158}
---- !u!114 &7110347479224891903
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1328549632806792841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bfa17e157161ca48964c5a25af19f38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RightHandJoint: {fileID: 7110347479224891902}
-  LeftHandJoint: {fileID: 4013332710266614404}
-  PositionRig: {fileID: 2178902186559408569}
-  RightHandOriginalPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &7113859382114391091
 Transform:
   m_ObjectHideFlags: 0
@@ -10048,7 +10007,7 @@ GameObject:
   - component: {fileID: 7941141811804085206}
   m_Layer: 0
   m_Name: PlayerCamera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

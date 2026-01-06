@@ -1,73 +1,97 @@
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
-// 
 public class WeaponWallBlock : MonoBehaviour
 {
-    [Header("Raycast")]
-    [SerializeField] float threshold = 1.0f;
+    [Header("Detection Settings")]
     [SerializeField] LayerMask hitMask;
+    [SerializeField] float maxDistance = 1.0f;
+    [SerializeField] float sphereRadius = 0.15f;
 
-    [Header("Rig")]
-    [SerializeField] Transform rightHand;
+    [Header("Rig & Smoothing")]
     [SerializeField] Rig weaponPullRig;
-    [SerializeField] float weightSpeed = 6f;
-    [SerializeField] Transform PullBackPosition;
+    [SerializeField] float weightSpeed = 8f;
 
-    [Header("Tuning")]
-    [SerializeField] float MaXDistance; 
-    [SerializeField] float MaxWeight;
-    [SerializeField] float MinWeight;
-    [SerializeField] float Radius;
+    [Header("Procedural Transformation")]
+    [SerializeField] Transform targetTransform;
+    [SerializeField] Vector3 maxPullbackOffset;
+    [SerializeField] Vector3 maxRotationOffset;
 
-    public bool blocked;
+    private float currentWeight;
+    private Vector3 initialLocalPos;
+    private Quaternion initialLocalRot;
+    private RaycastHit lastHit;
+    private bool wasBlocked;
 
-    [SerializeField] float TresholdForMaxBlock;
+    [SerializeField] float BlockTresholdLimit;
+
+    public bool Blocked {  get; private set; }
+
+    void Start()
+    {
+        if (targetTransform != null)
+        {
+            initialLocalPos = targetTransform.localPosition;
+            initialLocalRot = targetTransform.localRotation;
+        }
+    }
 
     void Update()
     {
-        blocked = Physics.Raycast(
+        if(currentWeight <BlockTresholdLimit)
+        {
+            Blocked = true;
+        }
+        else
+        {
+            Blocked = false;
+        }
+
+        wasBlocked = Physics.SphereCast(
             transform.position,
+            sphereRadius,
             transform.forward,
-            out RaycastHit hit,
-            threshold,
+            out lastHit,
+            maxDistance,
             hitMask
         );
 
-        blocked = Physics.SphereCast(Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f)), Radius, out var hitinfo, MaXDistance);
+        float targetWeight = 0f;
 
-        float dynamicMaxWeight = MinWeight;
-
-        float distance =0;
-
-        if (blocked)
+        if (wasBlocked)
         {
-            distance = hit.distance;
-
-            // 1 when very close, 0 when far
-            float Ratio = 1-(distance / threshold);
-
-            dynamicMaxWeight = Mathf.Lerp(MinWeight, MaxWeight*Ratio, weightSpeed);
+            float distanceRatio = lastHit.distance / maxDistance;
+            targetWeight = Mathf.Clamp01(1f - distanceRatio);
         }
 
-        weaponPullRig.weight = dynamicMaxWeight;
+        currentWeight = Mathf.Lerp(currentWeight, targetWeight, weightSpeed * Time.deltaTime);
 
-        Debug.Log(distance);
+        weaponPullRig.weight = currentWeight;
+        ApplyOffsets(currentWeight);
     }
 
-    void MoveArm()
+    void ApplyOffsets(float weight)
     {
-       
+        if (targetTransform == null) return;
+
+        targetTransform.localPosition = initialLocalPos + (maxPullbackOffset * weight);
+        targetTransform.localRotation = initialLocalRot * Quaternion.Euler(maxRotationOffset * weight);
     }
 
-
-    void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(
-            transform.position,
-            transform.position + transform.forward * threshold
-        );
+        Gizmos.color = Color.cyan;
+        Vector3 endPoint = transform.position + transform.forward * maxDistance;
+        Gizmos.DrawLine(transform.position, endPoint);
+        Gizmos.DrawWireSphere(endPoint, sphereRadius);
+
+        if (Application.isPlaying && wasBlocked)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(lastHit.point, 0.05f);
+
+            Vector3 sphereCenterAtHit = transform.position + transform.forward * lastHit.distance;
+            Gizmos.DrawWireSphere(sphereCenterAtHit, sphereRadius);
+        }
     }
 }
