@@ -24,7 +24,6 @@ public class AnimationLogic : MonoBehaviour
     private void Start()
     {
         PlayerAnimator = GetComponent<Animator>();
-        PlayerData.SetAnimationLogic(this);
     }
 
     private void Update()
@@ -39,20 +38,23 @@ public class AnimationLogic : MonoBehaviour
 
     void CheckReloadState()
     {
-        isReloading =PlayerData.GetShootLogic().isReloading;
+        isReloading = PlayerComponents.Instance.ShootLogic.isReloading;
+
+        
+
     }
 
     PlayerMovement.MovementState movement;
 
     void UpdateAnimationVariables()
     {
-        movement = PlayerData.GetMovement().CurrentMovementState;
+        movement = PlayerComponents.Instance.Movement.CurrentMovementState;
 
         // Update movement animations
 
         bool isWalking = (movement == PlayerMovement.MovementState.Walk);
 
-        bool isShooting = PlayerData.GetShootLogic().IsShooting;
+        bool isShooting = PlayerComponents.Instance.ShootLogic.IsShooting;
 
         bool isIdle = movement == PlayerMovement.MovementState.Idle;
 

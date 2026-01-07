@@ -20,7 +20,6 @@ public class CameraController : MonoBehaviour
     private void Awake()
     {
         Camera camera = GetComponent<Camera>();
-        PlayerData.SetPlayerCam(camera);
     }
     void GetMouseCoordinates()
     {

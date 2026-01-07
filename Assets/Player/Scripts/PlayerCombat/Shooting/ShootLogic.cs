@@ -35,7 +35,6 @@ public class ShootLogic : MonoBehaviour
     private void Start()
     {
         currentAmmo = MagazineSize;
-        PlayerData.SetShootLogic(this);
     }
 
     private void Update()
@@ -87,7 +86,7 @@ public class ShootLogic : MonoBehaviour
         {
             StartCoroutine(Reload());
             SoundManager.Instance.PlayReload(transform.position);
-            PlayerData.GetAnimationLogic().PlayReloadAnimation(currentAmmo == 0);
+            PlayerComponents.Instance.AnimationLogic.PlayReloadAnimation(currentAmmo ==0);   
         }
     }
 
@@ -100,7 +99,8 @@ public class ShootLogic : MonoBehaviour
 
             // play animation 
             // ShootType float 0 shoot 0.5 shoodry 1 shootlast
-            PlayerData.GetAnimationLogic().PlayShootAnimation(currentAmmo);
+            PlayerComponents.Instance.AnimationLogic.PlayShootAnimation(currentAmmo);
+
             // aplly logic
             Shoot();
 

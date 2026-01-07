@@ -17,15 +17,15 @@ public class WeaponWallBlock : MonoBehaviour
     [SerializeField] Vector3 maxPullbackOffset;
     [SerializeField] Vector3 maxRotationOffset;
 
+    [Header("Blocking Logic")]
+    [SerializeField] float BlockTresholdLimit = 0.1f;
+    public bool Blocked { get; private set; }
+
     private float currentWeight;
     private Vector3 initialLocalPos;
     private Quaternion initialLocalRot;
     private RaycastHit lastHit;
     private bool wasBlocked;
-
-    [SerializeField] float BlockTresholdLimit;
-
-    public bool Blocked {  get; private set; }
 
     void Start()
     {
@@ -38,15 +38,7 @@ public class WeaponWallBlock : MonoBehaviour
 
     void Update()
     {
-        if(currentWeight <BlockTresholdLimit)
-        {
-            Blocked = true;
-        }
-        else
-        {
-            Blocked = false;
-        }
-
+        // 1. Detection
         wasBlocked = Physics.SphereCast(
             transform.position,
             sphereRadius,
@@ -56,8 +48,8 @@ public class WeaponWallBlock : MonoBehaviour
             hitMask
         );
 
+        // 2. Weight Calculation
         float targetWeight = 0f;
-
         if (wasBlocked)
         {
             float distanceRatio = lastHit.distance / maxDistance;
@@ -66,8 +58,24 @@ public class WeaponWallBlock : MonoBehaviour
 
         currentWeight = Mathf.Lerp(currentWeight, targetWeight, weightSpeed * Time.deltaTime);
 
-        weaponPullRig.weight = currentWeight;
-        ApplyOffsets(currentWeight);
+        // 3. Application with Threshold Check
+        // If the weight is practically zero, reset to initial and stop updating transform
+        if (currentWeight > 0.001f)
+        {
+            weaponPullRig.weight = currentWeight;
+            ApplyOffsets(currentWeight);
+
+            // Set Blocked status based on threshold
+            Blocked = currentWeight > BlockTresholdLimit;
+        }
+        else if (currentWeight <= 0.001f && weaponPullRig.weight > 0f)
+        {
+            // Final reset to ensure clean values
+            currentWeight = 0f;
+            weaponPullRig.weight = 0f;
+            ResetOffsets();
+            Blocked = false;
+        }
     }
 
     void ApplyOffsets(float weight)
@@ -76,6 +84,13 @@ public class WeaponWallBlock : MonoBehaviour
 
         targetTransform.localPosition = initialLocalPos + (maxPullbackOffset * weight);
         targetTransform.localRotation = initialLocalRot * Quaternion.Euler(maxRotationOffset * weight);
+    }
+
+    void ResetOffsets()
+    {
+        if (targetTransform == null) return;
+        targetTransform.localPosition = initialLocalPos;
+        targetTransform.localRotation = initialLocalRot;
     }
 
     private void OnDrawGizmos()

@@ -46,20 +46,9 @@ public  class PlayerMovement : MonoBehaviour
 
     [Header("References")]
     Rigidbody rb;
-    [SerializeField] AnimationLogic AnimationLogic;
-    [SerializeField] CapsuleCollider PlayerHitbox;
-    [SerializeField] BoxCollider GroundTrigger; // detects if player on slope, ground or on air
+    CapsuleCollider PlayerHitbox;
+    BoxCollider GroundTrigger; // detects if player on slope, ground or on air
     GameObject Surface;
-
-    /// w a s d alone means running
-    ///  
-    /// w a d d + shift means walking
-    /// 
-    /// ctrl means crouching
-    /// 
-    /// spacebar means jumping
-    /// 
-
 
     void Start()
     {
@@ -70,8 +59,6 @@ public  class PlayerMovement : MonoBehaviour
         PlayerHitbox = GetComponent<CapsuleCollider>();
 
         BaseHeight = PlayerHitbox.height;
-
-        PlayerData.SetMovement(this);
 
         StandGroundCheck = GroundTrigger.center;
     }
@@ -99,8 +86,8 @@ public  class PlayerMovement : MonoBehaviour
         UpdateDirection();
     }
 
-    [SerializeField]Vector3 CurrentForwardDirection;
-    [SerializeField] Vector3 CurrentRightDirection;
+    Vector3 CurrentForwardDirection;
+    Vector3 CurrentRightDirection;
 
     // updates directions (forward and right) based on the nomral of surface
     void UpdateDirection()

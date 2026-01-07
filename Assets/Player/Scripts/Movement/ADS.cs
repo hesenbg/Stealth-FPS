@@ -6,6 +6,7 @@ public class ADS : MonoBehaviour
     [Header("References")]
     [SerializeField] Transform rightHand;
     [SerializeField] Rig adsRig;
+    [SerializeField] Transform ADSpos;
 
     [Header("Settings")]
     [SerializeField] float speed = 10f;
@@ -16,11 +17,22 @@ public class ADS : MonoBehaviour
     Vector3 originalLocalPos;
     float originalFOV;
 
-    void Awake()
+    void Start()
     {
-
         originalLocalPos = rightHand.localPosition;
-        originalFOV = PlayerData.GetCamera().fieldOfView;
+        originalFOV = PlayerComponents.Instance.MainCamera.fieldOfView;
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButton(1))
+        {
+            ApplyADS();
+        }
+        else
+        {
+            RevertADS();
+        }
     }
 
     public void ApplyADS()
@@ -33,12 +45,13 @@ public class ADS : MonoBehaviour
 
         rightHand.position = Vector3.Lerp(
             rightHand.position,
-            transform.position,
+            ADSpos.transform.position,
             speed * Time.deltaTime
         );
 
-        PlayerData.GetCamera().fieldOfView = Mathf.Lerp(
-            PlayerData.GetCamera().fieldOfView,
+
+        PlayerComponents.Instance.MainCamera.fieldOfView = Mathf.Lerp(
+            PlayerComponents.Instance.MainCamera.fieldOfView,
             zoomFOV,
             speed * Time.deltaTime
         );
@@ -58,8 +71,8 @@ public class ADS : MonoBehaviour
             speed * Time.deltaTime
         );
 
-        PlayerData.GetCamera().fieldOfView = Mathf.Lerp(
-            PlayerData.GetCamera().fieldOfView,
+        PlayerComponents.Instance.MainCamera.fieldOfView = Mathf.Lerp(
+            PlayerComponents.Instance.MainCamera.fieldOfView,
             originalFOV,
             speed * Time.deltaTime
         );
