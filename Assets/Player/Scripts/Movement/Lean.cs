@@ -1,37 +1,55 @@
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
+
 public class Lean : MonoBehaviour
 {
-    [SerializeField] float RotationSpeed = 100f;
-    [SerializeField] float MaxLean = 15f;        
-    private float currentZ = 0f; 
+    [SerializeField] float maxLeanAngle = 15f; // degrees
+    [SerializeField] float speed = 8f;
+    [SerializeField] Rig leanRig;
 
-    public bool IsLeaning= false;
-    [SerializeField] bool CanLean;
-    private void Update()
+    private Quaternion initialLocalRot;
+    private float currentAngle;
+    private float targetAngle;
+    private float targetWeight;
+
+    void Start()
     {
-        if (Input.GetKey(KeyCode.Q) && CanLean)
+        initialLocalRot = transform.localRotation;
+    }
+
+    void Update()
+    {
+        // Determine target
+        targetAngle = 0f;
+        targetWeight = 0f;
+
+        if (Input.GetKey(KeyCode.Q))
         {
-            // Lean right
-            currentZ = Mathf.MoveTowards(currentZ, MaxLean, RotationSpeed * Time.deltaTime);
-            IsLeaning = true;
+            targetAngle = maxLeanAngle;   // left
+            targetWeight = 1f;
         }
-        else if (Input.GetKey(KeyCode.E) && CanLean)
+        else if (Input.GetKey(KeyCode.E))
         {
-            // Lean left
-            currentZ = Mathf.MoveTowards(currentZ, -MaxLean, RotationSpeed * Time.deltaTime);
-            IsLeaning = true;
-        }
-        else
-        {
-            IsLeaning = false;
-            currentZ = Mathf.MoveTowards(currentZ, 0f, RotationSpeed * Time.deltaTime);
+            targetAngle = -maxLeanAngle;  // right
+            targetWeight = 1f;
         }
 
-        transform.localEulerAngles = new Vector3(
-            transform.localEulerAngles.x,
-            transform.localEulerAngles.y,
-            currentZ
+        // Smooth angle
+        currentAngle = Mathf.Lerp(
+            currentAngle,
+            targetAngle,
+            speed * Time.deltaTime
+        );
+
+        // Apply rotation ONLY on Z
+        transform.localRotation =
+            initialLocalRot * Quaternion.Euler(0f, 0f, currentAngle);
+
+        // Smooth rig weight
+        leanRig.weight = Mathf.Lerp(
+            leanRig.weight,
+            targetWeight,
+            speed * Time.deltaTime
         );
     }
 }
-

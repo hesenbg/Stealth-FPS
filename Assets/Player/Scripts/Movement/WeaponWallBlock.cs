@@ -21,7 +21,7 @@ public class WeaponWallBlock : MonoBehaviour
     [SerializeField] float BlockTresholdLimit = 0.1f;
     public bool Blocked { get; private set; }
 
-    private float currentWeight;
+    [SerializeField] private float currentWeight;
     private Vector3 initialLocalPos;
     private Quaternion initialLocalRot;
     private RaycastHit lastHit;
@@ -58,7 +58,6 @@ public class WeaponWallBlock : MonoBehaviour
 
         currentWeight = Mathf.Lerp(currentWeight, targetWeight, weightSpeed * Time.deltaTime);
 
-        // 3. Application with Threshold Check
         // If the weight is practically zero, reset to initial and stop updating transform
         if (currentWeight > 0.001f)
         {
@@ -107,6 +106,8 @@ public class WeaponWallBlock : MonoBehaviour
 
             Vector3 sphereCenterAtHit = transform.position + transform.forward * lastHit.distance;
             Gizmos.DrawWireSphere(sphereCenterAtHit, sphereRadius);
+
+           
         }
     }
 }

@@ -57,6 +57,7 @@ public  class PlayerMovement : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         PlayerHitbox = GetComponent<CapsuleCollider>();
+        GroundTrigger = GetComponent<BoxCollider>();
 
         BaseHeight = PlayerHitbox.height;
 
