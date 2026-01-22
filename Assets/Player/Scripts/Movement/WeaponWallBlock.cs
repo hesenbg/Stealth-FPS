@@ -7,6 +7,8 @@ public class WeaponWallBlock : MonoBehaviour
     [SerializeField] LayerMask hitMask;
     [SerializeField] float maxDistance = 1.0f;
     [SerializeField] float sphereRadius = 0.15f;
+    [SerializeField] Transform CastSource;
+    [SerializeField] Vector3 PosOffset;
 
     [Header("Rig & Smoothing")]
     [SerializeField] Rig weaponPullRig;
@@ -40,9 +42,9 @@ public class WeaponWallBlock : MonoBehaviour
     {
         // 1. Detection
         wasBlocked = Physics.SphereCast(
-            transform.position,
+            CastSource.position+PosOffset,
             sphereRadius,
-            transform.forward,
+            CastSource.forward,
             out lastHit,
             maxDistance,
             hitMask
@@ -94,9 +96,11 @@ public class WeaponWallBlock : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        Vector3 pos = CastSource.position + PosOffset;
+
         Gizmos.color = Color.cyan;
-        Vector3 endPoint = transform.position + transform.forward * maxDistance;
-        Gizmos.DrawLine(transform.position, endPoint);
+        Vector3 endPoint = pos + CastSource.forward * maxDistance;
+        Gizmos.DrawLine(pos, endPoint);
         Gizmos.DrawWireSphere(endPoint, sphereRadius);
 
         if (Application.isPlaying && wasBlocked)
@@ -104,7 +108,7 @@ public class WeaponWallBlock : MonoBehaviour
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(lastHit.point, 0.05f);
 
-            Vector3 sphereCenterAtHit = transform.position + transform.forward * lastHit.distance;
+            Vector3 sphereCenterAtHit = pos + CastSource.forward * lastHit.distance;
             Gizmos.DrawWireSphere(sphereCenterAtHit, sphereRadius);
 
            
