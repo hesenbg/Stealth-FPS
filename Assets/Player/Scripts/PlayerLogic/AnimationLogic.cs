@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 public class AnimationLogic : MonoBehaviour
@@ -32,7 +33,19 @@ public class AnimationLogic : MonoBehaviour
 
         UpdateAnimationVariables();
 
-        PlayMovementAnimations();  
+        PlayMovementAnimations();
+
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            PlayerAnimator.SetTrigger("Throw");
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            PlayerAnimator.SetTrigger("Stab");
+
+        }
 
     }
 
