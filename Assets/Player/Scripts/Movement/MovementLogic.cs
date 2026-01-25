@@ -12,14 +12,12 @@ public class MovementLogic : MonoBehaviour
 
     [Header("Control States")]
     [HideInInspector] public Vector2 MoveInput;
-    [HideInInspector] public bool IsCrouchRequested;
     [HideInInspector] public bool IsSprinting;
 
     [Header("Detection")]
     [SerializeField] float RayDistance = 1.5f;
-    [SerializeField] LayerMask GroundLayer;
-    private bool IsGround = false;
-    private bool IsOnSlope = false;
+    [SerializeField] bool IsGround = false;
+    [SerializeField] bool IsOnSlope = false;
 
     [Header("Obstacle Avoidance")]
     [SerializeField] Transform LowerPos;
@@ -52,21 +50,23 @@ public class MovementLogic : MonoBehaviour
     {
         Vector3 movementDirection = UpdateDirection();
         CheckObstacle();
-        HandleMovementExecution(movementDirection);
+        //HandleMovementExecution(movementDirection);
         ApplyVelocity();
     }
     #endregion
 
     #region Procedural Logic
+
     Vector3 UpdateDirection()
     {
         RaycastHit hit;
         Vector3 calculatedDir = transform.forward * MoveInput.y + transform.right * MoveInput.x;
 
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, RayDistance, GroundLayer))
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, RayDistance))
         {
             Vector3 surfaceNormal = hit.normal;
-            IsOnSlope = Vector3.Angle(Vector3.up, surfaceNormal) > 5f;
+            Debug.Log(hit.normal);
+            IsOnSlope = Vector3.Angle(Vector3.up, surfaceNormal) > 1f;
 
             if (IsOnSlope && IsGround)
             {
@@ -81,31 +81,7 @@ public class MovementLogic : MonoBehaviour
         return calculatedDir.normalized;
     }
 
-    void HandleMovementExecution(Vector3 direction)
-    {
-        if (!IsGround && !IsOnSlope)
-        {
-            CurrentMovementState = MovementState.Jump;
-            // While jumping, we still want to allow air drift
-            ApplyHorizontalMovement(direction);
-            return;
-        }
 
-        if (IsCrouchRequested) Crouch(direction, true);
-        else Crouch(direction, false);
-
-        if (direction.magnitude > 0 && !IsCrouchRequested)
-        {
-            if (IsSprinting) Walk(direction);
-            else Run(direction);
-        }
-        else if (direction.magnitude == 0 && !IsCrouchRequested)
-        {
-            CurrentMovementState = MovementState.Idle;
-            currAcc = 0;
-            ApplyHorizontalMovement(Vector3.zero);
-        }
-    }
 
     void CheckObstacle()
     {
@@ -240,6 +216,9 @@ public class MovementLogic : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + Vector3.down * RayDistance);
 
         Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + CurrentVelocity.normalized* RayDistance);
+
+        Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(LowerPos.position, HalfExtend * 2);
         Gizmos.DrawWireCube(UpperPos.position, HalfExtend * 2);
     }
