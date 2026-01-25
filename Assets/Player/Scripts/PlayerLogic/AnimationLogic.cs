@@ -57,7 +57,7 @@ public class AnimationLogic : MonoBehaviour
 
     }
 
-    PlayerMovement.MovementState movement;
+    MovementLogic.MovementState movement;
 
     void UpdateAnimationVariables()
     {
@@ -65,15 +65,15 @@ public class AnimationLogic : MonoBehaviour
 
         // Update movement animations
 
-        bool isWalking = (movement == PlayerMovement.MovementState.Walk);
+        bool isWalking = (movement == MovementLogic.MovementState.Walk);
 
         bool isShooting = PlayerComponents.Instance.ShootLogic.IsShooting;
 
-        bool isIdle = movement == PlayerMovement.MovementState.Idle;
+        bool isIdle = movement == MovementLogic.MovementState.Idle;
 
-        bool isRunning = (movement == PlayerMovement.MovementState.Run);
+        bool isRunning = (movement == MovementLogic.MovementState.Run);
 
-        bool isCrouching = (movement == PlayerMovement.MovementState.Crouch);
+        bool isCrouching = (movement == MovementLogic.MovementState.Crouch);
 
 
         if ((isWalking || isShooting || isIdle || isCrouching) && !isReloading && !isRunning)
@@ -88,8 +88,8 @@ public class AnimationLogic : MonoBehaviour
 
     void PlayMovementAnimations()
     {
-        PlayerAnimator.SetBool("IsWalking", movement == PlayerMovement.MovementState.Walk);
-        PlayerAnimator.SetBool("IsRunning", movement == PlayerMovement.MovementState.Run);
+        PlayerAnimator.SetBool("IsWalking", movement == MovementLogic.MovementState.Walk);
+        PlayerAnimator.SetBool("IsRunning", movement == MovementLogic.MovementState.Run);
     }
 
     public void PlayReloadAnimation(bool IsMagEmpty)

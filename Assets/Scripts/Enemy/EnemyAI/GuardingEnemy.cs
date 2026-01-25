@@ -23,7 +23,7 @@ public class GuardingEnemy : MonoBehaviour
     [SerializeField] Vector3 HalfExtend;
 
     [Header("References")]
-    [SerializeField] PlayerMovement Player;
+    [SerializeField] MovementLogic Player;
     [SerializeField] GameObject LeanCenter;
 
     // -------------------- Runtime Components --------------------

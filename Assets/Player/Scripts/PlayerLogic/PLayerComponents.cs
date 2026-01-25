@@ -7,7 +7,7 @@ public class PlayerComponents : MonoBehaviour
     public static PlayerComponents Instance { get;  set; }
 
     [Header("Core Systems")]
-    [SerializeField] private PlayerMovement movement;
+    [SerializeField] private MovementLogic movement;
     [SerializeField] private AnimationLogic animationLogic;
     [SerializeField] private ShootLogic shootLogic;
     [SerializeField] private HealthManager healthManager;
@@ -18,7 +18,7 @@ public class PlayerComponents : MonoBehaviour
     [SerializeField] private WeaponWallBlock WallBlock;
 
     // Getters
-    public PlayerMovement Movement => movement;
+    public MovementLogic Movement => movement;
     public AnimationLogic AnimationLogic => animationLogic;
     public ShootLogic ShootLogic => shootLogic;
     public HealthManager HealthManager => healthManager;

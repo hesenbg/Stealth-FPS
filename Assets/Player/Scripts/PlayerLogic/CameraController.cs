@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class CameraController : MonoBehaviour
 {
     public float MouseX;
@@ -8,46 +9,19 @@ public class CameraController : MonoBehaviour
     [SerializeField] Transform PlayerTransform;
 
     float Xrotation;
-
     Vector3 TargetLocation;
 
     // recoil system
-    float recoilX;              // current recoil rotation
-    float recoilVelocity;       // smoothing value for recoil
-    [SerializeField] float recoilKick ;       // how much the camera jumps each shot
-    [SerializeField] float recoilReturnSpeed ; // how fast recoil returns
+    float recoilX;
+    float recoilVelocity;
+    [SerializeField] float recoilKick;
+    [SerializeField] float recoilReturnSpeed;
 
-    private void Awake()
+    private void Start()
     {
-        Camera camera = GetComponent<Camera>();
-    }
-    void GetMouseCoordinates()
-    {
-        MouseX = Input.GetAxis("Mouse X") * MouseSensitivity * Time.deltaTime;
-        MouseY = Input.GetAxis("Mouse Y") * MouseSensitivity * Time.deltaTime;
-    }
-
-    void UpdateRotation()
-    {
-        // horizontal rotation (yaw)
-        PlayerTransform.Rotate(Vector3.up*MouseX);  // horizontal
-
-        // vertical rotation (pitch)
-        Xrotation -= MouseY;
-        Xrotation = Mathf.Clamp(Xrotation, -90f, 90f);  // vertical
-
-        TargetLocation.x = Xrotation + recoilX; // add recoil effect
-    }
-
-    void ApllyRotation()
-    {
-        transform.localRotation = Quaternion.Euler(TargetLocation);
-    }
-
-    public void ApllyRecoilMoation(float Kick)
-    {
-        // add upward kick
-        recoilX += Random.Range(-Kick,Kick);
+        // Lock cursor to center and hide it
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void Update()
@@ -58,6 +32,42 @@ public class CameraController : MonoBehaviour
         // Smooth recoil return
         recoilX = Mathf.SmoothDamp(recoilX, 0f, ref recoilVelocity, 1f / recoilReturnSpeed);
 
-        ApllyRotation();
+        ApplyRotation();
+
+        // Optional: Toggle lock state for debugging
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
+    void GetMouseCoordinates()
+    {
+        MouseX = Input.GetAxis("Mouse X") * MouseSensitivity * Time.deltaTime;
+        MouseY = Input.GetAxis("Mouse Y") * MouseSensitivity * Time.deltaTime;
+    }
+
+    void UpdateRotation()
+    {
+        // horizontal rotation (yaw)
+        PlayerTransform.Rotate(Vector3.up * MouseX);
+
+        // vertical rotation (pitch)
+        Xrotation -= MouseY;
+        Xrotation = Mathf.Clamp(Xrotation, -90f, 90f);
+
+        TargetLocation.x = Xrotation + recoilX;
+    }
+
+    void ApplyRotation()
+    {
+        transform.localRotation = Quaternion.Euler(TargetLocation);
+    }
+
+    public void ApplyRecoilMotion(float Kick)
+    {
+        // Typical vertical recoil kick is negative for upward movement
+        recoilX -= Kick;
     }
 }
