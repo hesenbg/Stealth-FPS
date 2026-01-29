@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-
 public class MovementInput : MonoBehaviour
 {
     [SerializeField] private MovementLogic playerMovementLogic;
@@ -10,40 +9,38 @@ public class MovementInput : MonoBehaviour
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
     [SerializeField] private KeyCode hookKey = KeyCode.E;
 
+
     private void Update()
     {
-        Vector2 dir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        Vector3 currentDirection = Vector3.zero;
 
-        playerMovementLogic.MoveInput = dir;
+        if (Input.GetKey(KeyCode.W)) currentDirection += transform.forward;
+        if (Input.GetKey(KeyCode.S)) currentDirection -= transform.forward;
+        if (Input.GetKey(KeyCode.D)) currentDirection += transform.right;
+        if (Input.GetKey(KeyCode.A)) currentDirection -= transform.right;
 
-        bool isCrouching = Input.GetKey(crouchKey);
-        bool isSprinting = Input.GetKey(sprintKey);
+        currentDirection.Normalize();
 
-        if (isCrouching)
-        {
-            playerMovementLogic.Crouch(dir, true);
-        }
-        else if (dir.magnitude > 0)
-        {
-            if (isSprinting)
-                playerMovementLogic.Walk(dir); 
-            else
-                playerMovementLogic.Run(dir);  
-        }
+        playerMovementLogic.Direction = currentDirection;
+
+        playerMovementLogic.Idle();
 
         if (Input.GetKeyDown(jumpKey))
         {
             playerMovementLogic.Jump();
         }
 
-        if (Input.GetKeyDown(hookKey))
+        playerMovementLogic.Hook(Input.GetKey(hookKey));
+        
+        if (Input.GetKey(sprintKey))
         {
-
+            playerMovementLogic.Run();
         }
+        else if(currentDirection.sqrMagnitude > 0.1f)
+        {
+            playerMovementLogic.Walk();
+        }
+
+        playerMovementLogic.Crouch(Input.GetKey(crouchKey));
     }
-
-
-
-
-
 }

@@ -1,9 +1,12 @@
 using UnityEngine;
-
+// how does it works
+// it only updates the procedural logic.
+// you give the direction vector a data  and inputs apply the effect
+// effects are applies regardless of the direction input
 public class MovementLogic : MonoBehaviour
 {
     [Header("Data Reference")]
-    [SerializeField] private PlayerMovementData data;
+    [SerializeField] private MovementData data;
 
     [Header("Runtime State (Read Only)")]
     public Vector3 CurrentVelocity;
@@ -18,12 +21,17 @@ public class MovementLogic : MonoBehaviour
     [SerializeField] float RayDistance = 1.5f;
     [SerializeField] bool IsGround = false;
     [SerializeField] bool IsOnSlope = false;
+    [SerializeField] Transform DetetctionSource;
 
     [Header("Obstacle Avoidance")]
     [SerializeField] Transform LowerPos;
     [SerializeField] Transform UpperPos;
     [SerializeField] Vector3 HalfExtend;
     [SerializeField] Vector3 RigidbodyUp;
+
+    [Header("Grapple")]
+    [SerializeField] float GrappleMaxDistance = 30f;
+    [SerializeField] LayerMask GrappleMask;
 
     [Header("References")]
     private Rigidbody rb;
@@ -34,6 +42,10 @@ public class MovementLogic : MonoBehaviour
     private float currAcc;
     private float baseHeight;
     private Vector3 standGroundCheck;
+
+    private Vector3 grapplePoint;
+
+    public Vector3 Direction;
 
     #region Unity Lifecycle
     void Start()
@@ -48,40 +60,37 @@ public class MovementLogic : MonoBehaviour
 
     private void Update()
     {
-        Vector3 movementDirection = UpdateDirection();
         CheckObstacle();
-        //HandleMovementExecution(movementDirection);
-        ApplyVelocity();
+
+        Direction = UpdateDirection();
     }
     #endregion
+
 
     #region Procedural Logic
 
     Vector3 UpdateDirection()
     {
         RaycastHit hit;
-        Vector3 calculatedDir = transform.forward * MoveInput.y + transform.right * MoveInput.x;
-
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, RayDistance))
+        if (Physics.Raycast(DetetctionSource.position, Vector3.down, out hit, RayDistance))
         {
             Vector3 surfaceNormal = hit.normal;
-            Debug.Log(hit.normal);
-            IsOnSlope = Vector3.Angle(Vector3.up, surfaceNormal) > 1f;
+            IsOnSlope = Vector3.Angle(Vector3.up, surfaceNormal) > 5f;
+
 
             if (IsOnSlope && IsGround)
             {
-                rb.useGravity = false;
-                rb.linearDamping = 4f;
-                return Vector3.ProjectOnPlane(calculatedDir, surfaceNormal).normalized;
+                rb.useGravity = false; // added to avoid falling down
+                rb.linearDamping = data.WalkSpeed; // moving in slope with gravity of disables deacceleration so we add damping
+                return Vector3.ProjectOnPlane(Direction, surfaceNormal).normalized;
             }
         }
 
+        rb.linearDamping = 0;
+        IsOnSlope = false;
         rb.useGravity = true;
-        rb.linearDamping = 0f;
-        return calculatedDir.normalized;
+        return Direction;
     }
-
-
 
     void CheckObstacle()
     {
@@ -89,15 +98,18 @@ public class MovementLogic : MonoBehaviour
         {
             if (Physics.OverlapBox(UpperPos.position, HalfExtend, transform.rotation).Length == 0)
             {
-                rb.position = Vector3.Lerp(rb.position, rb.position + RigidbodyUp, Time.deltaTime * data.CrouchLerpSpeed);
+                rb.position = Vector3.Lerp(
+                    rb.position,
+                    rb.position + RigidbodyUp,
+                    Time.deltaTime * data.CrouchLerpSpeed
+                );
             }
         }
     }
-
-    void ApplyVelocity() => rb.linearVelocity = CurrentVelocity;
     #endregion
 
     #region External Executable Functions
+    // each function adds effect of its own then applies the direction vector as movement(regardless of the value of vector)
     public void Jump()
     {
         if (IsGround || IsOnSlope)
@@ -109,27 +121,33 @@ public class MovementLogic : MonoBehaviour
         }
     }
 
-    public void Walk(Vector3 direction)
+    public void Walk()
     {
         CurrentMovementState = MovementState.Walk;
         currAcc = data.WalkAcceleration;
         currMaxVelocity = data.WalkSpeed;
 
-        ApplyHorizontalMovement(direction);
-        Clamp();
+        ApplyHorizontalMovement();
     }
 
-    public void Run(Vector3 direction)
+    public void Idle()
+    {
+        CurrentMovementState = MovementState.Idle;
+        currAcc = 0f;
+        currMaxVelocity = 0f;
+        ApplyHorizontalMovement();
+    }
+
+    public void Run()
     {
         CurrentMovementState = MovementState.Run;
         currAcc = data.RunAcceleration;
         currMaxVelocity = data.RunSpeed;
 
-        ApplyHorizontalMovement(direction);
-        Clamp();
+        ApplyHorizontalMovement();
     }
 
-    public void Crouch(Vector3 direction, bool IsPressed)
+    public void Crouch(bool IsPressed)
     {
         if (IsPressed)
         {
@@ -137,36 +155,36 @@ public class MovementLogic : MonoBehaviour
             currAcc = data.CrouchAcceleration;
             currMaxVelocity = data.CrouchSpeed;
             ApplyCrouchHitbox();
-            ApplyHorizontalMovement(direction);
+            ApplyHorizontalMovement();
         }
         else
         {
             ReverseCrouchHitbox();
         }
-        Clamp();
+
+    }
+
+    public void Hook(bool isHanging)
+    {
+
+        ApplyHorizontalMovement();
     }
     #endregion
 
     #region Internal Movement Logic
-    void ApplyHorizontalMovement(Vector3 direction)
+    void ApplyHorizontalMovement()
     {
-        Vector3 rbVel = rb.linearVelocity;
-        float yVel = rbVel.y; // Capture existing gravity/vertical velocity
+        CurrentVelocity = rb.linearVelocity;
+        Direction = UpdateDirection();
 
-        if (direction.magnitude > 0)
+        if (Direction.magnitude > 0)
         {
-            // Apply acceleration to current velocity
-            CurrentVelocity = rbVel + (direction * currAcc * Time.deltaTime);
+            CurrentVelocity += Direction * currAcc * Time.deltaTime;
         }
-        else
-        {
-            CurrentVelocity = rbVel;
-        }
-
-        // Re-apply gravity so the player doesn't float
-        CurrentVelocity.y = yVel;
+        Clamp();
+        rb.linearVelocity = CurrentVelocity;
     }
-
+    // limits the max velocity
     void Clamp()
     {
         if (CurrentMovementState == MovementState.Jump) return;
@@ -176,33 +194,51 @@ public class MovementLogic : MonoBehaviour
 
         if (IsOnSlope)
         {
-            // On slopes, we clamp the total magnitude to prevent "launching" off peaks
             if (CurrentVelocity.magnitude > currMaxVelocity && currMaxVelocity != 0)
-            {
                 CurrentVelocity = CurrentVelocity.normalized * currMaxVelocity;
-            }
         }
         else
         {
-            // On flat ground, we only clamp X and Z
             if (horizontalVel.magnitude > currMaxVelocity && currMaxVelocity != 0)
             {
                 horizontalVel = horizontalVel.normalized * currMaxVelocity;
-                CurrentVelocity = new Vector3(horizontalVel.x, verticalVel, horizontalVel.z);
+                CurrentVelocity = new Vector3(
+                    horizontalVel.x,
+                    verticalVel,
+                    horizontalVel.z
+                );
             }
         }
     }
 
     void ApplyCrouchHitbox()
     {
-        PlayerHitbox.height = Mathf.Lerp(PlayerHitbox.height, data.CrouchHitboxHeight, data.CrouchLerpSpeed * Time.deltaTime);
-        GroundTrigger.center = Vector3.Lerp(GroundTrigger.center, data.CrouchGroundCheck, data.CrouchLerpSpeed * Time.deltaTime);
+        PlayerHitbox.height = Mathf.Lerp(
+            PlayerHitbox.height,
+            data.CrouchHitboxHeight,
+            data.CrouchLerpSpeed * Time.deltaTime
+        );
+
+        GroundTrigger.center = Vector3.Lerp(
+            GroundTrigger.center,
+            data.CrouchGroundCheck,
+            data.CrouchLerpSpeed * Time.deltaTime
+        );
     }
 
     void ReverseCrouchHitbox()
     {
-        PlayerHitbox.height = Mathf.Lerp(PlayerHitbox.height, baseHeight, data.CrouchLerpSpeed * Time.deltaTime);
-        GroundTrigger.center = Vector3.Lerp(GroundTrigger.center, standGroundCheck, data.CrouchLerpSpeed * Time.deltaTime);
+        PlayerHitbox.height = Mathf.Lerp(
+            PlayerHitbox.height,
+            baseHeight,
+            data.CrouchLerpSpeed * Time.deltaTime
+        );
+
+        GroundTrigger.center = Vector3.Lerp(
+            GroundTrigger.center,
+            standGroundCheck,
+            data.CrouchLerpSpeed * Time.deltaTime
+        );
     }
     #endregion
 
@@ -212,13 +248,13 @@ public class MovementLogic : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * RayDistance);
+        Gizmos.color = Color.blue; // ground detection vector
+        Gizmos.DrawLine(DetetctionSource.position, DetetctionSource.position + Vector3.down * RayDistance);
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, transform.position + CurrentVelocity.normalized* RayDistance);
+        Gizmos.color = Color.red;  // velocity visual vector
+        Gizmos.DrawLine(transform.position, transform.position + CurrentVelocity.normalized * 1.5f);
 
-        Gizmos.color = Color.yellow;
+        Gizmos.color = Color.yellow;// obstacle avoidance vector
         Gizmos.DrawWireCube(LowerPos.position, HalfExtend * 2);
         Gizmos.DrawWireCube(UpperPos.position, HalfExtend * 2);
     }

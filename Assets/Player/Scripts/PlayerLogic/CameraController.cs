@@ -19,13 +19,14 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        // Lock cursor to center and hide it
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     private void Update()
     {
+        // Lock cursor to center and hide it
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         GetMouseCoordinates();
         UpdateRotation();
 

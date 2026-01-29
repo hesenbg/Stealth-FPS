@@ -1,18 +1,20 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Movement/Player Movement Data")]
-public class PlayerMovementData : ScriptableObject
+public class MovementData : ScriptableObject
 {
     [Header("Max Movement Speeds")]
     [SerializeField] float walkSpeed;
     [SerializeField] float runSpeed;
     [SerializeField] float crouchSpeed;
+    [SerializeField] float hookSpeed;
 
     [Header("Movement Accelerations")]
     [SerializeField] float walkAcceleration;
     [SerializeField] float runAcceleration;
     [SerializeField] float crouchAcceleration;
     [SerializeField] float jumpAcceleration;
+    [SerializeField] float hookAcceleration;
 
     [Header("Jump")]
     [SerializeField] float jumpForce;
@@ -26,6 +28,9 @@ public class PlayerMovementData : ScriptableObject
     public float WalkSpeed => walkSpeed;
     public float RunSpeed => runSpeed;
     public float CrouchSpeed => crouchSpeed;
+    public float HookSpeed => hookSpeed;
+    public float HookAcceleration => hookAcceleration;
+
 
     public float WalkAcceleration => walkAcceleration;
     public float RunAcceleration => runAcceleration;

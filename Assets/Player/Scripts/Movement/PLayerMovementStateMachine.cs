@@ -5,6 +5,6 @@ public class PLayerMovementStateMachine : StateManager<PLayerMovementStateMachin
     public enum PlayerMovementState {Run, Walk, Crouch, Jump, Idle, Hook}
 
 
-    [SerializeField] PlayerMovementData PlayerMovementData;
+    [SerializeField] MovementData PlayerMovementData;
 
 }
