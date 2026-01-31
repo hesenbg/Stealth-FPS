@@ -1675,7 +1675,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 971058617}
-  - component: {fileID: 971058618}
   m_Layer: 0
   m_Name: GunParent
   m_TagString: Untagged
@@ -1698,57 +1697,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1729441946}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &971058618
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 971058616}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8935e03361a14ec4b8edc872f76bc822, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.MultiParentConstraint
-  m_Weight: 1
-  m_Data:
-    m_ConstrainedObject: {fileID: 3698355987299278471}
-    m_SourceObjects:
-      m_Length: 1
-      m_Item0:
-        transform: {fileID: 7110347479224891902}
-        weight: 1
-      m_Item1:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item2:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item3:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item4:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item5:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item6:
-        transform: {fileID: 0}
-        weight: 0
-      m_Item7:
-        transform: {fileID: 0}
-        weight: 0
-    m_ConstrainedPositionAxes:
-      x: 1
-      y: 1
-      z: 1
-    m_ConstrainedRotationAxes:
-      x: 1
-      y: 1
-      z: 1
-    m_MaintainPositionOffset: 1
-    m_MaintainRotationOffset: 1
 --- !u!1 &1099886637
 GameObject:
   m_ObjectHideFlags: 0
@@ -9716,10 +9664,6 @@ MonoBehaviour:
   IsGround: 0
   IsOnSlope: 0
   DetetctionSource: {fileID: 110772360}
-  LowerPos: {fileID: 121383266418041560}
-  UpperPos: {fileID: 7894038624992650514}
-  HalfExtend: {x: 0.4, y: 0.02, z: 0.4}
-  RigidbodyUp: {x: 0, y: 0.2, z: 0}
   GrappleMaxDistance: 30
   GrappleMask:
     serializedVersion: 2

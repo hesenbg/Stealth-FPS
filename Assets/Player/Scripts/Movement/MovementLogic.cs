@@ -23,12 +23,6 @@ public class MovementLogic : MonoBehaviour
     [SerializeField] bool IsOnSlope = false;
     [SerializeField] Transform DetetctionSource;
 
-    [Header("Obstacle Avoidance")]
-    [SerializeField] Transform LowerPos;
-    [SerializeField] Transform UpperPos;
-    [SerializeField] Vector3 HalfExtend;
-    [SerializeField] Vector3 RigidbodyUp;
-
     [Header("Grapple")]
     [SerializeField] float GrappleMaxDistance = 30f;
     [SerializeField] LayerMask GrappleMask;
@@ -60,8 +54,6 @@ public class MovementLogic : MonoBehaviour
 
     private void Update()
     {
-        CheckObstacle();
-
         Direction = UpdateDirection();
     }
     #endregion
@@ -92,20 +84,6 @@ public class MovementLogic : MonoBehaviour
         return Direction;
     }
 
-    void CheckObstacle()
-    {
-        if (Physics.OverlapBox(LowerPos.position, HalfExtend, transform.rotation).Length >= 1)
-        {
-            if (Physics.OverlapBox(UpperPos.position, HalfExtend, transform.rotation).Length == 0)
-            {
-                rb.position = Vector3.Lerp(
-                    rb.position,
-                    rb.position + RigidbodyUp,
-                    Time.deltaTime * data.CrouchLerpSpeed
-                );
-            }
-        }
-    }
     #endregion
 
     #region External Executable Functions
@@ -224,6 +202,8 @@ public class MovementLogic : MonoBehaviour
             data.CrouchGroundCheck,
             data.CrouchLerpSpeed * Time.deltaTime
         );
+
+        DetetctionSource.localPosition = new Vector3(0f,-1f,0f);
     }
 
     void ReverseCrouchHitbox()
@@ -239,6 +219,8 @@ public class MovementLogic : MonoBehaviour
             standGroundCheck,
             data.CrouchLerpSpeed * Time.deltaTime
         );
+
+        DetetctionSource.localPosition = new Vector3(0f, -1.5f, 0f);
     }
     #endregion
 
@@ -253,10 +235,6 @@ public class MovementLogic : MonoBehaviour
 
         Gizmos.color = Color.red;  // velocity visual vector
         Gizmos.DrawLine(transform.position, transform.position + CurrentVelocity.normalized * 1.5f);
-
-        Gizmos.color = Color.yellow;// obstacle avoidance vector
-        Gizmos.DrawWireCube(LowerPos.position, HalfExtend * 2);
-        Gizmos.DrawWireCube(UpperPos.position, HalfExtend * 2);
     }
     #endregion
 }
