@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 // how does it works
 // it only updates the procedural logic.
-// you give the direction vector a data  and inputs apply the effect
+// you give the direction vector as data  and inputs apply the effect
 // effects are applies regardless of the direction input
 public class MovementLogic : MonoBehaviour
 {
@@ -12,43 +15,40 @@ public class MovementLogic : MonoBehaviour
     public Vector3 CurrentVelocity;
     public MovementState CurrentMovementState;
     public enum MovementState { Walk, Run, Crouch, Jump, Idle }
-
+    
     [Header("Control States")]
     [HideInInspector] public Vector2 MoveInput;
     [HideInInspector] public bool IsSprinting;
 
     [Header("Detection")]
     [SerializeField] float RayDistance = 1.5f;
-    [SerializeField] bool IsGround = false;
+    public bool IsGround  { get; private set; }
     [SerializeField] bool IsOnSlope = false;
     [SerializeField] Transform DetetctionSource;
 
-    [Header("Grapple")]
-    [SerializeField] float GrappleMaxDistance = 30f;
-    [SerializeField] LayerMask GrappleMask;
+    public event EventHandler OnStepOnGround;
+    public event EventHandler OnStepOffGround;
 
     [Header("References")]
     private Rigidbody rb;
-    private CapsuleCollider PlayerHitbox;
+    [SerializeField] CapsuleCollider DefoultCollider;
+    [SerializeField] CapsuleCollider CrouchCollider;
     private BoxCollider GroundTrigger;
 
     private float currMaxVelocity;
     private float currAcc;
     private float baseHeight;
     private Vector3 standGroundCheck;
-
-    private Vector3 grapplePoint;
-
     public Vector3 Direction;
 
     #region Unity Lifecycle
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        PlayerHitbox = GetComponent<CapsuleCollider>();
+        DefoultCollider = GetComponent<CapsuleCollider>();
         GroundTrigger = GetComponent<BoxCollider>();
 
-        baseHeight = PlayerHitbox.height;
+        baseHeight = DefoultCollider.height;
         standGroundCheck = GroundTrigger.center;
     }
 
@@ -139,13 +139,6 @@ public class MovementLogic : MonoBehaviour
         {
             ReverseCrouchHitbox();
         }
-
-    }
-
-    public void Hook(bool isHanging)
-    {
-
-        ApplyHorizontalMovement();
     }
     #endregion
 
@@ -191,8 +184,8 @@ public class MovementLogic : MonoBehaviour
 
     void ApplyCrouchHitbox()
     {
-        PlayerHitbox.height = Mathf.Lerp(
-            PlayerHitbox.height,
+        DefoultCollider.height = Mathf.Lerp(
+            DefoultCollider.height,
             data.CrouchHitboxHeight,
             data.CrouchLerpSpeed * Time.deltaTime
         );
@@ -208,8 +201,8 @@ public class MovementLogic : MonoBehaviour
 
     void ReverseCrouchHitbox()
     {
-        PlayerHitbox.height = Mathf.Lerp(
-            PlayerHitbox.height,
+        DefoultCollider.height = Mathf.Lerp(
+            DefoultCollider.height,
             baseHeight,
             data.CrouchLerpSpeed * Time.deltaTime
         );
@@ -225,8 +218,17 @@ public class MovementLogic : MonoBehaviour
     #endregion
 
     #region Physics Detection
+    private void OnTriggerEnter(Collider other)
+    {
+        IsGround = true;
+        OnStepOnGround?.Invoke(this,EventArgs.Empty);
+    }
     private void OnTriggerStay(Collider other) => IsGround = true;
-    private void OnTriggerExit(Collider other) => IsGround = false;
+    private void OnTriggerExit(Collider other)
+    {
+        IsGround = false;
+        OnStepOffGround?.Invoke(this,EventArgs.Empty);
+    }
 
     private void OnDrawGizmos()
     {

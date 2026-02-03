@@ -855,61 +855,6 @@ MonoBehaviour:
   adsRig: {fileID: 0}
   playerMainCamera: {fileID: 3370930244944254683}
   WallBlock: {fileID: 0}
---- !u!1 &411431730
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 411431732}
-  - component: {fileID: 411431731}
-  m_Layer: 0
-  m_Name: Capsule
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!136 &411431731
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 411431730}
-  m_Material: {fileID: 13400000, guid: 91b9677b799c89b4c895f04f362c132c, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: -0.5, z: 0}
---- !u!4 &411431732
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 411431730}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.176, y: 1.537, z: 11.31927}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &426839962
 GameObject:
   m_ObjectHideFlags: 0
@@ -1763,7 +1708,7 @@ GameObject:
   - component: {fileID: 985018983}
   - component: {fileID: 985018984}
   m_Layer: 0
-  m_Name: MovementAudio
+  m_Name: PlayerMovement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2377,8 +2322,6 @@ MonoBehaviour:
   playerAudioSource: {fileID: 985018984}
   footStep1: {fileID: 8300000, guid: 7eaadb7c58d97dc4591d2769a2a72114, type: 3}
   footStep2: {fileID: 8300000, guid: ff91bfe2aa89979448a3dff70e14c10e, type: 3}
-  JumpOff: {fileID: 8300000, guid: 38a735eebc87a804e861a53133cd1f75, type: 3}
-  Land: {fileID: 8300000, guid: b1f172696468dc54f84f5b252360762c, type: 3}
   walkStepInterval: 0.6
   runStepInterval: 0.4
   WalkSpeed: 1
@@ -14001,4 +13944,3 @@ SceneRoots:
   - {fileID: 2067446626}
   - {fileID: 278813608}
   - {fileID: 1103528576}
-  - {fileID: 411431732}

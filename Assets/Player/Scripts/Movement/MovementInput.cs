@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 public class MovementInput : MonoBehaviour
 {
     [SerializeField] private MovementLogic playerMovementLogic;
@@ -9,38 +10,81 @@ public class MovementInput : MonoBehaviour
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
     [SerializeField] private KeyCode hookKey = KeyCode.E;
 
+    Vector3 CurrentDirection;
 
-    private void Update()
+    private void Start()
     {
-        Vector3 currentDirection = Vector3.zero;
+        playerMovementLogic.OnStepOffGround += OnJumpOffGround;
+        playerMovementLogic.OnStepOnGround += OnFallDownGround;
+    }
 
-        if (Input.GetKey(KeyCode.W)) currentDirection += transform.forward;
-        if (Input.GetKey(KeyCode.S)) currentDirection -= transform.forward;
-        if (Input.GetKey(KeyCode.D)) currentDirection += transform.right;
-        if (Input.GetKey(KeyCode.A)) currentDirection -= transform.right;
+    void TakeInput()
+    {
+        CurrentDirection = Vector3.zero;
 
-        currentDirection.Normalize();
+        if (Input.GetKey(KeyCode.W)) CurrentDirection += transform.forward;
+        if (Input.GetKey(KeyCode.S)) CurrentDirection -= transform.forward;
+        if (Input.GetKey(KeyCode.D)) CurrentDirection += transform.right;
+        if (Input.GetKey(KeyCode.A)) CurrentDirection -= transform.right;
 
-        playerMovementLogic.Direction = currentDirection;
+        CurrentDirection = CurrentDirection.normalized;
+    }
 
+    void Idle()
+    {
         playerMovementLogic.Idle();
+    }
+    void OnJumpOffGround(object Sender, EventArgs a) => PlayerSoundManager.instance.PlayJump();
 
+    void OnFallDownGround(object Sender, EventArgs a) => PlayerSoundManager.instance.PlayLand();
+    void Jump()
+    {
         if (Input.GetKeyDown(jumpKey))
         {
             playerMovementLogic.Jump();
         }
 
-        playerMovementLogic.Hook(Input.GetKey(hookKey));
-        
+    }
+
+    void Walk()
+    {
+        if (CurrentDirection.sqrMagnitude > 0.1f && !Input.GetKey(sprintKey))
+        {
+            playerMovementLogic.Walk();
+            if (playerMovementLogic.IsGround)
+            {
+                PlayerSoundManager.instance.PlayWalk();
+            }   
+        }
+    }
+
+    void Run()
+    {
         if (Input.GetKey(sprintKey))
         {
             playerMovementLogic.Run();
+            if (playerMovementLogic.IsGround)
+            {
+                PlayerSoundManager.instance.PlayRun();
+            }      
         }
-        else if(currentDirection.sqrMagnitude > 0.1f)
-        {
-            playerMovementLogic.Walk();
-        }
+    }
 
+    void Crouch()
+    {
         playerMovementLogic.Crouch(Input.GetKey(crouchKey));
+    }
+
+    private void Update()
+    {
+        TakeInput();
+
+        playerMovementLogic.Direction = CurrentDirection;
+
+        Idle();
+        Walk();
+        Crouch();
+        Jump();
+        Run();
     }
 }
