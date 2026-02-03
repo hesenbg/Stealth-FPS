@@ -1,82 +1,84 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class AnimationLogic : MonoBehaviour
 {
     public Animator PlayerAnimator;
     public bool canADS;
-
-    public enum GunState {ADS, Pulled, Idle, Shoot, Reload , Inspect }
-    public GunState CurrentGunState;
-
-    /// annimation
-    /// 
-    /// 
-    /// 
-    ///
-    /// 
-    /// 
-    /// </summary>
-
     // Helper to track reloading state without complex animation events
     public bool isReloading = false;
- 
+
+    Vector3 CrouchOriginalPosition;
+
+    [SerializeField] float Speed;
+
     private void Start()
     {
-        PlayerAnimator = GetComponent<Animator>();
+        CrouchOriginalPosition = PlayerComponents.Instance.MainCamera.transform.localPosition;
     }
 
     private void Update()
     {
-        CheckReloadState();
-
-        UpdateAnimationVariables();
-
-        PlayMovementAnimations();  
-
-    }
-
-    void CheckReloadState()
-    {
-        isReloading = PlayerComponents.Instance.ShootLogic.isReloading;
-
-        
-
-    }
-
-    PlayerMovement.MovementState movement;
-
-    void UpdateAnimationVariables()
-    {
-        movement = PlayerComponents.Instance.Movement.CurrentMovementState;
-
-        // Update movement animations
-
-        bool isWalking = (movement == PlayerMovement.MovementState.Walk);
-
-        bool isShooting = PlayerComponents.Instance.ShootLogic.IsShooting;
-
-        bool isIdle = movement == PlayerMovement.MovementState.Idle;
-
-        bool isRunning = (movement == PlayerMovement.MovementState.Run);
-
-        bool isCrouching = (movement == PlayerMovement.MovementState.Crouch);
+        PlayMovementAnimations();
 
 
-        if ((isWalking || isShooting || isIdle || isCrouching) && !isReloading && !isRunning)
+        // remove them later
+        if (Input.GetKeyDown(KeyCode.G))
         {
-            canADS = true;
+            PlayerAnimator.SetTrigger("Throw");
         }
-        else
+
+        if (Input.GetKeyDown(KeyCode.F))
         {
-            canADS = false;
+            PlayerAnimator.SetTrigger("Stab");
+
         }
     }
+
+
+    MovementLogic.MovementState movement;
 
     void PlayMovementAnimations()
     {
-        PlayerAnimator.SetBool("IsWalking", movement == PlayerMovement.MovementState.Walk);
-        PlayerAnimator.SetBool("IsRunning", movement == PlayerMovement.MovementState.Run);
+        PlayerAnimator.SetBool("IsWalking", movement == MovementLogic.MovementState.Walk);
+        PlayerAnimator.SetBool("IsRunning", movement == MovementLogic.MovementState.Run);
+    }
+    
+    public void CrouchAnimation(bool IsCrouching)
+    {
+        if (IsCrouching)
+        {
+            PlayCrouchAnimation(Speed);
+        }
+        else
+        {
+            PlayUnCrouchAnimation(Speed);
+        }
+    }
+    
+
+    void PlayCrouchAnimation(float Speed)
+    {
+        Vector3 CrouchPos = new Vector3(
+             CrouchOriginalPosition.x
+            , 0
+            , CrouchOriginalPosition.z);
+
+        Transform cam = PlayerComponents.Instance.MainCamera.transform;
+
+        cam.localPosition = Vector3.Lerp(cam.localPosition, CrouchPos, Time.deltaTime*Speed);
+    }
+
+    void PlayUnCrouchAnimation(float Speed)
+    {
+        Transform cam = PlayerComponents.Instance.MainCamera.transform;
+
+        cam.localPosition = Vector3.Lerp(cam.localPosition, CrouchOriginalPosition, Time.deltaTime * Speed);
+    }
+
+
+    void PlayWalkAnimation()
+    {
+        PlayerAnimator.SetBool("IsWalking", movement == MovementLogic.MovementState.Walk);
     }
 
     public void PlayReloadAnimation(bool IsMagEmpty)
@@ -94,7 +96,15 @@ public class AnimationLogic : MonoBehaviour
         }
     }
 
-    public void PlayKnifeAttackAnimation() { }
+    public void PlayKnifeAttackAnimation()
+    {
+
+    }
+
+    public void PlayGrenedeAnimation()
+    {
+
+    }
 
     public void PlayShootAnimation(int CurrentAmmo)
     {

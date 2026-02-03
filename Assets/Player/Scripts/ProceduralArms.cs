@@ -17,13 +17,14 @@ public class ProceduralArms : MonoBehaviour
     Vector2 MouseMovement;
     Vector3 PhysicalMovement;
     Vector3 startPos;
+    [SerializeField] MovementData PlayerMovementData;
 
     void Start()
     {
         startPos = transform.localPosition;
     }
 
-    void Update()
+    void LateUpdate()
     {
         GetInput();
         ApplySway();
@@ -55,7 +56,7 @@ public class ProceduralArms : MonoBehaviour
         // Calculate how much input is being pressed
         float moveX = Mathf.Clamp(PhysicalMovement.x * MoveSwayAmount*Time.deltaTime, -MaxMoveSway, MaxMoveSway);
         float moveZ = Mathf.Clamp(PhysicalMovement.y * MoveSwayAmount*Time.deltaTime, -MaxMoveSway, MaxMoveSway);
-        float moveY = Mathf.Clamp((PlayerComponents.Instance.Movement.Velocity.y / PlayerComponents.Instance.Movement.JumpForce) * MoveSwayAmount*JumpBobMultipler * Time.deltaTime, -MaxMoveSway, MaxMoveSway);
+        float moveY = Mathf.Clamp((PlayerComponents.Instance.Movement.CurrentVelocity.y / PlayerMovementData.JumpForce) * MoveSwayAmount*JumpBobMultipler * Time.deltaTime, -MaxMoveSway, MaxMoveSway);
 
         Vector3 targetPos = startPos + new Vector3(-moveX, moveY, -moveZ);
 
