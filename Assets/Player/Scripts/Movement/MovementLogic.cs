@@ -90,6 +90,8 @@ public class MovementLogic : MonoBehaviour
     // each function adds effect of its own then applies the direction vector as movement(regardless of the value of vector)
     public void Jump()
     {
+        OnStepOffGround?.Invoke(this, EventArgs.Empty);
+
         if (IsGround || IsOnSlope)
         {
             CurrentVelocity = rb.linearVelocity;
@@ -184,50 +186,28 @@ public class MovementLogic : MonoBehaviour
 
     void ApplyCrouchHitbox()
     {
-        DefoultCollider.height = Mathf.Lerp(
-            DefoultCollider.height,
-            data.CrouchHitboxHeight,
-            data.CrouchLerpSpeed * Time.deltaTime
-        );
-
-        GroundTrigger.center = Vector3.Lerp(
-            GroundTrigger.center,
-            data.CrouchGroundCheck,
-            data.CrouchLerpSpeed * Time.deltaTime
-        );
-
-        DetetctionSource.localPosition = new Vector3(0f,-1f,0f);
+        DefoultCollider.enabled = false;
+        CrouchCollider.enabled = true;  
     }
 
     void ReverseCrouchHitbox()
     {
-        DefoultCollider.height = Mathf.Lerp(
-            DefoultCollider.height,
-            baseHeight,
-            data.CrouchLerpSpeed * Time.deltaTime
-        );
-
-        GroundTrigger.center = Vector3.Lerp(
-            GroundTrigger.center,
-            standGroundCheck,
-            data.CrouchLerpSpeed * Time.deltaTime
-        );
-
-        DetetctionSource.localPosition = new Vector3(0f, -1.5f, 0f);
+        DefoultCollider.enabled = true;
+        CrouchCollider.enabled = false;
     }
     #endregion
 
     #region Physics Detection
+    // 13 ground layer
     private void OnTriggerEnter(Collider other)
     {
-        IsGround = true;
-        OnStepOnGround?.Invoke(this,EventArgs.Empty);
+        if(!IsGround)
+            OnStepOnGround?.Invoke(this, EventArgs.Empty);
     }
     private void OnTriggerStay(Collider other) => IsGround = true;
     private void OnTriggerExit(Collider other)
     {
         IsGround = false;
-        OnStepOffGround?.Invoke(this,EventArgs.Empty);
     }
 
     private void OnDrawGizmos()

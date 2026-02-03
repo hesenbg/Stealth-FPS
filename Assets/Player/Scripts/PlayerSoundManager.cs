@@ -20,6 +20,13 @@ public class PlayerSoundManager : MonoBehaviour
     [SerializeField] private float WalkSpeed;
     [SerializeField] private float RunSpeed;
 
+
+    [Header("Volmues")]
+    [SerializeField] float JumpVolume;
+    [SerializeField] float LandVolume;
+
+    [SerializeField] float StepVolume;
+
     float stepTimer;
     int stepIndex; 
 
@@ -45,12 +52,12 @@ public class PlayerSoundManager : MonoBehaviour
 
     public void PlayJump()
     {
-        playerAudioSource.PlayOneShot(JumpOff);
+        playerAudioSource.PlayOneShot(JumpOff,JumpVolume);
     }
 
     public void PlayLand()
     {
-        playerAudioSource.PlayOneShot(Land);
+        playerAudioSource.PlayOneShot(Land,LandVolume);
     }
 
     void HandleFootsteps(float speed, float baseInterval)
@@ -74,9 +81,7 @@ public class PlayerSoundManager : MonoBehaviour
 
     void PlayNextStep()
     {
-        playerAudioSource.clip = (stepIndex == 0) ? footStep1 : footStep2;
-        playerAudioSource.Play();
-
+        playerAudioSource.PlayOneShot((stepIndex == 0) ? footStep1 : footStep2,StepVolume) ;
         stepIndex = 1 - stepIndex; // toggles 0 <-> 1
     }
 }

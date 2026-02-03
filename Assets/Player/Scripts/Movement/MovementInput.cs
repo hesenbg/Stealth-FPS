@@ -3,12 +3,13 @@ using UnityEngine;
 public class MovementInput : MonoBehaviour
 {
     [SerializeField] private MovementLogic playerMovementLogic;
+    [SerializeField] private AnimationLogic playerAnimationLogic;
+    //[SerializeField] private SoundManager playerSoundManager;
 
     [Header("Key Bindings")]
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
     [SerializeField] private KeyCode crouchKey = KeyCode.LeftControl;
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
-    [SerializeField] private KeyCode hookKey = KeyCode.E;
 
     Vector3 CurrentDirection;
 
@@ -34,16 +35,21 @@ public class MovementInput : MonoBehaviour
     {
         playerMovementLogic.Idle();
     }
-    void OnJumpOffGround(object Sender, EventArgs a) => PlayerSoundManager.instance.PlayJump();
+    void OnJumpOffGround(object Sender, EventArgs a)
+    {
+        PlayerSoundManager.instance.PlayJump();
+    }
 
-    void OnFallDownGround(object Sender, EventArgs a) => PlayerSoundManager.instance.PlayLand();
+    void OnFallDownGround(object Sender, EventArgs a)
+    {
+        PlayerSoundManager.instance.PlayLand();
+    }
     void Jump()
     {
         if (Input.GetKeyDown(jumpKey))
         {
             playerMovementLogic.Jump();
         }
-
     }
 
     void Walk()
@@ -70,9 +76,12 @@ public class MovementInput : MonoBehaviour
         }
     }
 
+
     void Crouch()
     {
-        playerMovementLogic.Crouch(Input.GetKey(crouchKey));
+        bool IsCrouching = Input.GetKey(crouchKey);
+        playerMovementLogic.Crouch(IsCrouching);
+        playerAnimationLogic.CrouchAnimation(IsCrouching);
     }
 
     private void Update()
