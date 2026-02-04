@@ -3,13 +3,10 @@ using UnityEngine;
 public class AnimationLogic : MonoBehaviour
 {
     public Animator PlayerAnimator;
-    public bool canADS;
-    // Helper to track reloading state without complex animation events
-    public bool isReloading = false;
 
     Vector3 CrouchOriginalPosition;
 
-    [SerializeField] float Speed;
+    [SerializeField] float CrouchSpeed;
 
     private void Start()
     {
@@ -34,24 +31,23 @@ public class AnimationLogic : MonoBehaviour
         }
     }
 
-
-    MovementLogic.MovementState movement;
-
     void PlayMovementAnimations()
     {
-        PlayerAnimator.SetBool("IsWalking", movement == MovementLogic.MovementState.Walk);
-        PlayerAnimator.SetBool("IsRunning", movement == MovementLogic.MovementState.Run);
+        MovementLogic Player= PlayerComponents.Instance.Movement;
+
+        PlayerAnimator.SetBool("IsWalking", Player.CurrentMovementState == MovementLogic.MovementState.Walk);
+        PlayerAnimator.SetBool("IsRunning", Player.CurrentMovementState == MovementLogic.MovementState.Run);
     }
     
     public void CrouchAnimation(bool IsCrouching)
     {
         if (IsCrouching)
         {
-            PlayCrouchAnimation(Speed);
+            PlayCrouchAnimation(CrouchSpeed);
         }
         else
         {
-            PlayUnCrouchAnimation(Speed);
+            PlayUnCrouchAnimation(CrouchSpeed);
         }
     }
     
@@ -74,13 +70,6 @@ public class AnimationLogic : MonoBehaviour
 
         cam.localPosition = Vector3.Lerp(cam.localPosition, CrouchOriginalPosition, Time.deltaTime * Speed);
     }
-
-
-    void PlayWalkAnimation()
-    {
-        PlayerAnimator.SetBool("IsWalking", movement == MovementLogic.MovementState.Walk);
-    }
-
     public void PlayReloadAnimation(bool IsMagEmpty)
     {
         // We set the trigger, the Update loop will detect the state change

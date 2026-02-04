@@ -1,9 +1,9 @@
 ﻿using System;
 using UnityEngine;
-public class MovementInput : MonoBehaviour
+public class InputManager : MonoBehaviour
 {
-    [SerializeField] private MovementLogic playerMovementLogic;
-    [SerializeField] private AnimationLogic playerAnimationLogic;
+    private MovementLogic playerMovementLogic;
+    private AnimationLogic playerAnimationLogic;
     //[SerializeField] private SoundManager playerSoundManager;
 
     [Header("Key Bindings")]
@@ -15,6 +15,9 @@ public class MovementInput : MonoBehaviour
 
     private void Start()
     {
+        playerMovementLogic = PlayerComponents.Instance.Movement;
+        playerAnimationLogic = PlayerComponents.Instance.AnimationLogic;
+
         playerMovementLogic.OnStepOffGround += OnJumpOffGround;
         playerMovementLogic.OnStepOnGround += OnFallDownGround;
     }
@@ -76,7 +79,6 @@ public class MovementInput : MonoBehaviour
         }
     }
 
-
     void Crouch()
     {
         bool IsCrouching = Input.GetKey(crouchKey);
@@ -87,9 +89,7 @@ public class MovementInput : MonoBehaviour
     private void Update()
     {
         TakeInput();
-
         playerMovementLogic.Direction = CurrentDirection;
-
         Idle();
         Walk();
         Crouch();

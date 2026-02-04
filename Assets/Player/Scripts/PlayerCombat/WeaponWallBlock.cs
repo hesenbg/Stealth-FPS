@@ -4,7 +4,6 @@ using UnityEngine.Animations.Rigging;
 public class WeaponWallBlock : MonoBehaviour
 {
     [Header("Detection Settings")]
-    [SerializeField] LayerMask hitMask;
     [SerializeField] float maxDistance = 1.0f;
     [SerializeField] float sphereRadius = 0.15f;
     [SerializeField] Transform CastSource;
@@ -46,8 +45,7 @@ public class WeaponWallBlock : MonoBehaviour
             sphereRadius,
             CastSource.forward,
             out lastHit,
-            maxDistance,
-            hitMask
+            maxDistance
         );
 
         // 2. Weight Calculation
