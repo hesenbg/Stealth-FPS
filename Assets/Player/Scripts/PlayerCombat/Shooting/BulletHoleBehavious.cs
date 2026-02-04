@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BulletHoleBehaviour : MonoBehaviour
+public class BulletHole : MonoBehaviour
 {
     [SerializeField] Material HoleMaterial;       // Base material (used as a template)
     [SerializeField] Texture2D[] HoleTextures;    // List of textures

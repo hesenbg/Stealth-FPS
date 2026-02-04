@@ -15,10 +15,15 @@ public class PlayerComponents : MonoBehaviour
     [Header("Technical/Visual")]
     [SerializeField] private Rig adsRig;
     [SerializeField] private Camera playerMainCamera;
-    [SerializeField] private WeaponWallBlock WallBlock;
+    [SerializeField] private WeaponWallBlock wallBlock;
+    [SerializeField] private ADS ads;
+    [SerializeField] private Lean lean;
 
     // Getters
+    public ADS ADS => ads;
+    public Lean Lean => lean;
     public MovementLogic Movement => movement;
+    public WeaponWallBlock WallBlock => wallBlock;
     public AnimationLogic AnimationLogic => animationLogic;
     public ShootLogic ShootLogic => shootLogic;
     public HealthManager HealthManager => healthManager;
@@ -34,10 +39,6 @@ public class PlayerComponents : MonoBehaviour
             Destroy(this.gameObject);
             return;
         }
-
         Instance = this;
-
-        // Optional: Keep the player between scene loads
-        // DontDestroyOnLoad(gameObject);
     }
 }

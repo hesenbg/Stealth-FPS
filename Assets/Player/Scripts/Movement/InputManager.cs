@@ -1,19 +1,67 @@
 ﻿using System;
+using Unity.VisualScripting;
 using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     private MovementLogic playerMovementLogic;
+    private ShootLogic playerShootLogic;
+    private ADS ADSlogic;
+    private Lean lean;
+    private WeaponWallBlock weaponWallBlock;
     private AnimationLogic playerAnimationLogic;
     //[SerializeField] private SoundManager playerSoundManager;
 
-    [Header("Key Bindings")]
+    [Header("Movement Keys")]
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
     [SerializeField] private KeyCode crouchKey = KeyCode.LeftControl;
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
 
+    [Header("Movement Variables")]
     Vector3 CurrentDirection;
 
+    [Header("Combat Keys")]
+    [SerializeField] private MouseButton ShootKey;
+    [SerializeField] private KeyCode ReloadKey;
+    [SerializeField] private MouseButton ADS_key;
+
+
+    [Header("Combat Variables")]
+    GunState CurrentGunState;
+    enum GunState {Idle, Blocked, Reload, ADS}
+   
     private void Start()
+    {
+        InitilizeMovementVariables();
+        InitilizeCombatVariables();
+    }
+    private void Update()
+    {
+        UpdateMovement();
+
+        Reload();
+
+    }
+    // combat
+    void InitilizeCombatVariables()
+    {
+        CurrentGunState = GunState.Idle;
+        ADSlogic = PlayerComponents.Instance.ADS;
+        lean = PlayerComponents.Instance.Lean;
+        playerShootLogic = PlayerComponents.Instance.ShootLogic;
+        weaponWallBlock = PlayerComponents.Instance.WallBlock;
+    }
+
+    void Reload()
+    {
+        if (Input.GetKeyDown(ReloadKey))
+        {
+            StartCoroutine(playerShootLogic.Reload());
+        }
+    }
+
+
+    // movement
+    void InitilizeMovementVariables()
     {
         playerMovementLogic = PlayerComponents.Instance.Movement;
         playerAnimationLogic = PlayerComponents.Instance.AnimationLogic;
@@ -86,7 +134,7 @@ public class InputManager : MonoBehaviour
         playerAnimationLogic.CrouchAnimation(IsCrouching);
     }
 
-    private void Update()
+    void UpdateMovement()
     {
         TakeInput();
         playerMovementLogic.Direction = CurrentDirection;
@@ -96,4 +144,5 @@ public class InputManager : MonoBehaviour
         Jump();
         Run();
     }
+
 }
