@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 public class ShootLogic : MonoBehaviour
 {
     [SerializeField] CombatData PlayerCombatData;
@@ -9,10 +10,13 @@ public class ShootLogic : MonoBehaviour
     public int CurrentMagazineAmmo {  get; private set; }
     public int CurrentTotalAmmo { get; private set; }
 
-    [HideInInspector] public bool isReloading = false;
     bool IsShootable = true;
     [HideInInspector] public bool IsShooting = false;
     float shootCooldown = 0f;
+
+    // events
+    public event EventHandler OnReloadEnd;
+    public event EventHandler OnReload;
 
     private void Start()
     {
@@ -55,7 +59,7 @@ public class ShootLogic : MonoBehaviour
 
     public IEnumerator Reload()
     {
-        isReloading = true;
+        OnReload?.Invoke(this, EventArgs.Empty);
         yield return new WaitForSeconds(PlayerCombatData.ReloadTime);
 
         int needed = PlayerCombatData.Magazine - CurrentMagazineAmmo;
@@ -64,6 +68,6 @@ public class ShootLogic : MonoBehaviour
         CurrentMagazineAmmo += toLoad;
         CurrentTotalAmmo-= toLoad;
 
-        isReloading = false;
+        OnReloadEnd?.Invoke(this,EventArgs.Empty);
     }
 }

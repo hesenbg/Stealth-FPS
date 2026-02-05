@@ -16,19 +16,6 @@ public class AnimationLogic : MonoBehaviour
     private void Update()
     {
         PlayMovementAnimations();
-
-
-        // remove them later
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            PlayerAnimator.SetTrigger("Throw");
-        }
-
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            PlayerAnimator.SetTrigger("Stab");
-
-        }
     }
 
     void PlayMovementAnimations()

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -12,6 +13,7 @@ public class WeaponWallBlock : MonoBehaviour
     [Header("Rig & Smoothing")]
     [SerializeField] Rig weaponPullRig;
     [SerializeField] float weightSpeed = 8f;
+    [SerializeField] float MinWeightBlock; // minimum weight for consider it to be 
 
     [Header("Procedural Transformation")]
     [SerializeField] Transform targetTransform;
@@ -28,6 +30,11 @@ public class WeaponWallBlock : MonoBehaviour
     private RaycastHit lastHit;
     private bool wasBlocked;
 
+    // events
+
+    public event EventHandler WallBlockStart;
+    public event EventHandler WallBlockEnd;
+
     void Start()
     {
         if (targetTransform != null)
@@ -39,7 +46,7 @@ public class WeaponWallBlock : MonoBehaviour
 
     void Update()
     {
-        // 1. Detection
+        //Detection
         wasBlocked = Physics.SphereCast(
             CastSource.position+PosOffset,
             sphereRadius,
@@ -48,7 +55,7 @@ public class WeaponWallBlock : MonoBehaviour
             maxDistance
         );
 
-        // 2. Weight Calculation
+        //Weight Calculation
         float targetWeight = 0f;
         if (wasBlocked)
         {
@@ -75,6 +82,8 @@ public class WeaponWallBlock : MonoBehaviour
             ResetOffsets();
             Blocked = false;
         }
+
+        FireEvents();
     }
 
     void ApplyOffsets(float weight)
@@ -91,6 +100,20 @@ public class WeaponWallBlock : MonoBehaviour
         targetTransform.localPosition = initialLocalPos;
         targetTransform.localRotation = initialLocalRot;
     }
+    bool prevBlocked;
+    void FireEvents()
+    {
+        if (Blocked == prevBlocked)
+            return;
+
+        if (Blocked)
+            WallBlockStart?.Invoke(this, EventArgs.Empty);
+        else
+            WallBlockEnd?.Invoke(this, EventArgs.Empty);
+
+        prevBlocked = Blocked;
+    }
+
 
     private void OnDrawGizmos()
     {
@@ -107,9 +130,7 @@ public class WeaponWallBlock : MonoBehaviour
             Gizmos.DrawSphere(lastHit.point, 0.05f);
 
             Vector3 sphereCenterAtHit = pos + CastSource.forward * lastHit.distance;
-            Gizmos.DrawWireSphere(sphereCenterAtHit, sphereRadius);
-
-           
+            Gizmos.DrawWireSphere(sphereCenterAtHit, sphereRadius);     
         }
     }
 }

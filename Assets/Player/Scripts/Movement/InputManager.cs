@@ -3,13 +3,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 public class InputManager : MonoBehaviour
 {
+    [Header("References")]
     private MovementLogic playerMovementLogic;
     private ShootLogic playerShootLogic;
     private ADS ADSlogic;
-    private Lean lean;
     private WeaponWallBlock weaponWallBlock;
     private AnimationLogic playerAnimationLogic;
-    //[SerializeField] private SoundManager playerSoundManager;
 
     [Header("Movement Keys")]
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
@@ -24,9 +23,8 @@ public class InputManager : MonoBehaviour
     [SerializeField] private KeyCode ReloadKey;
     [SerializeField] private MouseButton ADS_key;
 
-
     [Header("Combat Variables")]
-    GunState CurrentGunState;
+    [SerializeField] GunState CurrentGunState;
     enum GunState {Idle, Blocked, Reload, ADS}
    
     private void Start()
@@ -37,28 +35,70 @@ public class InputManager : MonoBehaviour
     private void Update()
     {
         UpdateMovement();
-
-        Reload();
-
+        UpdateCombat();
     }
-    // combat
+
     void InitilizeCombatVariables()
     {
+        // variable assigning
         CurrentGunState = GunState.Idle;
         ADSlogic = PlayerComponents.Instance.ADS;
-        lean = PlayerComponents.Instance.Lean;
         playerShootLogic = PlayerComponents.Instance.ShootLogic;
         weaponWallBlock = PlayerComponents.Instance.WallBlock;
+        // event subscribing
+        playerShootLogic.OnReloadEnd += OnReloadEnd;
+        weaponWallBlock.WallBlockEnd += OnWallBlockEnd;
+        weaponWallBlock.WallBlockStart += OnWallBlockStart;
+    }
+
+    void ADS()
+    {
+        if (Input.GetMouseButton(1))
+        {
+            CurrentGunState = GunState.ADS;
+            ADSlogic.ApplyADS();
+        }
+        else
+        {
+            ADSlogic.RevertADS();
+        }
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            CurrentGunState = GunState.Idle;
+        }
     }
 
     void Reload()
     {
         if (Input.GetKeyDown(ReloadKey))
         {
+            CurrentGunState = GunState.Reload;
             StartCoroutine(playerShootLogic.Reload());
         }
     }
 
+    void OnReloadEnd(object  sender,EventArgs a)
+    {
+        CurrentGunState = GunState.Idle;
+    }
+
+    void OnWallBlockStart(object sender,EventArgs a)
+    {
+        CurrentGunState = GunState.Blocked;
+    }
+
+    void OnWallBlockEnd(object sender,EventArgs a)
+    {
+        CurrentGunState = GunState.Idle;
+    }
+
+    void UpdateCombat()
+    {
+        Reload();
+        ADS();
+
+    }
 
     // movement
     void InitilizeMovementVariables()

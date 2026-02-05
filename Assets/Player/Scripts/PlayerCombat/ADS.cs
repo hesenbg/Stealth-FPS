@@ -23,18 +23,6 @@ public class ADS : MonoBehaviour
         originalFOV = PlayerComponents.Instance.MainCamera.fieldOfView;
     }
 
-    private void Update()
-    {
-        if (Input.GetMouseButton(1))
-        {
-            ApplyADS();
-        }
-        else
-        {
-            RevertADS();
-        }
-    }
-
     public void ApplyADS()
     {
         adsRig.weight = Mathf.Lerp(
