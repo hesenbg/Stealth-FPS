@@ -45,8 +45,10 @@ public class ADS : MonoBehaviour
         );
     }
 
-    public void RevertADS()
+    public void RevertADS() // revert ads doesnt set values after reaching a certain treshold
     {
+        if (adsRig.weight <= minWeight + 0.001f) return;
+
         adsRig.weight = Mathf.Lerp(
             adsRig.weight,
             minWeight,
@@ -64,5 +66,12 @@ public class ADS : MonoBehaviour
             originalFOV,
             speed * Time.deltaTime
         );
+
+        if (adsRig.weight <= minWeight + 0.001f)
+        {
+            adsRig.weight = minWeight;
+            rightHand.localPosition = originalLocalPos;
+            PlayerComponents.Instance.MainCamera.fieldOfView = originalFOV;
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class AnimationLogic : MonoBehaviour
@@ -7,6 +8,9 @@ public class AnimationLogic : MonoBehaviour
     Vector3 CrouchOriginalPosition;
 
     [SerializeField] float CrouchSpeed;
+
+    public event EventHandler CombatAnimationStart;
+    public event EventHandler CombatAnimationEnd;
 
     private void Start()
     {
@@ -74,12 +78,22 @@ public class AnimationLogic : MonoBehaviour
 
     public void PlayKnifeAttackAnimation()
     {
-
+        PlayerAnimator.SetTrigger("Stab");
     }
 
     public void PlayGrenedeAnimation()
     {
+        PlayerAnimator.SetTrigger("Throw");
+    }
 
+    public void StartCombatAnimation()
+    {
+        CombatAnimationStart?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void EndCombatAnimation()
+    {
+        CombatAnimationEnd?.Invoke(this, EventArgs.Empty);
     }
 
     public void PlayShootAnimation(int CurrentAmmo)

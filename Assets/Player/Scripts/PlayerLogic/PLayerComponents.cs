@@ -13,7 +13,7 @@ public class PlayerComponents : MonoBehaviour
     [SerializeField] private HealthManager healthManager;
 
     [Header("Technical/Visual")]
-    [SerializeField] private Rig adsRig;
+    [SerializeField] private Rig combatAnimation;
     [SerializeField] private Camera playerMainCamera;
     [SerializeField] private WeaponWallBlock wallBlock;
     [SerializeField] private ADS ads;
@@ -27,7 +27,7 @@ public class PlayerComponents : MonoBehaviour
     public AnimationLogic AnimationLogic => animationLogic;
     public ShootLogic ShootLogic => shootLogic;
     public HealthManager HealthManager => healthManager;
-    public Rig ADSRig => adsRig;
+    public Rig CombatAnimation => combatAnimation;
     public Camera MainCamera => playerMainCamera;
     public WeaponWallBlock PullLogic => WallBlock;
 

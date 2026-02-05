@@ -22,6 +22,8 @@ public class InputManager : MonoBehaviour
     [SerializeField] private MouseButton ShootKey;
     [SerializeField] private KeyCode ReloadKey;
     [SerializeField] private MouseButton ADS_key;
+    [SerializeField] private KeyCode KnifeStabKey;
+    [SerializeField] private KeyCode ThrowObjectKey;
 
     [Header("Combat Variables")]
     [SerializeField] GunState CurrentGunState;
@@ -46,9 +48,15 @@ public class InputManager : MonoBehaviour
         playerShootLogic = PlayerComponents.Instance.ShootLogic;
         weaponWallBlock = PlayerComponents.Instance.WallBlock;
         // event subscribing
+        // reload
         playerShootLogic.OnReloadEnd += OnReloadEnd;
-        weaponWallBlock.WallBlockEnd += OnWallBlockEnd;
-        weaponWallBlock.WallBlockStart += OnWallBlockStart;
+
+        // weapon block
+        weaponWallBlock.WallBlockEnd += OnBlockEnd;
+        weaponWallBlock.WallBlockStart += OnBlockStart;
+
+        playerAnimationLogic.CombatAnimationEnd += OnBlockEnd;
+        playerAnimationLogic.CombatAnimationStart += OnBlockStart;
     }
 
     void ADS()
@@ -69,12 +77,40 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    void Shoot()
+    {
+        if(Input.GetMouseButton(1) && (CurrentGunState== GunState.Idle || CurrentGunState == GunState.ADS))
+        {
+            playerShootLogic.Shoot();
+            playerAnimationLogic.PlayShootAnimation(playerShootLogic.CurrentMagazineAmmo);
+        }
+    }
+
     void Reload()
     {
-        if (Input.GetKeyDown(ReloadKey))
+        if (Input.GetKeyDown(ReloadKey) && CurrentGunState== GunState.Idle)
         {
             CurrentGunState = GunState.Reload;
             StartCoroutine(playerShootLogic.Reload());
+            playerAnimationLogic.PlayReloadAnimation(playerShootLogic.CurrentMagazineAmmo==0);
+        }
+    }
+
+    void KnifeStab()
+    {
+        if (Input.GetKeyDown(KnifeStabKey))
+        {
+            CurrentGunState = GunState.Blocked;
+            playerAnimationLogic.PlayKnifeAttackAnimation();
+        }
+    }
+
+    void ThrowObject()
+    {
+        if (Input.GetKeyDown(ThrowObjectKey))
+        {
+            CurrentGunState = GunState.Blocked;
+            playerAnimationLogic.PlayGrenedeAnimation();
         }
     }
 
@@ -83,12 +119,12 @@ public class InputManager : MonoBehaviour
         CurrentGunState = GunState.Idle;
     }
 
-    void OnWallBlockStart(object sender,EventArgs a)
+    void OnBlockStart(object sender,EventArgs a)
     {
         CurrentGunState = GunState.Blocked;
     }
 
-    void OnWallBlockEnd(object sender,EventArgs a)
+    void OnBlockEnd(object sender,EventArgs a)
     {
         CurrentGunState = GunState.Idle;
     }
@@ -97,6 +133,8 @@ public class InputManager : MonoBehaviour
     {
         Reload();
         ADS();
+        ThrowObject();
+        KnifeStab();    
 
     }
 

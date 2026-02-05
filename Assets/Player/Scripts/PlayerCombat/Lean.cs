@@ -8,14 +8,17 @@ public class Lean : MonoBehaviour
     [SerializeField] float speed = 8f;
 
     [Header("References")]
-    [SerializeField] Transform bodyTransform;   // visual mesh root
-    [SerializeField] Transform cameraTransform; // FPS camera
+    [SerializeField] Transform bodyTransform;
+    [SerializeField] Transform cameraTransform;
 
     float currentAngle;
     float targetAngle;
 
     Vector3 camInitialLocalPos;
     Quaternion bodyInitialLocalRot;
+
+    enum LeanMode { Toggle, Hold }
+    [SerializeField] LeanMode CurrentLeanMode;
 
     void Start()
     {
@@ -25,18 +28,31 @@ public class Lean : MonoBehaviour
 
     void Update()
     {
-        targetAngle = 0f;
-
-        if (Input.GetKey(KeyCode.Q))
-            targetAngle = maxLeanAngle;
-        else if (Input.GetKey(KeyCode.E))
-            targetAngle = -maxLeanAngle;
+        HandleInput();
 
         currentAngle = Mathf.Lerp(
             currentAngle,
             targetAngle,
             speed * Time.deltaTime
         );
+    }
+
+    void HandleInput()
+    {
+        if (CurrentLeanMode == LeanMode.Hold)
+        {
+            targetAngle = 0f;
+            if (Input.GetKey(KeyCode.Q)) targetAngle = maxLeanAngle;
+            else if (Input.GetKey(KeyCode.E)) targetAngle = -maxLeanAngle;
+        }
+        else // Toggle Mode
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+                targetAngle = (targetAngle == maxLeanAngle) ? 0f : maxLeanAngle;
+
+            if (Input.GetKeyDown(KeyCode.E))
+                targetAngle = (targetAngle == -maxLeanAngle) ? 0f : -maxLeanAngle;
+        }
     }
 
     void LateUpdate()
@@ -54,9 +70,7 @@ public class Lean : MonoBehaviour
     void ApplyCameraOffset()
     {
         float normalized = currentAngle / maxLeanAngle;
-
-        Vector3 targetLocalPos = camInitialLocalPos;
-        targetLocalPos += Vector3.right * (normalized * maxCameraOffset);
+        Vector3 targetLocalPos = camInitialLocalPos + (Vector3.right * (normalized * maxCameraOffset));
 
         cameraTransform.localPosition = Vector3.Lerp(
             cameraTransform.localPosition,
