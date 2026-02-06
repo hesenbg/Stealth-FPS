@@ -11,6 +11,7 @@ public class PlayerComponents : MonoBehaviour
     [SerializeField] private AnimationLogic animationLogic;
     [SerializeField] private ShootLogic shootLogic;
     [SerializeField] private HealthManager healthManager;
+    [SerializeField] private InputManager inputManager;
 
     [Header("Technical/Visual")]
     [SerializeField] private Rig combatAnimation;
@@ -20,6 +21,7 @@ public class PlayerComponents : MonoBehaviour
     [SerializeField] private Lean lean;
 
     // Getters
+    public InputManager InputManager  => inputManager;
     public ADS ADS => ads;
     public Lean Lean => lean;
     public MovementLogic Movement => movement;

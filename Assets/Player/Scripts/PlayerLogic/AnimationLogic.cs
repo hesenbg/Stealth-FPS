@@ -1,10 +1,11 @@
 using System;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class AnimationLogic : MonoBehaviour
 {
-    public Animator PlayerAnimator;
-
+    public Animator Animator;
+    RigBuilder AnimationRig;
     Vector3 CrouchOriginalPosition;
 
     [SerializeField] float CrouchSpeed;
@@ -14,6 +15,8 @@ public class AnimationLogic : MonoBehaviour
 
     private void Start()
     {
+        AnimationRig = GetComponent<RigBuilder>();
+        Animator = GetComponent<Animator>();  
         CrouchOriginalPosition = PlayerComponents.Instance.MainCamera.transform.localPosition;
     }
 
@@ -26,8 +29,8 @@ public class AnimationLogic : MonoBehaviour
     {
         MovementLogic Player= PlayerComponents.Instance.Movement;
 
-        PlayerAnimator.SetBool("IsWalking", Player.CurrentMovementState == MovementLogic.MovementState.Walk);
-        PlayerAnimator.SetBool("IsRunning", Player.CurrentMovementState == MovementLogic.MovementState.Run);
+        Animator.SetBool("IsWalking", Player.CurrentMovementState == MovementLogic.MovementState.Walk);
+        Animator.SetBool("IsRunning", Player.CurrentMovementState == MovementLogic.MovementState.Run);
     }
     
     public void CrouchAnimation(bool IsCrouching)
@@ -66,24 +69,24 @@ public class AnimationLogic : MonoBehaviour
         // We set the trigger, the Update loop will detect the state change
         if (IsMagEmpty)
         {
-            PlayerAnimator.SetFloat("ReloadType", 1f);
-            PlayerAnimator.SetTrigger("Reload");
+            Animator.SetFloat("ReloadType", 1f);
+            Animator.SetTrigger("Reload");
         }
         else
         {
-            PlayerAnimator.SetFloat("ReloadType", 0f);
-            PlayerAnimator.SetTrigger("Reload");
+            Animator.SetFloat("ReloadType", 0f);
+            Animator.SetTrigger("Reload");
         }
     }
 
     public void PlayKnifeAttackAnimation()
     {
-        PlayerAnimator.SetTrigger("Stab");
+        Animator.SetTrigger("Stab");
     }
 
     public void PlayGrenedeAnimation()
     {
-        PlayerAnimator.SetTrigger("Throw");
+        Animator.SetTrigger("Throw");
     }
 
     public void StartCombatAnimation()
@@ -100,18 +103,18 @@ public class AnimationLogic : MonoBehaviour
     {
         if (CurrentAmmo == 1)
         {
-            PlayerAnimator.SetFloat("ShootType", 0.5f);
-            PlayerAnimator.SetTrigger("Shoot");
+            Animator.SetFloat("ShootType", 0.5f);
+            Animator.SetTrigger("Shoot");
         }
         else if (CurrentAmmo > 1)
         {
-            PlayerAnimator.SetFloat("ShootType", 1f);
-            PlayerAnimator.SetTrigger("Shoot");
+            Animator.SetFloat("ShootType", 1f);
+            Animator.SetTrigger("Shoot");
         }
         else
         {
-            PlayerAnimator.SetFloat("ShootType", 0f);
-            PlayerAnimator.SetTrigger("Shoot");
+            Animator.SetFloat("ShootType", 0f);
+            Animator.SetTrigger("Shoot");
         }
     }
 

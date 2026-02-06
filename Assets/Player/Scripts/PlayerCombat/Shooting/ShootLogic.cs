@@ -1,20 +1,16 @@
 using UnityEngine;
 using System.Collections;
 using System;
+
 public class ShootLogic : MonoBehaviour
 {
     [SerializeField] CombatData PlayerCombatData;
-
     [SerializeField] Transform Origin;
 
-    public int CurrentMagazineAmmo {  get; private set; }
+    public int CurrentMagazineAmmo { get; private set; }
     public int CurrentTotalAmmo { get; private set; }
 
-    bool IsShootable = true;
-    [HideInInspector] public bool IsShooting = false;
-    float shootCooldown = 0f;
-
-    // events
+    private float shootTimer = 0f;
     public event EventHandler OnReloadEnd;
     public event EventHandler OnReload;
 
@@ -24,23 +20,39 @@ public class ShootLogic : MonoBehaviour
         CurrentTotalAmmo = PlayerCombatData.TotalAmmo;
     }
 
-    public void Shoot()
+    private void Update()
     {
-        CurrentMagazineAmmo--;
-
-        Ray ray = new Ray(Origin.transform.position,Origin.forward);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        if (shootTimer > 0)
         {
-            // when hits an objects stop raycasting and apply impact
-            if (hit.collider.CompareTag("Obstacle"))
+            shootTimer -= Time.deltaTime;
+        }
+    }
+
+    public bool Shoot()
+    {
+        if (shootTimer <= 0 && CurrentMagazineAmmo > 0)
+        {
+            shootTimer = PlayerCombatData.ShootDelay;
+
+            ExecuteRaycast();
+            CurrentMagazineAmmo--;
+            return true;
+        }
+
+        return false;
+    }
+
+    private void ExecuteRaycast()
+    {
+        Ray ray = new Ray(Origin.position, Origin.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            if (hit.collider.CompareTag("Untagged"))
             {
                 PlayerCombatData.Trace.ApplyRandomTexture();
                 Instantiate(PlayerCombatData.Trace, hit.point + (hit.normal * 0.01f), Quaternion.FromToRotation(Vector3.up, hit.normal));
-                return;
             }
-            // damage certain points of enemy
-            if (hit.collider.CompareTag("Head"))
+            else if (hit.collider.CompareTag("Head"))
             {
                 SoundManager.Instance.PlayHeadShotIndicator(transform.position);
                 hit.collider.gameObject.GetComponent<EnemyHead>().GetDamage(40, true, hit.normal, hit.point);
@@ -49,8 +61,7 @@ public class ShootLogic : MonoBehaviour
             {
                 hit.collider.gameObject.GetComponent<EnemyHealthManager>().GetDamage(40, false, hit.point, hit.normal);
             }
-            // specificly for destructable objects 
-            else if (hit.collider.CompareTag("Destrcutable")) // destructibles
+            else if (hit.collider.CompareTag("Destructable"))
             {
                 hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
             }
@@ -63,11 +74,11 @@ public class ShootLogic : MonoBehaviour
         yield return new WaitForSeconds(PlayerCombatData.ReloadTime);
 
         int needed = PlayerCombatData.Magazine - CurrentMagazineAmmo;
-        int toLoad = Mathf.Min(needed, PlayerCombatData.TotalAmmo);
+        int toLoad = Mathf.Min(needed, CurrentTotalAmmo);
 
         CurrentMagazineAmmo += toLoad;
-        CurrentTotalAmmo-= toLoad;
+        CurrentTotalAmmo -= toLoad;
 
-        OnReloadEnd?.Invoke(this,EventArgs.Empty);
+        OnReloadEnd?.Invoke(this, EventArgs.Empty);
     }
 }

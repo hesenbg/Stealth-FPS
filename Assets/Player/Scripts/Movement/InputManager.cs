@@ -26,8 +26,8 @@ public class InputManager : MonoBehaviour
     [SerializeField] private KeyCode ThrowObjectKey;
 
     [Header("Combat Variables")]
-    [SerializeField] GunState CurrentGunState;
-    enum GunState {Idle, Blocked, Reload, ADS}
+    public GunState CurrentGunState { get; private set; }
+    public enum GunState { Idle, Blocked, Reload, ADS }
    
     private void Start()
     {
@@ -79,9 +79,10 @@ public class InputManager : MonoBehaviour
 
     void Shoot()
     {
-        if(Input.GetMouseButton(1) && (CurrentGunState== GunState.Idle || CurrentGunState == GunState.ADS))
+        if(Input.GetMouseButton(0) && (CurrentGunState== GunState.Idle || CurrentGunState == GunState.ADS))
         {
-            playerShootLogic.Shoot();
+            if (!playerShootLogic.Shoot())
+                return;
             playerAnimationLogic.PlayShootAnimation(playerShootLogic.CurrentMagazineAmmo);
         }
     }
@@ -135,7 +136,7 @@ public class InputManager : MonoBehaviour
         ADS();
         ThrowObject();
         KnifeStab();    
-
+        Shoot();
     }
 
     // movement
@@ -222,5 +223,4 @@ public class InputManager : MonoBehaviour
         Jump();
         Run();
     }
-
 }

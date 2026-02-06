@@ -6,13 +6,14 @@ public class Lean : MonoBehaviour
     [SerializeField] float maxLeanAngle = 15f;
     [SerializeField] float maxCameraOffset = 0.25f;
     [SerializeField] float speed = 8f;
-
+    [SerializeField] float threshold = 0.01f; 
     [Header("References")]
     [SerializeField] Transform bodyTransform;
     [SerializeField] Transform cameraTransform;
 
     float currentAngle;
     float targetAngle;
+    bool isMoving;
 
     Vector3 camInitialLocalPos;
     Quaternion bodyInitialLocalRot;
@@ -28,13 +29,26 @@ public class Lean : MonoBehaviour
 
     void Update()
     {
+        float previousTarget = targetAngle;
         HandleInput();
 
-        currentAngle = Mathf.Lerp(
-            currentAngle,
-            targetAngle,
-            speed * Time.deltaTime
-        );
+        if (previousTarget != targetAngle)
+        {
+            isMoving = true;
+        }
+
+        if (isMoving)
+        {
+            currentAngle = Mathf.Lerp(currentAngle, targetAngle, speed * Time.deltaTime);
+
+            // Check if we are within the 0.01 threshold
+            if (Mathf.Abs(currentAngle - targetAngle) < threshold)
+            {
+                currentAngle = targetAngle;
+                ApplyTransformations(); // Final snap to exact position
+                isMoving = false;       // Stop updating until input changes
+            }
+        }
     }
 
     void HandleInput()
@@ -48,34 +62,30 @@ public class Lean : MonoBehaviour
         else // Toggle Mode
         {
             if (Input.GetKeyDown(KeyCode.Q))
-                targetAngle = (targetAngle == maxLeanAngle) ? 0f : maxLeanAngle;
+                targetAngle = Mathf.Approximately(targetAngle, maxLeanAngle) ? 0f : maxLeanAngle;
 
             if (Input.GetKeyDown(KeyCode.E))
-                targetAngle = (targetAngle == -maxLeanAngle) ? 0f : -maxLeanAngle;
+                targetAngle = Mathf.Approximately(targetAngle, -maxLeanAngle) ? 0f : -maxLeanAngle;
         }
     }
 
     void LateUpdate()
     {
-        ApplyBodyLean();
-        ApplyCameraOffset();
+        // Only run the heavy transform updates if the flag is true
+        if (isMoving)
+        {
+            ApplyTransformations();
+        }
     }
 
-    void ApplyBodyLean()
+    void ApplyTransformations()
     {
-        bodyTransform.localRotation =
-            bodyInitialLocalRot * Quaternion.Euler(0f, 0f, currentAngle);
-    }
+        // Body Rotation
+        bodyTransform.localRotation = bodyInitialLocalRot * Quaternion.Euler(0f, 0f, currentAngle);
 
-    void ApplyCameraOffset()
-    {
+        // Camera Offset
         float normalized = currentAngle / maxLeanAngle;
         Vector3 targetLocalPos = camInitialLocalPos + (Vector3.right * (normalized * maxCameraOffset));
-
-        cameraTransform.localPosition = Vector3.Lerp(
-            cameraTransform.localPosition,
-            targetLocalPos,
-            speed * Time.deltaTime
-        );
+        cameraTransform.localPosition = targetLocalPos;
     }
 }
