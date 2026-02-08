@@ -12,6 +12,10 @@ public class AnimationLogic : MonoBehaviour
 
     public event EventHandler CombatAnimationStart;
     public event EventHandler CombatAnimationEnd;
+    public event EventHandler ThrowAbleRelease;
+
+    [SerializeField] Rig RecoilRig;
+    [SerializeField] Transform GunParent;
 
     private void Start()
     {
@@ -89,6 +93,11 @@ public class AnimationLogic : MonoBehaviour
         Animator.SetTrigger("Throw");
     }
 
+    public void FireThrowAbleRelease()
+    {
+        ThrowAbleRelease?.Invoke(this, EventArgs.Empty);
+    }
+
     public void StartCombatAnimation()
     {
         CombatAnimationStart?.Invoke(this, EventArgs.Empty);
@@ -101,6 +110,7 @@ public class AnimationLogic : MonoBehaviour
 
     public void PlayShootAnimation(int CurrentAmmo)
     {
+        // fixed animation
         if (CurrentAmmo == 1)
         {
             Animator.SetFloat("ShootType", 0.5f);
@@ -116,6 +126,7 @@ public class AnimationLogic : MonoBehaviour
             Animator.SetFloat("ShootType", 0f);
             Animator.SetTrigger("Shoot");
         }
-    }
 
+        // procedural animation
+    }
 }

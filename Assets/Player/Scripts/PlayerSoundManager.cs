@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerSoundManager : MonoBehaviour
@@ -13,6 +15,8 @@ public class PlayerSoundManager : MonoBehaviour
 
     [SerializeField] private AudioClip JumpOff;
     [SerializeField] private AudioClip Land;
+
+    [SerializeField] List<AudioClip> ShootSounds;
 
     [Header("Step Settings")]
     [SerializeField] private float walkStepInterval = 0.5f;
@@ -38,6 +42,17 @@ public class PlayerSoundManager : MonoBehaviour
             return;
         }
         instance = this;
+    }
+
+
+    public void PlayShootSound()
+    {
+
+    }
+
+    public void ReloadSound()
+    {
+
     }
 
     public void PlayWalk()

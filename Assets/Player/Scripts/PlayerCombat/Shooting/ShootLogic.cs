@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using System;
-
 public class ShootLogic : MonoBehaviour
 {
     [SerializeField] CombatData PlayerCombatData;
@@ -13,6 +12,8 @@ public class ShootLogic : MonoBehaviour
     private float shootTimer = 0f;
     public event EventHandler OnReloadEnd;
     public event EventHandler OnReload;
+
+    public Vector3 TotalCurrentRecoil { get; private set; }
 
     private void Start()
     {
@@ -66,6 +67,12 @@ public class ShootLogic : MonoBehaviour
                 hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
             }
         }
+    }
+
+
+    void CalculateRecoil()
+    {
+
     }
 
     public IEnumerator Reload()

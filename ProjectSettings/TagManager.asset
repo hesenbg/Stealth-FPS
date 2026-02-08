@@ -9,6 +9,7 @@ TagManager:
   - Obstacle
   - LightSources
   - FxTemporaire
+  - Destrcutable
   layers:
   - Default
   - TransparentFX

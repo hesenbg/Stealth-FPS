@@ -99,7 +99,7 @@ public class InputManager : MonoBehaviour
 
     void KnifeStab()
     {
-        if (Input.GetKeyDown(KnifeStabKey))
+        if (Input.GetKeyDown(KnifeStabKey) && CurrentGunState == GunState.Idle)
         {
             CurrentGunState = GunState.Blocked;
             playerAnimationLogic.PlayKnifeAttackAnimation();
@@ -108,7 +108,7 @@ public class InputManager : MonoBehaviour
 
     void ThrowObject()
     {
-        if (Input.GetKeyDown(ThrowObjectKey))
+        if (Input.GetKeyDown(ThrowObjectKey) && CurrentGunState == GunState.Idle)
         {
             CurrentGunState = GunState.Blocked;
             playerAnimationLogic.PlayGrenedeAnimation();

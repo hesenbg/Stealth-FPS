@@ -18,12 +18,10 @@ public class PlayerComponents : MonoBehaviour
     [SerializeField] private Camera playerMainCamera;
     [SerializeField] private WeaponWallBlock wallBlock;
     [SerializeField] private ADS ads;
-    [SerializeField] private Lean lean;
 
     // Getters
     public InputManager InputManager  => inputManager;
     public ADS ADS => ads;
-    public Lean Lean => lean;
     public MovementLogic Movement => movement;
     public WeaponWallBlock WallBlock => wallBlock;
     public AnimationLogic AnimationLogic => animationLogic;

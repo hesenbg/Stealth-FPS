@@ -12,6 +12,7 @@ public class ProceduralArms : MonoBehaviour
     [SerializeField] float maxMoveSway = 0.1f;
     [SerializeField] float bobSpeed = 5f;
     [SerializeField] float jumpBobMultiplier = 2f;
+    [SerializeField] float MoveMultipiler;
 
     [Header("Lean Settings")]
     Transform cameraTransform;
@@ -61,23 +62,27 @@ public class ProceduralArms : MonoBehaviour
     {
         GetInput();
 
-        // 1. CALCULATE CAMERA LEAN (X-Axis Offset)
         if (cameraTransform != null)
         {
-            float leanNormalized = currentLeanAngle / maxLeanAngle;
-            Vector3 targetCamPos = camStartLocalPos + (Vector3.right * (leanNormalized * maxCameraXOffset));
-            cameraTransform.localPosition = targetCamPos;
+            if (Mathf.Abs(currentLeanAngle) > 0.01f || Mathf.Abs(currentLeanAngle - targetLeanAngle) > leanThreshold)
+            {
+                float leanNormalized = currentLeanAngle / maxLeanAngle;
+                float targetXOffset = leanNormalized * maxCameraXOffset;
+
+                Vector3 currentPos = cameraTransform.localPosition;
+                cameraTransform.localPosition = new Vector3(camStartLocalPos.x + targetXOffset, currentPos.y, currentPos.z);
+            }
         }
 
-        // Combine mouse sway with the z-axis tilt from leaning
+        // sway lean
         Quaternion swayRot = CalculateSwayRotation();
         Quaternion leanRot = Quaternion.Euler(0f, 0f, currentLeanAngle);
         Quaternion finalRotation = swayRot * leanRot;
 
-        // CALCULATE ARM BOBBING (WASD + Jump)
+        // bobbing
         Vector3 targetArmBobPos = CalculateMovementBob();
 
-        // APPLY TO ARMS
+        // final apply
         transform.localRotation = Quaternion.Slerp(transform.localRotation, finalRotation, swaySpeed * Time.deltaTime);
         transform.localPosition = Vector3.Lerp(transform.localPosition, targetArmBobPos, Time.deltaTime * bobSpeed);
     }
@@ -122,6 +127,6 @@ public class ProceduralArms : MonoBehaviour
         float verticalVel = PlayerComponents.Instance.Movement.CurrentVelocity.y;
         float moveY = Mathf.Clamp((verticalVel / playerMovementData.JumpForce) * moveSwayAmount * jumpBobMultiplier, -maxMoveSway, maxMoveSway);
 
-        return armStartLocalPos + new Vector3(-moveX, moveY, -moveZ);
+        return armStartLocalPos + new Vector3(-moveX*MoveMultipiler, moveY, -moveZ*MoveMultipiler);
     }
 }
