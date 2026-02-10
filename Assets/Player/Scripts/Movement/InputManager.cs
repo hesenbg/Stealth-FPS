@@ -10,6 +10,8 @@ public class InputManager : MonoBehaviour
     private WeaponWallBlock weaponWallBlock;
     private AnimationLogic playerAnimationLogic;
 
+    [SerializeField] Recoil PlayerRecoil;
+
     [Header("Movement Keys")]
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
     [SerializeField] private KeyCode crouchKey = KeyCode.LeftControl;
@@ -26,7 +28,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] private KeyCode ThrowObjectKey;
 
     [Header("Combat Variables")]
-    public GunState CurrentGunState { get; private set; }
+    public GunState CurrentGunState;
     public enum GunState { Idle, Blocked, Reload, ADS }
    
     private void Start()
@@ -61,19 +63,18 @@ public class InputManager : MonoBehaviour
 
     void ADS()
     {
+        if (Input.GetMouseButtonUp(1))
+        {
+            CurrentGunState = GunState.Idle;
+        }
         if (Input.GetMouseButton(1))
         {
             CurrentGunState = GunState.ADS;
             ADSlogic.ApplyADS();
         }
-        else
+        if(CurrentGunState == GunState.Idle)
         {
             ADSlogic.RevertADS();
-        }
-
-        if (Input.GetMouseButtonUp(1))
-        {
-            CurrentGunState = GunState.Idle;
         }
     }
 
@@ -81,8 +82,15 @@ public class InputManager : MonoBehaviour
     {
         if(Input.GetMouseButton(0) && (CurrentGunState== GunState.Idle || CurrentGunState == GunState.ADS))
         {
-            if (!playerShootLogic.Shoot())
+            if (!playerShootLogic.CanShoot())
                 return;
+
+            playerShootLogic.Shoot();
+
+            playerShootLogic.CalculateRecoil();
+
+            PlayerRecoil.RecoilFire(playerShootLogic.TotalCurrentRecoil);
+
             playerAnimationLogic.PlayShootAnimation(playerShootLogic.CurrentMagazineAmmo);
         }
     }
@@ -133,10 +141,10 @@ public class InputManager : MonoBehaviour
     void UpdateCombat()
     {
         Reload();
-        ADS();
         ThrowObject();
         KnifeStab();    
         Shoot();
+        ADS();
     }
 
     // movement

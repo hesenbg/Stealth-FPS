@@ -8,6 +8,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] float MouseSensitivity;
     [SerializeField] Transform PlayerTransform;
 
+    [Header("Input Control")]
+    [SerializeField] KeyCode toggleLookKey = KeyCode.Tab;
+    bool lookEnabled = true;
+
     float Xrotation;
     Vector3 TargetLocation;
 
@@ -17,30 +21,34 @@ public class CameraController : MonoBehaviour
     [SerializeField] float recoilKick;
     [SerializeField] float recoilReturnSpeed;
 
-    private void Start()
-    {
-    }
-
     private void Update()
     {
-        // Lock cursor to center and hide it
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // Toggle look on/off
+        if (Input.GetKeyDown(toggleLookKey))
+            lookEnabled = !lookEnabled;
 
-        GetMouseCoordinates();
-        UpdateRotation();
+        // Cursor handling based on state
+        if (lookEnabled)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            GetMouseCoordinates();
+            UpdateRotation();
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            // prevent leftover input affecting rotation
+            MouseX = 0f;
+            MouseY = 0f;
+        }
 
         // Smooth recoil return
         recoilX = Mathf.SmoothDamp(recoilX, 0f, ref recoilVelocity, 1f / recoilReturnSpeed);
 
         ApplyRotation();
-
-        // Optional: Toggle lock state for debugging
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
     }
 
     void GetMouseCoordinates()
@@ -51,10 +59,8 @@ public class CameraController : MonoBehaviour
 
     void UpdateRotation()
     {
-        // horizontal rotation (yaw)
         PlayerTransform.Rotate(Vector3.up * MouseX);
 
-        // vertical rotation (pitch)
         Xrotation -= MouseY;
         Xrotation = Mathf.Clamp(Xrotation, -90f, 90f);
 
@@ -68,7 +74,6 @@ public class CameraController : MonoBehaviour
 
     public void ApplyRecoilMotion(float Kick)
     {
-        // Typical vertical recoil kick is negative for upward movement
         recoilX -= Kick;
     }
 }

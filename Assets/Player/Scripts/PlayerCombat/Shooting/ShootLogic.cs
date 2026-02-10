@@ -13,7 +13,7 @@ public class ShootLogic : MonoBehaviour
     public event EventHandler OnReloadEnd;
     public event EventHandler OnReload;
 
-    public Vector3 TotalCurrentRecoil { get; private set; }
+    public Vector3 TotalCurrentRecoil;
 
     private void Start()
     {
@@ -27,15 +27,21 @@ public class ShootLogic : MonoBehaviour
         {
             shootTimer -= Time.deltaTime;
         }
+
+
+
+        TotalCurrentRecoil = Vector3.Lerp(TotalCurrentRecoil,
+            Vector3.zero,
+            Time.deltaTime*PlayerCombatData.RecoilRecoverySpeed);
+
     }
 
-    public bool Shoot()
+    public bool CanShoot()
     {
         if (shootTimer <= 0 && CurrentMagazineAmmo > 0)
         {
             shootTimer = PlayerCombatData.ShootDelay;
 
-            ExecuteRaycast();
             CurrentMagazineAmmo--;
             return true;
         }
@@ -43,9 +49,9 @@ public class ShootLogic : MonoBehaviour
         return false;
     }
 
-    private void ExecuteRaycast()
+    public void Shoot()
     {
-        Ray ray = new Ray(Origin.position, Origin.forward);
+        Ray ray = new Ray(Origin.position, Origin.forward+ TotalCurrentRecoil);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             if (hit.collider.CompareTag("Untagged"))
@@ -69,10 +75,19 @@ public class ShootLogic : MonoBehaviour
         }
     }
 
-
-    void CalculateRecoil()
+    public void CalculateRecoil()
     {
+        float randomX = UnityEngine.Random.Range(0,
+            PlayerCombatData.RecoilX);
+        float randomY = UnityEngine.Random.Range(0,
+            PlayerCombatData.RecoilY);
+        float randomZ = UnityEngine.Random.Range(0,
+            PlayerCombatData.RecoilZ);
 
+
+        Vector3 Recoil = new Vector3(randomX, randomY, randomZ);
+
+        TotalCurrentRecoil += Recoil*PlayerCombatData.RecoilBuildupSpeed;
     }
 
     public IEnumerator Reload()

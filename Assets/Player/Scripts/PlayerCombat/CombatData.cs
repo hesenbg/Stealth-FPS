@@ -16,8 +16,19 @@ public class CombatData : ScriptableObject
     [SerializeField] private float baseRecoil;
     [SerializeField] private float moveRecoilMultiplier;
     [SerializeField] private float recoilRecoverySpeed;
+    [SerializeField] private float recoilBuildupSpeed;
 
+    [SerializeField] private float recoilX;
+    [SerializeField] private float recoilY;
+    [SerializeField] private float recoilZ;
     // getters
+
+    public float RecoilX => recoilX;
+    public float RecoilY => recoilY;
+    public float RecoilZ => recoilZ;
+
+    public float RecoilBuildupSpeed => recoilBuildupSpeed;
+
     public float ShootDelay => shootDelay;
     public BulletHole Trace => trace;
 

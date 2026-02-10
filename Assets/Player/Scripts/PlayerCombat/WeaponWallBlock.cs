@@ -22,7 +22,7 @@ public class WeaponWallBlock : MonoBehaviour
 
     [Header("Blocking Logic")]
     [SerializeField] float BlockTresholdLimit = 0.1f;
-    public bool Blocked { get; private set; }
+    public bool Blocked;
 
     [SerializeField] private float currentWeight;
     private Vector3 initialLocalPos;

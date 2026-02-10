@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-
 public class ADS : MonoBehaviour
 {
     [Header("References")]
@@ -36,7 +35,6 @@ public class ADS : MonoBehaviour
             ADSpos.transform.position,
             speed * Time.deltaTime
         );
-
 
         PlayerComponents.Instance.MainCamera.fieldOfView = Mathf.Lerp(
             PlayerComponents.Instance.MainCamera.fieldOfView,
