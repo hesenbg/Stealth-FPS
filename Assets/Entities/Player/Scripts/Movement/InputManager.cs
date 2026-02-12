@@ -92,6 +92,8 @@ public class InputManager : MonoBehaviour
             PlayerRecoil.RecoilFire(playerShootLogic.TotalCurrentRecoil);
 
             playerAnimationLogic.PlayShootAnimation(playerShootLogic.CurrentMagazineAmmo);
+
+            PlayerSoundManager.instance.PlayShootSound();
         }
     }
 

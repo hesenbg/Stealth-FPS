@@ -66,9 +66,6 @@ public class ProceduralArms : MonoBehaviour
         {
             float leanNormalized = currentLeanAngle / maxLeanAngle;
             counterOffset = leanNormalized * maxCameraXOffset;
-
-            Debug.Log(counterOffset);
-
             transform.localPosition = new Vector3(StartLocalPos.x + counterOffset, StartLocalPos.y, StartLocalPos.z);
         }
 

@@ -15,6 +15,8 @@ public class ShootLogic : MonoBehaviour
 
     public Vector3 TotalCurrentRecoil;
 
+    public enum EffectedObject {Head, Body, Destrcutable}
+
     private void Start()
     {
         CurrentMagazineAmmo = PlayerCombatData.Magazine;
@@ -27,13 +29,9 @@ public class ShootLogic : MonoBehaviour
         {
             shootTimer -= Time.deltaTime;
         }
-
-
-
         TotalCurrentRecoil = Vector3.Lerp(TotalCurrentRecoil,
             Vector3.zero,
             Time.deltaTime*PlayerCombatData.RecoilRecoverySpeed);
-
     }
 
     public bool CanShoot()
@@ -59,15 +57,15 @@ public class ShootLogic : MonoBehaviour
                 PlayerCombatData.Trace.ApplyRandomTexture();
                 Instantiate(PlayerCombatData.Trace, hit.point + (hit.normal * 0.01f), Quaternion.FromToRotation(Vector3.up, hit.normal));
             }
-            else if (hit.collider.CompareTag("Head"))
+            if (hit.collider.CompareTag("Head"))
             {
-                SoundManager.Instance.PlayHeadShotIndicator(transform.position);
+                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetDamage(PlayerCombatData.BaseDamage,PlayerCombatData.HsMultipiler);
             }
-            else if (hit.collider.CompareTag("Body"))
+            if (hit.collider.CompareTag("Body"))
             {
-
+                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetDamage(PlayerCombatData.BaseDamage,1f);
             }
-            else if (hit.collider.CompareTag("Destructable"))
+            if (hit.collider.CompareTag("Destructable"))
             {
                 hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
             }

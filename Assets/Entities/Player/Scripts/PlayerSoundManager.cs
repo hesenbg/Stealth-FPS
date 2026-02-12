@@ -16,7 +16,7 @@ public class PlayerSoundManager : MonoBehaviour
     [SerializeField] private AudioClip JumpOff;
     [SerializeField] private AudioClip Land;
 
-    [SerializeField] List<AudioClip> ShootSounds;
+    [SerializeField] private List<AudioClip> ShootSounds;
     [SerializeField] private List<AudioClip> headhitSound;
     [SerializeField] private List<AudioClip> bodyHitSound;
 
@@ -49,12 +49,26 @@ public class PlayerSoundManager : MonoBehaviour
 
     public void PlayShootSound()
     {
+        if (ShootSounds == null || ShootSounds.Count == 0) return;
 
+        int index = Random.Range(0, ShootSounds.Count);
+        playerAudioSource.PlayOneShot(ShootSounds[index]);
     }
 
-    public void ReloadSound()
+    public void BodyHitSound()
     {
+        if (bodyHitSound == null || bodyHitSound.Count == 0) return;
 
+        int index = Random.Range(0, bodyHitSound.Count);
+        playerAudioSource.PlayOneShot(bodyHitSound[index]);
+    }
+
+    public void HeadShotHitSound()
+    {
+        if (headhitSound == null || headhitSound.Count == 0) return;
+
+        int index = Random.Range(0, headhitSound.Count);
+        playerAudioSource.PlayOneShot(headhitSound[index]);
     }
 
     public void PlayWalk()

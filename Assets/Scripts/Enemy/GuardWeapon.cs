@@ -35,13 +35,13 @@ public class GuardWeapon : MonoBehaviour
 
     private void Shoot()
     {
-        HealthManager.GotDamage(15);
+        //HealthManager.GotDamage(15);
 
         Ray ray = new Ray(Origin.transform.position,transform.forward);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, RayLength, HitMask,QueryTriggerInteraction.Ignore))
         {
-            hit.collider.gameObject.GetComponent<HealthManager>().GotDamage(30);
+            //hit.collider.gameObject.GetComponent<HealthManager>().GotDamage(30);
         }
         
     }

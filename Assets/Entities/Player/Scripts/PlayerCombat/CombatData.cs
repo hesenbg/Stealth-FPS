@@ -13,8 +13,8 @@ public class CombatData : ScriptableObject
     [SerializeField] private float reloadTime;
 
     [Header("Damage")]
-    [SerializeField] private float BodyDamage;
-    [SerializeField] private float HsMultipiler;
+    [SerializeField] private float baseDamage;
+    [SerializeField] private float hsMultipiler;
 
     [Header("Recoil")]
     [SerializeField] private float baseRecoil;
@@ -27,6 +27,8 @@ public class CombatData : ScriptableObject
     [SerializeField] private float recoilZ;
     // getters
 
+    public float BaseDamage => baseDamage;
+    public float HsMultipiler => hsMultipiler;
     public float RecoilX => recoilX;
     public float RecoilY => recoilY;
     public float RecoilZ => recoilZ;
