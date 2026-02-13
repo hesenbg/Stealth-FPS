@@ -8,8 +8,8 @@ TagManager:
   - Head
   - Obstacle
   - LightSources
-  - Destrcutable
   - Enemy
+  - Destructable
   layers:
   - Default
   - TransparentFX

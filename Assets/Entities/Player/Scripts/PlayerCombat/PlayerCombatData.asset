@@ -17,9 +17,11 @@ MonoBehaviour:
   magazine: 100
   totalAmmo: 1000000
   reloadTime: 1.4
+  baseDamage: 40
+  hsMultipiler: 3
   baseRecoil: 0
   moveRecoilMultiplier: 0
-  recoilRecoverySpeed: 0.6
+  recoilRecoverySpeed: 1.5
   recoilBuildupSpeed: 2
   recoilX: 0.02
   recoilY: 0.005

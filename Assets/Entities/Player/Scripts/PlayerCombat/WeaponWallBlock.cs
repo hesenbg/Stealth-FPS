@@ -66,7 +66,7 @@ public class WeaponWallBlock : MonoBehaviour
         currentWeight = Mathf.Lerp(currentWeight, targetWeight, weightSpeed * Time.deltaTime);
 
         // If the weight is practically zero, reset to initial and stop updating transform
-        if (currentWeight > 0.001f)
+        if (currentWeight > MinWeightBlock)
         {
             weaponPullRig.weight = currentWeight;
             ApplyOffsets(currentWeight);
@@ -74,7 +74,7 @@ public class WeaponWallBlock : MonoBehaviour
             // Set Blocked status based on threshold
             Blocked = currentWeight > BlockTresholdLimit;
         }
-        else if (currentWeight <= 0.001f && weaponPullRig.weight > 0f)
+        else if (currentWeight <= MinWeightBlock && weaponPullRig.weight > 0f)
         {
             // Final reset to ensure clean values
             currentWeight = 0f;

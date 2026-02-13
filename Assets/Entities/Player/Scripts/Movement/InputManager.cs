@@ -67,7 +67,7 @@ public class InputManager : MonoBehaviour
         {
             CurrentGunState = GunState.Idle;
         }
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1) && CurrentGunState != GunState.Blocked)
         {
             CurrentGunState = GunState.ADS;
             ADSlogic.ApplyADS();

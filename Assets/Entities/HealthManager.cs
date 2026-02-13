@@ -4,14 +4,30 @@ public class HealthManager : MonoBehaviour
     [SerializeField] float MaxHealth;
     [SerializeField] float CurrentHealth;
 
+    [SerializeField] Transform Head;
+    [SerializeField] Transform Body;
+
+    [SerializeField] GameObject OriginalHips;
+    [SerializeField] GameObject CoreObjectToBeDestroyed;
+    [SerializeField] GameObject Ragdoll;
+
     private void Start()
     {
         CurrentHealth = MaxHealth;
     }
 
-    public void GetDamage(float damage, float HSmultipiler)
+    public void GetDamage(float damage)
     {
-        CurrentHealth -= damage * HSmultipiler;
+        CurrentHealth -= damage;
+        EnemyEffects.instance.PlayBodyHit(transform.position);
+        CheckDie();
+    }
+
+    public void GetHeadShotDamage(float damage, float HeadShotMultipiler)
+    {
+        CurrentHealth -= damage*HeadShotMultipiler;
+        EnemyEffects.instance.PlayHeadHit(transform.position);
+        EnemyEffects.instance.PlayBloodVFX(Head.position);
         CheckDie();
     }
 
@@ -32,7 +48,20 @@ public class HealthManager : MonoBehaviour
     {
         if (CurrentHealth <= 0)
         {
-            Destroy(gameObject);
+            SpawnRagdoll();
+            Destroy(CoreObjectToBeDestroyed);
+        }
+    }
+
+    private void SpawnRagdoll()
+    {
+        GameObject spawnedRagdoll = Instantiate(Ragdoll, transform.position, transform.rotation);
+
+        EnemyRagdoll ragdollScript = spawnedRagdoll.GetComponent<EnemyRagdoll>();
+
+        if (ragdollScript != null)
+        {
+            ragdollScript.MatchRagdollToAnimation(OriginalHips);
         }
     }
 }

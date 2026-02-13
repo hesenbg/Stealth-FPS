@@ -30,7 +30,7 @@ public class PlayerSoundManager : MonoBehaviour
     [Header("Volmues")]
     [SerializeField] float JumpVolume;
     [SerializeField] float LandVolume;
-
+    [SerializeField] float ShootVolume;
     [SerializeField] float StepVolume;
 
     float stepTimer;
@@ -52,7 +52,7 @@ public class PlayerSoundManager : MonoBehaviour
         if (ShootSounds == null || ShootSounds.Count == 0) return;
 
         int index = Random.Range(0, ShootSounds.Count);
-        playerAudioSource.PlayOneShot(ShootSounds[index]);
+        playerAudioSource.PlayOneShot(ShootSounds[index],ShootVolume);
     }
 
     public void BodyHitSound()

@@ -14,9 +14,6 @@ public class ShootLogic : MonoBehaviour
     public event EventHandler OnReload;
 
     public Vector3 TotalCurrentRecoil;
-
-    public enum EffectedObject {Head, Body, Destrcutable}
-
     private void Start()
     {
         CurrentMagazineAmmo = PlayerCombatData.Magazine;
@@ -43,7 +40,6 @@ public class ShootLogic : MonoBehaviour
             CurrentMagazineAmmo--;
             return true;
         }
-
         return false;
     }
 
@@ -59,11 +55,11 @@ public class ShootLogic : MonoBehaviour
             }
             if (hit.collider.CompareTag("Head"))
             {
-                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetDamage(PlayerCombatData.BaseDamage,PlayerCombatData.HsMultipiler);
+                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetHeadShotDamage(PlayerCombatData.BaseDamage,PlayerCombatData.HsMultipiler);
             }
             if (hit.collider.CompareTag("Body"))
             {
-                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetDamage(PlayerCombatData.BaseDamage,1f);
+                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetDamage(PlayerCombatData.BaseDamage);
             }
             if (hit.collider.CompareTag("Destructable"))
             {
