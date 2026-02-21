@@ -10465,13 +10465,12 @@ MonoBehaviour:
   jumpBobMultiplier: 2
   MoveMultipiler: 0
   maxLeanAngle: 15
-  maxCameraXOffset: 0.25
+  maxCameraXOffset: -0.4
   leanSpeed: 12
   leanThreshold: 0.001
   currentLeanMode: 0
   playerMovementData: {fileID: 11400000, guid: 520ffee29f7fdbe4e8984dbfea7d9980, type: 2}
   PlayerMesh: {fileID: 186235814}
-  cameraTransform: {fileID: 4421427989521592850}
 --- !u!1 &794165455
 GameObject:
   m_ObjectHideFlags: 0
@@ -39896,10 +39895,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5db954ce8eb7a6439e951e6e039a326, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimationLogic
-  Animator: {fileID: 0}
   CrouchSpeed: 6
-  RecoilRig: {fileID: 0}
-  GunParent: {fileID: 0}
+  CrouchObject: {fileID: 1052231830}
+  CrouchHeight: -0.5
 --- !u!4 &7497107204843653013
 Transform:
   m_ObjectHideFlags: 0

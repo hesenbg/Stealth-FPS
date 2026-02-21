@@ -26,7 +26,6 @@ public class ProceduralArms : MonoBehaviour
     [Header("References")]
     [SerializeField] MovementData playerMovementData;
     [SerializeField] Transform PlayerMesh;
-    [SerializeField] Transform cameraTransform;
 
     Vector3 meshStartLocalPos;
     Vector3 StartLocalPos;
@@ -38,7 +37,6 @@ public class ProceduralArms : MonoBehaviour
     void Start()
     {
         if (PlayerMesh != null) meshStartLocalPos = PlayerMesh.localPosition;
-        if (cameraTransform != null) StartLocalPos = transform.localPosition;
     }
 
     void Update()
@@ -62,13 +60,10 @@ public class ProceduralArms : MonoBehaviour
         GetInput();
         float counterOffset = 0f;
 
-        if (cameraTransform != null)
-        {
-            float leanNormalized = currentLeanAngle / maxLeanAngle;
-            counterOffset = leanNormalized * maxCameraXOffset;
-            transform.localPosition = new Vector3(StartLocalPos.x + counterOffset, StartLocalPos.y, StartLocalPos.z);
-        }
-
+        float leanNormalized = currentLeanAngle / maxLeanAngle;
+        counterOffset = leanNormalized * maxCameraXOffset;
+        transform.localPosition = new Vector3(StartLocalPos.x + counterOffset, StartLocalPos.y, StartLocalPos.z);
+        
         Quaternion finalRotation = CalculateSwayRotation() * Quaternion.Euler(0f, 0f, currentLeanAngle);
 
         Vector3 bobPos = CalculateMovementBob();

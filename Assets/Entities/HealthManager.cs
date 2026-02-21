@@ -59,6 +59,8 @@ public class HealthManager : MonoBehaviour
 
         EnemyRagdoll ragdollScript = spawnedRagdoll.GetComponent<EnemyRagdoll>();
 
+
+
         if (ragdollScript != null)
         {
             ragdollScript.MatchRagdollToAnimation(OriginalHips);

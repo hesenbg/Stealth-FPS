@@ -4,24 +4,21 @@ using UnityEngine.Animations.Rigging;
 
 public class AnimationLogic : MonoBehaviour
 {
-    public Animator Animator;
-    RigBuilder AnimationRig;
+    public Animator Animator { get; private set; }
     Vector3 CrouchOriginalPosition;
 
     [SerializeField] float CrouchSpeed;
+    [SerializeField] Transform CrouchObject;
+    [SerializeField] float CrouchHeight;
 
     public event EventHandler CombatAnimationStart;
     public event EventHandler CombatAnimationEnd;
     public event EventHandler ThrowAbleRelease;
 
-    [SerializeField] Rig RecoilRig;
-    [SerializeField] Transform GunParent;
-
     private void Start()
     {
-        AnimationRig = GetComponent<RigBuilder>();
         Animator = GetComponent<Animator>();  
-        CrouchOriginalPosition = PlayerComponents.Instance.MainCamera.transform.localPosition;
+        CrouchOriginalPosition = CrouchObject.localPosition;
     }
 
     private void Update()
@@ -54,19 +51,15 @@ public class AnimationLogic : MonoBehaviour
     {
         Vector3 CrouchPos = new Vector3(
              CrouchOriginalPosition.x
-            , 0
+            , CrouchHeight
             , CrouchOriginalPosition.z);
 
-        Transform cam = PlayerComponents.Instance.MainCamera.transform;
-
-        cam.localPosition = Vector3.Lerp(cam.localPosition, CrouchPos, Time.deltaTime*Speed);
+        CrouchObject.localPosition = Vector3.Lerp(CrouchObject.localPosition, CrouchPos, Time.deltaTime*Speed);
     }
 
     void PlayUnCrouchAnimation(float Speed)
     {
-        Transform cam = PlayerComponents.Instance.MainCamera.transform;
-
-        cam.localPosition = Vector3.Lerp(cam.localPosition, CrouchOriginalPosition, Time.deltaTime * Speed);
+        CrouchObject.localPosition = Vector3.Lerp(CrouchObject.localPosition, CrouchOriginalPosition, Time.deltaTime * Speed);
     }
     public void PlayReloadAnimation(bool IsMagEmpty)
     {

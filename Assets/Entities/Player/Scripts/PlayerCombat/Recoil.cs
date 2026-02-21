@@ -3,6 +3,7 @@ public class Recoil : MonoBehaviour
 {
     private Vector3 CurrRotation;
     private Vector3 TargetRotation;
+    [SerializeField] GameObject AffectedObject;
 
     [SerializeField] float Snappines;
     [SerializeField] float returnSpeed;
@@ -13,12 +14,12 @@ public class Recoil : MonoBehaviour
     {
         TargetRotation = Vector3.Lerp(TargetRotation, Vector3.zero, returnSpeed * Time.deltaTime);
         CurrRotation = Vector3.Slerp(CurrRotation, TargetRotation, Snappines * Time.deltaTime);
-        transform.localRotation = Quaternion.Euler(CurrRotation);
+        AffectedObject.transform.localRotation = Quaternion.Euler(CurrRotation);
     }
 
     public void RecoilFire(Vector3 Recoil)
     {
         Recoil = Recoil * RecoilMultipiler;
-        TargetRotation -= new Vector3(Recoil.x, Recoil.y,Recoil.z);
+        TargetRotation -= new Vector3(Recoil.y, Recoil.x,Recoil.z);
     }
 }
