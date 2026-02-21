@@ -206,7 +206,7 @@ public class InputManager : MonoBehaviour
 
     void Run()
     {
-        if (Input.GetKey(sprintKey))
+        if (Input.GetKey(sprintKey) && CurrentDirection.magnitude> 0.01f)
         {
             playerMovementLogic.Run();
             if (playerMovementLogic.IsGround)

@@ -23,6 +23,6 @@ MonoBehaviour:
   moveRecoilMultiplier: 0
   recoilRecoverySpeed: 1.5
   recoilBuildupSpeed: 2
-  recoilX: 0.02
-  recoilY: 0.005
-  recoilZ: 0.01
+  recoilX: 0.005
+  recoilY: 0.05
+  recoilZ: 0.005

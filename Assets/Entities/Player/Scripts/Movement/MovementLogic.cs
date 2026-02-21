@@ -90,10 +90,9 @@ public class MovementLogic : MonoBehaviour
     // each function adds effect of its own then applies the direction vector as movement(regardless of the value of vector)
     public void Jump()
     {
-        OnStepOffGround?.Invoke(this, EventArgs.Empty);
-
         if (IsGround || IsOnSlope)
         {
+            OnStepOffGround?.Invoke(this, EventArgs.Empty);
             CurrentVelocity = rb.linearVelocity;
             CurrentVelocity.y = data.JumpForce;
             CurrentMovementState = MovementState.Jump;

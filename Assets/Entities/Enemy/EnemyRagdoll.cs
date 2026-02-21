@@ -7,62 +7,16 @@ public class EnemyRagdoll : MonoBehaviour
     [SerializeField] GameObject ragdollHips;
     [SerializeField] float RagdollDisableTimer = 5f;
 
-    private GameObject CleanHips; 
+    private GameObject CleanHipObject; 
     private GameObject CleanContainer; // The parent of the animated/clean hierarchy
     private float CurrRagdollDisableTimer;
     private bool isSyncing = false;
 
     public void MatchRagdollToAnimation(GameObject originalHips)
     {
-        CleanHips = originalHips;
+        CleanHipObject = originalHips;
         CopyTransformRecursively(originalHips.transform, ragdollHips.transform);
     }
-    public void StartRagdollSequence(GameObject originalHips, GameObject originalContainer)
-    {
-        CleanHips = originalHips;
-        CleanContainer = originalContainer;
-
-        // 1. Match Ragdoll to the current Animation pose before starting physics
-        CopyTransformRecursively(CleanHips.transform, ragdollHips.transform);
-
-        // 2. Enable Ragdoll, Disable Clean version
-        ragdollContainer.SetActive(true);
-        CleanContainer.SetActive(false);
-
-        // 3. Start the timer
-        CurrRagdollDisableTimer = RagdollDisableTimer;
-        isSyncing = true;
-    }
-
-    private void Update()
-    {
-        if (!isSyncing) return;
-
-        if (CurrRagdollDisableTimer > 0)
-        {
-            CurrRagdollDisableTimer -= Time.deltaTime;
-        }
-        else
-        {
-            // TIMER FINISHED: Perform the swap
-            SwapRagdollForClean();
-        }
-    }
-
-    private void SwapRagdollForClean()
-    {
-        isSyncing = false;
-
-        // 1. Final sync: Move the "Clean" bones to exactly where the Ragdoll landed
-        CopyTransformRecursively(ragdollHips.transform, CleanHips.transform);
-
-        // 2. Swap the objects
-        CleanContainer.SetActive(true);
-        ragdollContainer.SetActive(false); 
-
-        Debug.Log("Physics Ragdoll swapped for optimized Clean bones.");
-    }
-
     private void CopyTransformRecursively(Transform source, Transform destination)
     {
         destination.position = source.position;
@@ -77,4 +31,24 @@ public class EnemyRagdoll : MonoBehaviour
             }
         }
     }
+
+    private void CleanHip() // applies the transform values of a ragdol hip and siwtches them(to avoid calculating the ragdoll physics)
+    {
+
+    }
+
+    private void Update()
+    {
+        if (!isSyncing) return;
+
+        if (CurrRagdollDisableTimer > 0)
+        {
+            CurrRagdollDisableTimer -= Time.deltaTime;
+        }
+        else
+        {
+
+        }
+    }
+
 }
