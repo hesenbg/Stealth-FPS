@@ -77,23 +77,29 @@ public class ShootLogic : MonoBehaviour
         float randomZ = UnityEngine.Random.Range(0,
             PlayerCombatData.RecoilZ);
 
-
         Vector3 Recoil = new Vector3(randomX, randomY, randomZ);
 
         TotalCurrentRecoil += Recoil*PlayerCombatData.RecoilBuildupSpeed;
     }
 
+    int toLoad;
+
     public IEnumerator Reload()
     {
         OnReload?.Invoke(this, EventArgs.Empty);
         yield return new WaitForSeconds(PlayerCombatData.ReloadTime);
-
-        int needed = PlayerCombatData.Magazine - CurrentMagazineAmmo;
-        int toLoad = Mathf.Min(needed, CurrentTotalAmmo);
-
-        CurrentMagazineAmmo += toLoad;
-        CurrentTotalAmmo -= toLoad;
-
         OnReloadEnd?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void MagOut()
+    {
+        int needed = PlayerCombatData.Magazine - CurrentMagazineAmmo;
+        toLoad = Mathf.Min(needed, CurrentTotalAmmo);
+        CurrentMagazineAmmo += toLoad;
+    }
+
+    public void MagIn()
+    {
+        CurrentTotalAmmo -= toLoad;
     }
 }

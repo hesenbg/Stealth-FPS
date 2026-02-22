@@ -15,6 +15,9 @@ public class AnimationLogic : MonoBehaviour
     public event EventHandler CombatAnimationEnd;
     public event EventHandler ThrowAbleRelease;
 
+    public event EventHandler GunMagOut;
+    public event EventHandler GunMagIn;
+
     private void Start()
     {
         Animator = GetComponent<Animator>();  
@@ -81,26 +84,6 @@ public class AnimationLogic : MonoBehaviour
         Animator.SetTrigger("Stab");
     }
 
-    public void PlayGrenedeAnimation()
-    {
-        Animator.SetTrigger("Throw");
-    }
-
-    public void FireThrowAbleRelease()
-    {
-        ThrowAbleRelease?.Invoke(this, EventArgs.Empty);
-    }
-
-    public void StartCombatAnimation()
-    {
-        CombatAnimationStart?.Invoke(this, EventArgs.Empty);
-    }
-
-    public void EndCombatAnimation()
-    {
-        CombatAnimationEnd?.Invoke(this, EventArgs.Empty);
-    }
-
     public void PlayShootAnimation(int CurrentAmmo)
     {
         // fixed animation
@@ -121,5 +104,35 @@ public class AnimationLogic : MonoBehaviour
         }
 
         // procedural animation
+    }
+    public void PlayGrenedeAnimation()
+    {
+        Animator.SetTrigger("Throw");
+    }
+
+    // event fires
+    public void FireThrowAbleRelease()
+    {
+        ThrowAbleRelease?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void StartCombatAnimation()
+    {
+        CombatAnimationStart?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void EndCombatAnimation()
+    {
+        CombatAnimationEnd?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void FireMagOut()
+    {
+        GunMagOut?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void FireMagIn()
+    {
+        GunMagIn?.Invoke(this, EventArgs.Empty);
     }
 }

@@ -20,6 +20,9 @@ public class PlayerSoundManager : MonoBehaviour
     [SerializeField] private List<AudioClip> headhitSound;
     [SerializeField] private List<AudioClip> bodyHitSound;
 
+    [SerializeField] private AudioClip MagIn;
+    [SerializeField] private AudioClip MagOut;
+
     [Header("Step Settings")]
     [SerializeField] private float walkStepInterval = 0.5f;
     [SerializeField] private float runStepInterval = 0.3f;
@@ -33,6 +36,8 @@ public class PlayerSoundManager : MonoBehaviour
     [SerializeField] float ShootVolume;
     [SerializeField] float StepVolume;
 
+    [SerializeField] float ReloadVolume;
+
     float stepTimer;
     int stepIndex; 
 
@@ -44,6 +49,16 @@ public class PlayerSoundManager : MonoBehaviour
             return;
         }
         instance = this;
+    }
+
+    public void PlayMagOut()
+    {
+        AudioSource.PlayClipAtPoint(MagOut, transform.position, ReloadVolume);
+    }
+
+    public void PlayMagIn()
+    {
+        AudioSource.PlayClipAtPoint(MagIn,transform.position, ReloadVolume);
     }
 
 

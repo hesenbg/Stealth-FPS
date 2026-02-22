@@ -52,11 +52,14 @@ public class InputManager : MonoBehaviour
         // event subscribing
         // reload
         playerShootLogic.OnReloadEnd += OnReloadEnd;
+        playerAnimationLogic.GunMagOut += OnReloadMagOut;
+        playerAnimationLogic.GunMagIn += OnReloadMagIn;
 
         // weapon block
         weaponWallBlock.WallBlockEnd += OnBlockEnd;
         weaponWallBlock.WallBlockStart += OnBlockStart;
 
+        // combat animations
         playerAnimationLogic.CombatAnimationEnd += OnBlockEnd;
         playerAnimationLogic.CombatAnimationStart += OnBlockStart;
     }
@@ -67,7 +70,7 @@ public class InputManager : MonoBehaviour
         {
             CurrentGunState = GunState.Idle;
         }
-        if (Input.GetMouseButton(1) && CurrentGunState != GunState.Blocked)
+        if (Input.GetMouseButton(1) && CurrentGunState == GunState.Idle || CurrentGunState == GunState.ADS)
         {
             CurrentGunState = GunState.ADS;
             ADSlogic.ApplyADS();
@@ -105,6 +108,18 @@ public class InputManager : MonoBehaviour
             StartCoroutine(playerShootLogic.Reload());
             playerAnimationLogic.PlayReloadAnimation(playerShootLogic.CurrentMagazineAmmo==0);
         }
+    }
+
+    void OnReloadMagOut(object sender, EventArgs a)
+    {
+        playerShootLogic.MagOut();
+        PlayerSoundManager.instance.PlayMagOut();
+    }
+
+    void OnReloadMagIn(object sender, EventArgs a)
+    {
+        playerShootLogic.MagIn();
+        PlayerSoundManager.instance.PlayMagIn();
     }
 
     void KnifeStab()
