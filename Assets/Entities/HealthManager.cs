@@ -58,12 +58,6 @@ public class HealthManager : MonoBehaviour
         GameObject spawnedRagdoll = Instantiate(Ragdoll, transform.position, transform.rotation);
 
         EnemyRagdoll ragdollScript = spawnedRagdoll.GetComponent<EnemyRagdoll>();
-
-
-
-        if (ragdollScript != null)
-        {
-            ragdollScript.MatchRagdollToAnimation(OriginalHips);
-        }
+        ragdollScript.MatchRagdollToAnimation(OriginalHips);
     }
 }

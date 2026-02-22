@@ -3,18 +3,12 @@ using UnityEngine;
 public class EnemyRagdoll : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] GameObject ragdollContainer; // The parent of the ragdoll hierarchy
     [SerializeField] GameObject ragdollHips;
     [SerializeField] float RagdollDisableTimer = 5f;
-
-    private GameObject CleanHipObject; 
-    private GameObject CleanContainer; // The parent of the animated/clean hierarchy
-    private float CurrRagdollDisableTimer;
-    private bool isSyncing = false;
+    private float CurrRagdollDisableTimer =0;
 
     public void MatchRagdollToAnimation(GameObject originalHips)
     {
-        CleanHipObject = originalHips;
         CopyTransformRecursively(originalHips.transform, ragdollHips.transform);
     }
     private void CopyTransformRecursively(Transform source, Transform destination)
@@ -32,23 +26,39 @@ public class EnemyRagdoll : MonoBehaviour
         }
     }
 
-    private void CleanHip() // applies the transform values of a ragdol hip and siwtches them(to avoid calculating the ragdoll physics)
-    {
-
-    }
+    private bool hasCleaned = false; // Guard to run logic only once
 
     private void Update()
     {
-        if (!isSyncing) return;
-
-        if (CurrRagdollDisableTimer > 0)
+        Debug.Log(CurrRagdollDisableTimer);
+        if (CurrRagdollDisableTimer < RagdollDisableTimer )
         {
-            CurrRagdollDisableTimer -= Time.deltaTime;
+            CurrRagdollDisableTimer += Time.deltaTime;
         }
-        else
+        else if (!hasCleaned)
         {
-
+            CleanHip();
+            hasCleaned = true;
         }
+    }
+
+    private void CleanHip()
+    {
+        Rigidbody[] rbs = ragdollHips.GetComponentsInChildren<Rigidbody>();
+        Collider[] cols = ragdollHips.GetComponentsInChildren<Collider>();
+
+        foreach (Rigidbody rb in rbs)
+        {
+            rb.isKinematic = true; // Stops physics movement
+        }
+        foreach (Collider col in cols)
+        {
+            col.enabled = false; // Stops collision checks
+        }
+
+        Debug.Log("Physics stripped and Hips switched.");
+
+        this.enabled = false;
     }
 
 }
