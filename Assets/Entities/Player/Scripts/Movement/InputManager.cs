@@ -9,6 +9,7 @@ public class InputManager : MonoBehaviour
     private ADS ADSlogic;
     private WeaponWallBlock weaponWallBlock;
     private AnimationLogic playerAnimationLogic;
+    private PlayerUI playerUI;
 
     [SerializeField] Recoil PlayerRecoil;
 
@@ -49,6 +50,7 @@ public class InputManager : MonoBehaviour
         ADSlogic = PlayerComponents.Instance.ADS;
         playerShootLogic = PlayerComponents.Instance.ShootLogic;
         weaponWallBlock = PlayerComponents.Instance.WallBlock;
+        playerUI = PlayerComponents.Instance.PlayerUI;
         // event subscribing
         // reload
         playerShootLogic.OnReloadEnd += OnReloadEnd;
@@ -98,6 +100,7 @@ public class InputManager : MonoBehaviour
 
             PlayerSoundManager.instance.PlayShootSound();
         }
+        playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
     }
 
     void Reload()
