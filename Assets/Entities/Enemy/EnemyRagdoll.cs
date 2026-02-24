@@ -30,7 +30,7 @@ public class EnemyRagdoll : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(CurrRagdollDisableTimer);
+        //Debug.Log(CurrRagdollDisableTimer);
         if (CurrRagdollDisableTimer < RagdollDisableTimer )
         {
             CurrRagdollDisableTimer += Time.deltaTime;
@@ -56,7 +56,7 @@ public class EnemyRagdoll : MonoBehaviour
             col.enabled = false; // Stops collision checks
         }
 
-        Debug.Log("Physics stripped and Hips switched.");
+        //Debug.Log("Physics stripped and Hips switched.");
 
         this.enabled = false;
     }

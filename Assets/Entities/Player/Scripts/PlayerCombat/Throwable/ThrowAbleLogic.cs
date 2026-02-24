@@ -1,31 +1,30 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class ThrowAbleLogic : MonoBehaviour
 {
-    [SerializeField] float Force;
-
-    Rigidbody rb;
-
     [SerializeField] FlashNade flashNade;
 
     [SerializeField] SmokeNade smokeNade;
 
+    BaseNade CurrentNade;
+
+    [SerializeField] Transform source;
 
     private void Update()
     {
-        
-    }
+        // current nade selection will be handled in here
 
+    }
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        CurrentNade = flashNade;
     }
 
-    void Release()
+    public void ThrowNade()
     {
-        Transform cam = PlayerComponents.Instance.MainCamera.transform;
-        rb.AddForce((cam.forward + cam.up) * Force);
+        BaseNade ThrowenNade = Instantiate(CurrentNade, source.position,source.rotation);
     }
 }

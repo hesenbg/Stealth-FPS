@@ -12,6 +12,7 @@ public class PlayerComponents : MonoBehaviour
     [SerializeField] private ShootLogic shootLogic;
     [SerializeField] private HealthManager healthManager;
     [SerializeField] private InputManager inputManager;
+    [SerializeField] private ThrowAbleLogic throwAbleLogic;
 
     [Header("Technical/Visual")]
     [SerializeField] private Rig combatAnimation;
@@ -21,6 +22,7 @@ public class PlayerComponents : MonoBehaviour
     [SerializeField] private PlayerUI playerUI;
 
     // Getters
+    public ThrowAbleLogic ThrowAbleLogic => throwAbleLogic;
     public PlayerUI PlayerUI => playerUI;
     public InputManager InputManager  => inputManager;
     public ADS ADS => ads;

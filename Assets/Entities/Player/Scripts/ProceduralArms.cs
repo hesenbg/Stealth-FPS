@@ -95,18 +95,30 @@ public class ProceduralArms : MonoBehaviour
 
     void HandleLeanInput()
     {
-        if (currentLeanMode == LeanMode.Hold)
+        if (IsRightBlocked && targetLeanAngle == -maxLeanAngle)
         {
             targetLeanAngle = 0f;
-            if (Input.GetKey(KeyCode.Q)) targetLeanAngle = maxLeanAngle;
-            else if (Input.GetKey(KeyCode.E)) targetLeanAngle = -maxLeanAngle;
         }
-        else
+
+        if (IsLeftBlocked && targetLeanAngle == maxLeanAngle)
         {
-            if (Input.GetKeyDown(KeyCode.Q))
-                targetLeanAngle = Mathf.Approximately(targetLeanAngle, maxLeanAngle) ? 0f : maxLeanAngle;
-            if (Input.GetKeyDown(KeyCode.E))
-                targetLeanAngle = Mathf.Approximately(targetLeanAngle, -maxLeanAngle) ? 0f : -maxLeanAngle;
+            targetLeanAngle = 0f;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            if (Mathf.Approximately(targetLeanAngle, maxLeanAngle))
+                targetLeanAngle = 0f; // Toggle off
+            else if (!IsLeftBlocked)
+                targetLeanAngle = maxLeanAngle; // Lean if clear
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (Mathf.Approximately(targetLeanAngle, -maxLeanAngle))
+                targetLeanAngle = 0f; // Toggle off
+            else if (!IsRightBlocked)
+                targetLeanAngle = -maxLeanAngle; // Lean if clear
         }
     }
 

@@ -2,12 +2,8 @@ using UnityEngine;
 
 public class FlashNade : BaseNade
 {
-    public override float EffectRadius { get; set; }
-
-    public override void Effect()
+    public override void ExecuteNadeLogic()
     {
-        
+        Destroy(gameObject);
     }
-
-
 }

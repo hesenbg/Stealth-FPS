@@ -10,6 +10,7 @@ public class InputManager : MonoBehaviour
     private WeaponWallBlock weaponWallBlock;
     private AnimationLogic playerAnimationLogic;
     private PlayerUI playerUI;
+    private ThrowAbleLogic playerThrowAbleLogic;
 
     [SerializeField] Recoil PlayerRecoil;
 
@@ -51,6 +52,7 @@ public class InputManager : MonoBehaviour
         playerShootLogic = PlayerComponents.Instance.ShootLogic;
         weaponWallBlock = PlayerComponents.Instance.WallBlock;
         playerUI = PlayerComponents.Instance.PlayerUI;
+        playerThrowAbleLogic = PlayerComponents.Instance.ThrowAbleLogic;
         // event subscribing
         // reload
         playerShootLogic.OnReloadEnd += OnReloadEnd;
@@ -64,6 +66,9 @@ public class InputManager : MonoBehaviour
         // combat animations
         playerAnimationLogic.CombatAnimationEnd += OnBlockEnd;
         playerAnimationLogic.CombatAnimationStart += OnBlockStart;
+
+        // nades
+        playerAnimationLogic.ThrowAbleRelease += OnNadeThrown;
     }
 
     void ADS()
@@ -138,9 +143,14 @@ public class InputManager : MonoBehaviour
     {
         if (Input.GetKeyDown(ThrowObjectKey) && CurrentGunState == GunState.Idle)
         {
-            CurrentGunState = GunState.Blocked;
             playerAnimationLogic.PlayGrenedeAnimation();
+            // add sound effects and camera shake
         }
+    }
+
+    void OnNadeThrown(object sender, EventArgs e)
+    {
+        playerThrowAbleLogic.ThrowNade();
     }
 
     void OnReloadEnd(object  sender,EventArgs a)

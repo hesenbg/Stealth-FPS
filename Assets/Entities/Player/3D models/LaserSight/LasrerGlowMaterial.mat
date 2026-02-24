@@ -52,11 +52,11 @@ Material:
     m_Ints: []
     m_Floats:
     - _GlowStrength: 50
-    - _Pulse: 0
+    - _Pulse: 2
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
-    - _Emission: {r: 0.6679245, g: 0.02013495, b: 0.01386257, a: 0}
-    - _neon: {r: 0.554717, g: 0.037821613, b: 0, a: 0}
+    - _Emission: {r: 1, g: 0.006024095, b: 0, a: 0}
+    - _neon: {r: 1, g: 0.07092199, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
