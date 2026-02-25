@@ -81,6 +81,7 @@ public class InputManager : MonoBehaviour
         {
             CurrentGunState = GunState.ADS;
             ADSlogic.ApplyADS();
+            //playerUI.ActivateADSCrosshair();
         }
         if(CurrentGunState == GunState.Idle)
         {
@@ -150,7 +151,7 @@ public class InputManager : MonoBehaviour
 
     void OnNadeThrown(object sender, EventArgs e)
     {
-        playerThrowAbleLogic.ThrowNade();
+        playerThrowAbleLogic.ThrowNadeLong();
     }
 
     void OnReloadEnd(object  sender,EventArgs a)

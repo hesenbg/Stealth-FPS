@@ -10,21 +10,24 @@ public class ThrowAbleLogic : MonoBehaviour
 
     BaseNade CurrentNade;
 
-    [SerializeField] Transform source;
-
     private void Update()
     {
         // current nade selection will be handled in here
-
     }
 
     private void Start()
     {
-        CurrentNade = flashNade;
+        CurrentNade = smokeNade;
     }
 
-    public void ThrowNade()
+    public void ThrowNadeShort()
     {
-        BaseNade ThrowenNade = Instantiate(CurrentNade, source.position,source.rotation);
+        BaseNade ThrownNade = Instantiate(CurrentNade, transform.position, transform.rotation);
+    }
+
+
+    public void ThrowNadeLong()
+    {
+        BaseNade ThrownNade = Instantiate(CurrentNade, transform.position,transform.rotation);
     }
 }

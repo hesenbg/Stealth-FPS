@@ -145,8 +145,8 @@ public class ProceduralArms : MonoBehaviour
         IsLeftBlocked = Physics.SphereCast(CheckOrigin.position, leanCheckRadius, - CheckOrigin.right, out _, leanCheckDistance);
     }
 
-    private void OnDrawGizmos()
-    {
+    private void OnaDrawGizmos()
+    {   
         // right
         Gizmos.color = IsRightBlocked ? Color.red : Color.green;
         Vector3 rightEndPos = CheckOrigin.position + (CheckOrigin.right * leanCheckDistance);

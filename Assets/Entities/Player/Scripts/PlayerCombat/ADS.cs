@@ -22,7 +22,7 @@ public class ADS : MonoBehaviour
         originalFOV = PlayerComponents.Instance.MainCamera.fieldOfView;
     }
 
-    public void ApplyADS()
+    public bool ApplyADS()
     {
         adsRig.weight = Mathf.Lerp(
             adsRig.weight,
@@ -41,6 +41,15 @@ public class ADS : MonoBehaviour
             zoomFOV,
             speed * Time.deltaTime
         );
+
+        if (Vector3.Distance(rightHand.position, ADSpos.position) < 0.01f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public void RevertADS() // revert ads doesnt set values after reaching a certain treshold
