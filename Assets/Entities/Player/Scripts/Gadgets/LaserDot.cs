@@ -1,28 +1,29 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class LaserDot : MonoBehaviour
 {
-    [SerializeField] float Lenght;
+    [SerializeField] float Length = 50f;
     LineRenderer Laser;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         Laser = GetComponent<LineRenderer>();
+        Laser.useWorldSpace = false;
     }
 
-    // Update is called once per frame
     void LateUpdate()
     {
-        Laser.SetPosition(0,Laser.transform.position);
+        Laser.SetPosition(0, Vector3.zero);
+
         RaycastHit LaserHit;
-        if(Physics.Raycast(transform.position,transform.forward, out LaserHit, Lenght))
+        if (Physics.Raycast(transform.position, transform.forward, out LaserHit, Length))
         {
-            Laser.SetPosition(1, LaserHit.point);
+            Vector3 localHitPoint = transform.InverseTransformPoint(LaserHit.point);
+            Laser.SetPosition(1, localHitPoint);
         }
         else
         {
-            Laser.SetPosition(1, transform.position + transform.forward.normalized * Lenght);
+            Laser.SetPosition(1, Vector3.forward * Length);
         }
     }
 }

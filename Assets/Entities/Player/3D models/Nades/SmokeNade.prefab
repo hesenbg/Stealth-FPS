@@ -126,12 +126,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aadc75dab99949a4085128f16373dcfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SmokeNade
-  FuseTimer: 3
+  FuseTimer: 5
   EffectRadius: 0
   NadeMesh: {fileID: 0}
   NadeEffect: {fileID: 2894886092556123163, guid: f8030db448a5dfd4ab1bd98c778e15b4, type: 3}
   rb: {fileID: 5938030649727521357}
-  force: 6
+  LongThrowForce: 5
+  ShortThrowForce: 0
+  ThrowType: 0
 --- !u!54 &5938030649727521357
 Rigidbody:
   m_ObjectHideFlags: 0

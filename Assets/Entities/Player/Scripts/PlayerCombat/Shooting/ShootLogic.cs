@@ -26,7 +26,7 @@ public class ShootLogic : MonoBehaviour
         {
             shootTimer -= Time.deltaTime;
         }
-        TotalCurrentRecoil = Vector3.Lerp(TotalCurrentRecoil,
+        TotalCurrentRecoil = Vector3.MoveTowards(TotalCurrentRecoil,
             Vector3.zero,
             Time.deltaTime*PlayerCombatData.RecoilRecoverySpeed);
     }

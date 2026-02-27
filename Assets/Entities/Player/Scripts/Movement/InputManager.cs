@@ -95,12 +95,11 @@ public class InputManager : MonoBehaviour
         {
             if (!playerShootLogic.CanShoot())
                 return;
+            playerShootLogic.CalculateRecoil();
 
             playerShootLogic.Shoot();
 
-            playerShootLogic.CalculateRecoil();
-
-            PlayerRecoil.RecoilFire(playerShootLogic.TotalCurrentRecoil);
+            PlayerRecoil.RecoilFire();
 
             playerAnimationLogic.PlayShootAnimation(playerShootLogic.CurrentMagazineAmmo);
 

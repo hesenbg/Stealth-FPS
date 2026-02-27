@@ -21,8 +21,8 @@ MonoBehaviour:
   hsMultipiler: 3
   baseRecoil: 0
   moveRecoilMultiplier: 0
-  recoilRecoverySpeed: 1.5
-  recoilBuildupSpeed: 2
-  recoilX: 0.001
-  recoilY: 0.003
-  recoilZ: 0.001
+  recoilRecoverySpeed: 1
+  recoilBuildupSpeed: 5
+  recoilX: 0
+  recoilY: 0
+  recoilZ: 0
