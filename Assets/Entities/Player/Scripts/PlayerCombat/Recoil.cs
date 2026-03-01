@@ -20,7 +20,6 @@ public class Recoil : MonoBehaviour
 
     [SerializeField] Vector3 RecoilPosValue;
 
-
     private void Start()
     {
     }

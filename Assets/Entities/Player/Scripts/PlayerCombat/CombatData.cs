@@ -17,21 +17,22 @@ public class CombatData : ScriptableObject
     [SerializeField] private float hsMultipiler;
 
     [Header("Recoil")]
-    [SerializeField] private float baseRecoil;
-    [SerializeField] private float moveRecoilMultiplier;
     [SerializeField] private float recoilRecoverySpeed;
     [SerializeField] private float recoilBuildupSpeed;
+    [SerializeField] float heatDecayDelay;
+    [SerializeField] float heatDecayRate;
+    [SerializeField] Vector2[] recoilPattern;
+    [SerializeField] AnimationCurve recoilPatternNegativeRandomness;
+    [SerializeField] float adsRecoilDamper;
 
-    [SerializeField] private float recoilX;
-    [SerializeField] private float recoilY;
-    [SerializeField] private float recoilZ;
     // getters
-
+    public float ADSrecoilDamper => adsRecoilDamper;
+    public AnimationCurve RecoilPatternRandomness => recoilPatternNegativeRandomness;
+    public float HeatDecayDelay => heatDecayDelay;
+    public float HeatDecayRate => heatDecayRate;
+    public Vector2[] RecoilPattern => recoilPattern;
     public float BaseDamage => baseDamage;
     public float HsMultipiler => hsMultipiler;
-    public float RecoilX => recoilX;
-    public float RecoilY => recoilY;
-    public float RecoilZ => recoilZ;
 
     public float RecoilBuildupSpeed => recoilBuildupSpeed;
 
@@ -41,8 +42,5 @@ public class CombatData : ScriptableObject
     public int Magazine => magazine;
     public int TotalAmmo => totalAmmo;
     public float ReloadTime => reloadTime;
-
-    public float BaseRecoil => baseRecoil;
-    public float MoveRecoilMultiplier => moveRecoilMultiplier;
     public float RecoilRecoverySpeed => recoilRecoverySpeed;
 }

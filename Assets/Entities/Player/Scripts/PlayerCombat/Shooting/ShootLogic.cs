@@ -1,9 +1,10 @@
 using UnityEngine;
 using System.Collections;
 using System;
+
 public class ShootLogic : MonoBehaviour
 {
-    [SerializeField] CombatData PlayerCombatData;
+    [SerializeField] CombatData data;
     [SerializeField] Transform Origin;
 
     public int CurrentMagazineAmmo { get; private set; }
@@ -14,10 +15,17 @@ public class ShootLogic : MonoBehaviour
     public event EventHandler OnReload;
 
     public Vector3 TotalCurrentRecoil;
+
+    [Header("Heat Settings")]
+    private int CurrentHotValue;
+    private int MaxHotValue;
+    private float lastShotTime;
+
     private void Start()
     {
-        CurrentMagazineAmmo = PlayerCombatData.Magazine;
-        CurrentTotalAmmo = PlayerCombatData.TotalAmmo;
+        MaxHotValue = data.RecoilPattern.Length;
+        CurrentMagazineAmmo = data.Magazine;
+        CurrentTotalAmmo = data.TotalAmmo;
     }
 
     private void Update()
@@ -26,17 +34,38 @@ public class ShootLogic : MonoBehaviour
         {
             shootTimer -= Time.deltaTime;
         }
+
         TotalCurrentRecoil = Vector3.MoveTowards(TotalCurrentRecoil,
             Vector3.zero,
-            Time.deltaTime*PlayerCombatData.RecoilRecoverySpeed);
+            Time.deltaTime * data.RecoilRecoverySpeed);
+
+        HandleHeatDecay();
+    }
+
+    private void HandleHeatDecay()
+    {
+        if (Time.time > lastShotTime + data.HeatDecayDelay && CurrentHotValue > 0)
+        {
+            float decayStep = data.HeatDecayRate * Time.deltaTime;
+
+            if (decayStep >= 1f)
+            {
+                CurrentHotValue -= Mathf.FloorToInt(decayStep);
+            }
+            else if (Time.frameCount % 10 == 0)
+            {
+                CurrentHotValue--;
+            }
+
+            CurrentHotValue = Mathf.Clamp(CurrentHotValue, 0, MaxHotValue - 1);
+        }
     }
 
     public bool CanShoot()
     {
         if (shootTimer <= 0 && CurrentMagazineAmmo > 0)
         {
-            shootTimer = PlayerCombatData.ShootDelay;
-
+            shootTimer = data.ShootDelay;
             CurrentMagazineAmmo--;
             return true;
         }
@@ -45,41 +74,74 @@ public class ShootLogic : MonoBehaviour
 
     public void Shoot()
     {
-        Ray ray = new Ray(Origin.position, Origin.forward+ TotalCurrentRecoil);
+        lastShotTime = Time.time;
+
+        Ray ray = new Ray(Origin.position, Origin.forward + TotalCurrentRecoil);
+
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
             if (hit.collider.CompareTag("Untagged"))
             {
-                PlayerCombatData.Trace.ApplyRandomTexture();
-                Instantiate(PlayerCombatData.Trace, hit.point + (hit.normal * 0.01f), Quaternion.FromToRotation(Vector3.up, hit.normal));
+                data.Trace.ApplyRandomTexture();
+                Instantiate(data.Trace, hit.point + (hit.normal * 0.01f), Quaternion.FromToRotation(Vector3.up, hit.normal));
             }
             if (hit.collider.CompareTag("Head"))
             {
-                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetHeadShotDamage(PlayerCombatData.BaseDamage,PlayerCombatData.HsMultipiler);
+                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetHeadShotDamage(data.BaseDamage, data.HsMultipiler);
             }
             if (hit.collider.CompareTag("Body"))
             {
-                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetDamage(PlayerCombatData.BaseDamage);
+                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetDamage(data.BaseDamage);
             }
             if (hit.collider.CompareTag("Destructable"))
             {
                 hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
             }
         }
+
+        if (CurrentHotValue < MaxHotValue - 1)
+        {
+            CurrentHotValue++;
+        }
+    }
+
+    float RecoilDamper = 1;
+
+    public void CalculateRecoilDaper(bool IsADS, float VelocityMagnitude)
+    {
+        if (IsADS)
+        {
+            RecoilDamper = data.ADSrecoilDamper;
+        }
+        else
+        {
+            RecoilDamper = 1f;
+        }
     }
 
     public void CalculateRecoil()
     {
-        float randomX = UnityEngine.Random.Range(0,
-            PlayerCombatData.RecoilX);
-        float randomY = UnityEngine.Random.Range(0,
-            PlayerCombatData.RecoilY);
-        float randomZ = UnityEngine.Random.Range(0,
-            PlayerCombatData.RecoilZ);
+        int index = Mathf.Clamp(CurrentHotValue, 0, MaxHotValue - 1);
 
-        Vector3 Recoil = new Vector3(randomX, randomY, randomZ);
+        float patternX = data.RecoilPattern[index].x;
+        float patternY = data.RecoilPattern[index].y;
 
-        TotalCurrentRecoil += Recoil*PlayerCombatData.RecoilBuildupSpeed;
+        float curvedPercentage =data.RecoilPatternRandomness.Evaluate(CurrentHotValue);
+
+        float minX = -patternX*curvedPercentage;
+        float maxX = patternX;
+
+        float minY = patternY*curvedPercentage;
+        float maxY = patternY;
+
+        float randomX = UnityEngine.Random.Range(minX, maxX);
+        float randomY = UnityEngine.Random.Range(minY, maxY);
+
+        Vector3 Recoil = new Vector3(randomX, randomY, 0f);
+
+        TotalCurrentRecoil += Recoil * data.RecoilBuildupSpeed*RecoilDamper;
+
+        Debug.Log(Recoil);
     }
 
     int toLoad;
@@ -87,13 +149,13 @@ public class ShootLogic : MonoBehaviour
     public IEnumerator Reload()
     {
         OnReload?.Invoke(this, EventArgs.Empty);
-        yield return new WaitForSeconds(PlayerCombatData.ReloadTime);
+        yield return new WaitForSeconds(data.ReloadTime);
         OnReloadEnd?.Invoke(this, EventArgs.Empty);
     }
 
     public void MagOut()
     {
-        int needed = PlayerCombatData.Magazine - CurrentMagazineAmmo;
+        int needed = data.Magazine - CurrentMagazineAmmo;
         toLoad = Mathf.Min(needed, CurrentTotalAmmo);
         CurrentMagazineAmmo += toLoad;
     }

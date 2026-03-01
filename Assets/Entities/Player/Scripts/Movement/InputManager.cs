@@ -101,6 +101,8 @@ public class InputManager : MonoBehaviour
 
             PlayerRecoil.RecoilFire();
 
+            playerShootLogic.CalculateRecoilDaper(CurrentGunState == GunState.ADS, playerMovementLogic.CurrentVelocity.magnitude);
+
             playerAnimationLogic.PlayShootAnimation(playerShootLogic.CurrentMagazineAmmo);
 
             PlayerSoundManager.instance.PlayShootSound();
