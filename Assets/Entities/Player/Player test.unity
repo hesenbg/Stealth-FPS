@@ -33245,7 +33245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86ec8d7da35650a408d36ef8b17aba3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerCombatData: {fileID: 11400000, guid: 03031332a27acf9488a571bff45d278f, type: 2}
+  data: {fileID: 11400000, guid: 03031332a27acf9488a571bff45d278f, type: 2}
   Origin: {fileID: 4421427989521592850}
   TotalCurrentRecoil: {x: 0, y: 0, z: 0}
 --- !u!4 &2834495512745834287

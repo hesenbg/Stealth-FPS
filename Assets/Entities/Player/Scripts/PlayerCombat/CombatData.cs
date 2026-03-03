@@ -6,6 +6,7 @@ public class CombatData : ScriptableObject
     [Header("Shooting")]
     [SerializeField] private float shootDelay;
     [SerializeField] private BulletHole trace;
+    [SerializeField] private float adsShootSpeed;
 
     [Header("Ammo")]
     [SerializeField] private int magazine;
@@ -26,6 +27,7 @@ public class CombatData : ScriptableObject
     [SerializeField] float adsRecoilDamper;
 
     // getters
+    public float ADSshootSpeed => adsShootSpeed;
     public float ADSrecoilDamper => adsRecoilDamper;
     public AnimationCurve RecoilPatternRandomness => recoilPatternNegativeRandomness;
     public float HeatDecayDelay => heatDecayDelay;

@@ -14,15 +14,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CombatData
   shootDelay: 0.4
   trace: {fileID: -5813446771995636474, guid: e7e54b6d5fbdb594f9f314d9b51ff159, type: 3}
+  adsShootSpeed: 0.6
   magazine: 100
   totalAmmo: 1000000
   reloadTime: 1.4
   baseDamage: 40
   hsMultipiler: 3
-  baseRecoil: 0
-  moveRecoilMultiplier: 0
-  recoilRecoverySpeed: 1
-  recoilBuildupSpeed: 5
-  recoilX: 0.001
-  recoilY: 0.001
-  recoilZ: 0.001
+  recoilRecoverySpeed: 0.6
+  recoilBuildupSpeed: 1
+  heatDecayDelay: 0.5
+  heatDecayRate: 1
+  recoilPattern:
+  - {x: 0.04, y: 0.04}
+  - {x: 0.05, y: 0.05}
+  - {x: 0.1, y: 0.08}
+  - {x: 0.15, y: 0.1}
+  - {x: 0.2, y: 0.15}
+  recoilPatternNegativeRandomness:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: -0.25
+      inSlope: 0.3125
+      outSlope: 0.3125
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 4
+      value: 1
+      inSlope: 0.3125
+      outSlope: 0.3125
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  adsRecoilDamper: 0.2

@@ -16,6 +16,8 @@ public class ShootLogic : MonoBehaviour
 
     public Vector3 TotalCurrentRecoil;
 
+    private float ShootSpeedMultipiler=1f;
+
     [Header("Heat Settings")]
     private int CurrentHotValue;
     private int MaxHotValue;
@@ -40,6 +42,8 @@ public class ShootLogic : MonoBehaviour
             Time.deltaTime * data.RecoilRecoverySpeed);
 
         HandleHeatDecay();
+
+        Debug.Log(TotalCurrentRecoil);
     }
 
     private void HandleHeatDecay()
@@ -65,7 +69,7 @@ public class ShootLogic : MonoBehaviour
     {
         if (shootTimer <= 0 && CurrentMagazineAmmo > 0)
         {
-            shootTimer = data.ShootDelay;
+            shootTimer = data.ShootDelay * (1 / ShootSpeedMultipiler);
             CurrentMagazineAmmo--;
             return true;
         }
@@ -112,10 +116,12 @@ public class ShootLogic : MonoBehaviour
         if (IsADS)
         {
             RecoilDamper = data.ADSrecoilDamper;
+            ShootSpeedMultipiler = data.ADSshootSpeed;
         }
         else
         {
             RecoilDamper = 1f;
+            ShootSpeedMultipiler = 1f;
         }
     }
 
@@ -138,10 +144,8 @@ public class ShootLogic : MonoBehaviour
         float randomY = UnityEngine.Random.Range(minY, maxY);
 
         Vector3 Recoil = new Vector3(randomX, randomY, 0f);
-
+        
         TotalCurrentRecoil += Recoil * data.RecoilBuildupSpeed*RecoilDamper;
-
-        Debug.Log(Recoil);
     }
 
     int toLoad;
