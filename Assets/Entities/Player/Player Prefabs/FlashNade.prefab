@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &899028545691431591
+--- !u!1 &2828675822406946523
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,49 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5561886421077530225}
-  - component: {fileID: 1923851238172076025}
-  - component: {fileID: 2358841317869159766}
-  - component: {fileID: 6629418512321632149}
-  - component: {fileID: 317389184234881959}
-  - component: {fileID: 5938030649727521357}
+  - component: {fileID: 7258063070621239761}
+  - component: {fileID: 5035606423490831533}
+  - component: {fileID: 7981534468193487687}
+  - component: {fileID: 5082312781981825340}
+  - component: {fileID: 694764899396780350}
+  - component: {fileID: -1554174544956269344}
   m_Layer: 0
-  m_Name: SmokeNade
+  m_Name: FlashNade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5561886421077530225
+--- !u!4 &7258063070621239761
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 899028545691431591}
+  m_GameObject: {fileID: 2828675822406946523}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.00612, y: 0.07157, z: 16.43165}
+  m_LocalRotation: {x: -0, y: -0.9996672, z: -0, w: -0.025797527}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1923851238172076025
+--- !u!33 &5035606423490831533
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 899028545691431591}
+  m_GameObject: {fileID: 2828675822406946523}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &2358841317869159766
+--- !u!23 &7981534468193487687
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 899028545691431591}
+  m_GameObject: {fileID: 2828675822406946523}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -93,13 +93,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &6629418512321632149
+--- !u!135 &5082312781981825340
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 899028545691431591}
+  m_GameObject: {fileID: 2828675822406946523}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -114,33 +114,33 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &317389184234881959
+--- !u!114 &694764899396780350
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 899028545691431591}
+  m_GameObject: {fileID: 2828675822406946523}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aadc75dab99949a4085128f16373dcfc, type: 3}
+  m_Script: {fileID: 11500000, guid: 6fedeea5e47ef75459cb163e1b7d3168, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SmokeNade
-  FuseTimer: 5
+  m_EditorClassIdentifier: Assembly-CSharp::FlashNade
+  FuseTimer: 1
   EffectRadius: 0
   NadeMesh: {fileID: 0}
-  NadeEffect: {fileID: 2894886092556123163, guid: f8030db448a5dfd4ab1bd98c778e15b4, type: 3}
-  rb: {fileID: 5938030649727521357}
-  LongThrowForce: 5
+  NadeEffect: {fileID: 0}
+  rb: {fileID: -1554174544956269344}
+  LongThrowForce: 0
   ShortThrowForce: 0
   ThrowType: 0
---- !u!54 &5938030649727521357
+--- !u!54 &-1554174544956269344
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 899028545691431591}
+  m_GameObject: {fileID: 2828675822406946523}
   serializedVersion: 5
   m_Mass: 1
   m_LinearDamping: 0
@@ -158,6 +158,6 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1

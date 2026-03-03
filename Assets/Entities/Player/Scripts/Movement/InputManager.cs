@@ -4,14 +4,14 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     [Header("References")]
-    private MovementLogic playerMovementLogic;
-    private ShootLogic playerShootLogic;
-    private ADS ADSlogic;
-    private WeaponWallBlock weaponWallBlock;
-    private AnimationLogic playerAnimationLogic;
-    private PlayerUI playerUI;
-    private ThrowAbleLogic playerThrowAbleLogic;
-
+    [SerializeField] private MovementLogic playerMovementLogic;
+    [SerializeField] private ShootLogic playerShootLogic;
+    [SerializeField] private ADS ADSlogic;
+    [SerializeField] private WeaponWallBlock weaponWallBlock;
+    [SerializeField] private AnimationLogic playerAnimationLogic;
+    [SerializeField] private PlayerUI playerUI;
+    [SerializeField] private ThrowAbleLogic playerThrowAbleLogic;
+    [SerializeField] private Knife playerKnife;
     [SerializeField] Recoil PlayerRecoil;
 
     [Header("Movement Keys")]
@@ -66,6 +66,7 @@ public class InputManager : MonoBehaviour
         // combat animations
         playerAnimationLogic.CombatAnimationEnd += OnBlockEnd;
         playerAnimationLogic.CombatAnimationStart += OnBlockStart;
+        playerAnimationLogic.KnifeStab += OnKNifeStab;
 
         // nades
         playerAnimationLogic.ThrowAbleRelease += OnNadeThrown;
@@ -81,7 +82,6 @@ public class InputManager : MonoBehaviour
         {
             CurrentGunState = GunState.ADS;
             ADSlogic.ApplyADS();
-            //playerUI.ActivateADSCrosshair();
         }
         if(CurrentGunState == GunState.Idle)
         {
@@ -99,7 +99,7 @@ public class InputManager : MonoBehaviour
 
             playerShootLogic.Shoot();
 
-            PlayerRecoil.RecoilFire();
+            PlayerRecoil.RecoilFire(CurrentGunState == GunState.ADS);
 
             playerShootLogic.CalculateRecoilDaper(CurrentGunState == GunState.ADS, playerMovementLogic.CurrentVelocity.magnitude);
 
@@ -148,6 +148,11 @@ public class InputManager : MonoBehaviour
             playerAnimationLogic.PlayGrenedeAnimation();
             // add sound effects and camera shake
         }
+    }
+
+    void OnKNifeStab(object sender, EventArgs a)
+    {
+        playerKnife.Damage();
     }
 
     void OnNadeThrown(object sender, EventArgs e)

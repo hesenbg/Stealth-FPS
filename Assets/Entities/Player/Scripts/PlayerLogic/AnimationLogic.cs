@@ -17,6 +17,7 @@ public class AnimationLogic : MonoBehaviour
 
     public event EventHandler GunMagOut;
     public event EventHandler GunMagIn;
+    public event EventHandler KnifeStab;
 
     private void Start()
     {
@@ -111,6 +112,12 @@ public class AnimationLogic : MonoBehaviour
     }
 
     // event fires
+
+    public void FireKnifeStab()
+    {
+        KnifeStab?.Invoke(this,EventArgs.Empty);
+    }
+
     public void FireThrowAbleRelease()
     {
         ThrowAbleRelease?.Invoke(this, EventArgs.Empty);

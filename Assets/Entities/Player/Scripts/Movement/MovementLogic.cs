@@ -33,12 +33,12 @@ public class MovementLogic : MonoBehaviour
     private Rigidbody rb;
     [SerializeField] CapsuleCollider DefoultCollider;
     [SerializeField] CapsuleCollider CrouchCollider;
-    private BoxCollider GroundTrigger;
+    [SerializeField] LayerMask GroundMask;
+    [SerializeField] float Radius;
+    private Transform Ground;
 
     private float currMaxVelocity;
     private float currAcc;
-    private float baseHeight;
-    private Vector3 standGroundCheck;
     public Vector3 Direction;
 
     #region Unity Lifecycle
@@ -46,13 +46,9 @@ public class MovementLogic : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         DefoultCollider = GetComponent<CapsuleCollider>();
-        GroundTrigger = GetComponent<BoxCollider>();
-
-        baseHeight = DefoultCollider.height;
-        standGroundCheck = GroundTrigger.center;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         Direction = UpdateDirection();
     }
@@ -63,25 +59,34 @@ public class MovementLogic : MonoBehaviour
 
     Vector3 UpdateDirection()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(DetetctionSource.position, Vector3.down, out hit, RayDistance))
+        Vector3 surfaceNormal = Vector3.up;
+
+        if (Physics.SphereCast(DetetctionSource.position, Radius, Vector3.down, out RaycastHit hit, RayDistance, GroundMask))
         {
-            Vector3 surfaceNormal = hit.normal;
-            IsOnSlope = Vector3.Angle(Vector3.up, surfaceNormal) > 5f;
+            surfaceNormal = hit.normal;
+            Ground = hit.transform;
+            IsGround = true;
+        }
+        else
+        {
+            IsGround = false;
+        }
 
+        float slopeAngle = Vector3.Angle(Vector3.up, surfaceNormal);
+        IsOnSlope = slopeAngle > 5f && slopeAngle < 45f;
 
-            if (IsOnSlope && IsGround)
-            {
-                rb.useGravity = false; // added to avoid falling down
-                rb.linearDamping = data.WalkSpeed; // moving in slope with gravity of disables deacceleration so we add damping
-                return Vector3.ProjectOnPlane(Direction, surfaceNormal).normalized;
-            }
+        if (IsOnSlope && IsGround)
+        {
+            rb.useGravity = false;
+            rb.linearDamping = data.WalkSpeed;
+
+            Vector3 rawInputDirection = new Vector3(MoveInput.x, 0, MoveInput.y);
+            return Vector3.ProjectOnPlane(rawInputDirection, surfaceNormal).normalized;
         }
 
         rb.linearDamping = 0;
-        IsOnSlope = false;
         rb.useGravity = true;
-        return Direction;
+        return new Vector3(MoveInput.x, 0, MoveInput.y);
     }
 
     #endregion
@@ -147,7 +152,6 @@ public class MovementLogic : MonoBehaviour
     void ApplyHorizontalMovement()
     {
         CurrentVelocity = rb.linearVelocity;
-        Direction = UpdateDirection();
 
         if (Direction.magnitude > 0)
         {
@@ -200,6 +204,7 @@ public class MovementLogic : MonoBehaviour
     // 13 ground layer
     private void OnTriggerEnter(Collider other)
     {
+        Ground = other.gameObject.transform;
         if(!IsGround)
             OnStepOnGround?.Invoke(this, EventArgs.Empty);
     }
@@ -211,8 +216,28 @@ public class MovementLogic : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.blue; // ground detection vector
-        Gizmos.DrawLine(DetetctionSource.position, DetetctionSource.position + Vector3.down * RayDistance);
+        if (DetetctionSource == null) return;
+
+        Gizmos.color = IsGround ? Color.green : Color.red;
+
+        Vector3 start = DetetctionSource.position;
+        Vector3 end = start + Vector3.down * RayDistance;
+
+        Gizmos.DrawLine(start, end);
+        Gizmos.DrawWireSphere(start, Radius);
+        Gizmos.DrawWireSphere(end, Radius);
+
+        if (IsGround)
+        {
+            Gizmos.color = Color.cyan;
+            Vector3 rawInputDirection = new Vector3(MoveInput.x, 0, MoveInput.y);
+            Vector3 moveDir = UpdateDirection();
+
+            Gizmos.DrawRay(transform.position, rawInputDirection * 2f);
+
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawRay(transform.position, moveDir * 2f);
+        }
 
         Gizmos.color = Color.red;  // velocity visual vector
         Gizmos.DrawLine(transform.position, transform.position + CurrentVelocity.normalized * 1.5f);

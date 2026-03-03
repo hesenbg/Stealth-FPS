@@ -42,8 +42,6 @@ public class ShootLogic : MonoBehaviour
             Time.deltaTime * data.RecoilRecoverySpeed);
 
         HandleHeatDecay();
-
-        Debug.Log(TotalCurrentRecoil);
     }
 
     private void HandleHeatDecay()

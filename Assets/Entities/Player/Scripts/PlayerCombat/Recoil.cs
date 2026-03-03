@@ -14,7 +14,7 @@ public class Recoil : MonoBehaviour
     [SerializeField] float Snappines;
     [SerializeField] float returnSpeed;
 
-    [SerializeField] float RecoilMultipiler;
+    [SerializeField] float ADSmultipiler;
 
     [SerializeField] Vector3 RecoilRotValue;
 
@@ -22,6 +22,7 @@ public class Recoil : MonoBehaviour
 
     private void Start()
     {
+
     }
 
     private void Update()
@@ -41,7 +42,7 @@ public class Recoil : MonoBehaviour
         Mesh.transform.localPosition = CurrPos;
     }
 
-    public void RecoilFire()
+    public void RecoilFire(bool IsADS)
     {
         TargetRotation -= new Vector3(RecoilRotValue.y,
             Random.Range(-RecoilRotValue.x, RecoilRotValue.x),

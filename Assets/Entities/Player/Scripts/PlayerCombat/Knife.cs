@@ -10,6 +10,12 @@ public class Knife : MonoBehaviour
 
     [SerializeField] bool ShowGizmos;
 
+
+    private void FixedUpdate()
+    {
+        
+    }
+
     public void Damage()
     {
         RaycastHit HitInfo;
@@ -18,7 +24,7 @@ public class Knife : MonoBehaviour
         {
             if (HitInfo.collider.CompareTag("Head") || HitInfo.collider.CompareTag("Body"))
             {
-                // Damage logic here
+                HitInfo.collider.gameObject.GetComponentInParent<HealthManager>().GetKnifeDamage();
             }
         }
     }
