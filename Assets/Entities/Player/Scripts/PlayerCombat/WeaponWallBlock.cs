@@ -23,6 +23,7 @@ public class WeaponWallBlock : MonoBehaviour
     [Header("Blocking Logic")]
     [SerializeField] float BlockTresholdLimit = 0.1f;
     public bool Blocked;
+    [SerializeField] LayerMask BlockAble;
 
     [SerializeField] private float currentWeight;
     private Vector3 initialLocalPos;
@@ -53,6 +54,7 @@ public class WeaponWallBlock : MonoBehaviour
             CastSource.forward,
             out lastHit,
             maxDistance
+            ,BlockAble
         );
 
         //Weight Calculation

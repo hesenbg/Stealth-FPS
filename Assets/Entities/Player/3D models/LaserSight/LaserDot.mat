@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4600208322962400294
+--- !u!114 &-6791501824265440282
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
   version: 10
 --- !u!21 &2100000
 Material:
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LasrerGlowMaterial
-  m_Shader: {fileID: -6465566751694194690, guid: dcd1d0192b8ffed42aed3b5505b4f578, type: 3}
+  m_Name: LaserDot
+  m_Shader: {fileID: -6465566751694194690, guid: 5f72076598a83f048b78555f7f0f79aa, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -51,12 +51,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _GlowStrength: 50
-    - _Pulse: 0
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _Strength: 1
     m_Colors:
-    - _Emission: {r: 1, g: 0.006024095, b: 0, a: 0}
-    - _neon: {r: 1, g: 0.07092199, b: 0, a: 0}
+    - _BaseColor: {r: 1, g: 0, b: 0, a: 1}
+    - _Size: {r: 0.5, g: 0.5, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

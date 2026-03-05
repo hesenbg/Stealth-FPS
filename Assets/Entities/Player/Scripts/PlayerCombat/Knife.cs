@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class Knife : MonoBehaviour
@@ -9,11 +10,19 @@ public class Knife : MonoBehaviour
     [SerializeField] float Distance = 1.0f;
 
     [SerializeField] bool ShowGizmos;
-
+    [SerializeField] LayerMask Enemy;
+    [SerializeField] TextMeshProUGUI AttackIndicator;
 
     private void FixedUpdate()
     {
-        
+        if (Physics.Raycast(Origin.position, Origin.forward, Distance+Radius,Enemy))
+        {
+            AttackIndicator.enabled = true;
+        }
+        else
+        {
+            AttackIndicator.enabled = false;
+        }
     }
 
     public void Damage()
