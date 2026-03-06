@@ -6,7 +6,7 @@ public class LaserDot : MonoBehaviour
     LineRenderer Laser;
     [SerializeField] GameObject LaserQuad;
     [SerializeField] float surfaceOffset = 0.02f;
-
+    
     void Start()
     {
         Laser = GetComponent<LineRenderer>();

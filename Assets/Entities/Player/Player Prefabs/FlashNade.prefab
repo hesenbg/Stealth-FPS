@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fedeea5e47ef75459cb163e1b7d3168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlashNade
-  FuseTimer: 1
+  FuseTimer: 1.5
   EffectRadius: 0
   NadeMesh: {fileID: 0}
   NadeEffect: {fileID: 0}

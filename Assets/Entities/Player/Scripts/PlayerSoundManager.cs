@@ -1,7 +1,5 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class PlayerSoundManager : MonoBehaviour
 {
     public static PlayerSoundManager instance { get; private set; }
@@ -23,6 +21,9 @@ public class PlayerSoundManager : MonoBehaviour
     [SerializeField] private AudioClip MagIn;
     [SerializeField] private AudioClip MagOut;
 
+    [SerializeField] private AudioClip KnifeSlash;
+    [SerializeField] private AudioClip KnifeStab;
+
     [Header("Step Settings")]
     [SerializeField] private float walkStepInterval = 0.5f;
     [SerializeField] private float runStepInterval = 0.3f;
@@ -35,6 +36,9 @@ public class PlayerSoundManager : MonoBehaviour
     [SerializeField] float LandVolume;
     [SerializeField] float ShootVolume;
     [SerializeField] float StepVolume;
+
+    [SerializeField] float KnifeSlashVolume;
+    [SerializeField] float KnifeStabVolume;
 
     [SerializeField] float ReloadVolume;
 
@@ -49,6 +53,16 @@ public class PlayerSoundManager : MonoBehaviour
             return;
         }
         instance = this;
+    }
+
+    public void PlayKnifeSlash(Vector3 pos)
+    {
+        AudioSource.PlayClipAtPoint(KnifeSlash, pos, KnifeSlashVolume);
+    }
+
+    public void PlayKnifeStab(Vector3 pos)
+    {
+        AudioSource.PlayClipAtPoint(KnifeStab, pos , KnifeStabVolume);
     }
 
     public void PlayMagOut()

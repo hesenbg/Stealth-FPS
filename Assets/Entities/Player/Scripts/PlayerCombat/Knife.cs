@@ -17,11 +17,11 @@ public class Knife : MonoBehaviour
     {
         if (Physics.Raycast(Origin.position, Origin.forward, Distance+Radius,Enemy))
         {
-            AttackIndicator.enabled = true;
+            AttackIndicator.gameObject.SetActive(true);
         }
         else
         {
-            AttackIndicator.enabled = false;
+            AttackIndicator.gameObject.SetActive(false);
         }
     }
 
@@ -29,11 +29,15 @@ public class Knife : MonoBehaviour
     {
         RaycastHit HitInfo;
 
+        PlayerSoundManager.instance.PlayKnifeSlash(transform.position);
+
         if (Physics.SphereCast(Origin.position, Radius, Origin.forward, out HitInfo, Distance))
         {
             if (HitInfo.collider.CompareTag("Head") || HitInfo.collider.CompareTag("Body"))
             {
+                PlayerSoundManager.instance.PlayKnifeStab(HitInfo.point);
                 HitInfo.collider.gameObject.GetComponentInParent<HealthManager>().GetKnifeDamage();
+                EnemyEffects.instance.PlayBloodVFX(HitInfo.point);
             }
         }
     }

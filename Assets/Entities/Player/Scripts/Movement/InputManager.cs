@@ -1,8 +1,11 @@
 ﻿using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 public class InputManager : MonoBehaviour
 {
+    public enum InputType { Hold, Toggle }
+
     [Header("References")]
     [SerializeField] private MovementLogic playerMovementLogic;
     [SerializeField] private ShootLogic playerShootLogic;
@@ -29,69 +32,106 @@ public class InputManager : MonoBehaviour
     [SerializeField] private KeyCode KnifeStabKey;
     [SerializeField] private KeyCode ThrowObjectKey;
 
+    [Header("Settings")]
+    [SerializeField] private InputType adsInputType = InputType.Hold;
+
     [Header("Combat Variables")]
     public GunState CurrentGunState;
     public enum GunState { Idle, Blocked, Reload, ADS }
-   
+
     private void Start()
     {
         InitilizeMovementVariables();
         InitilizeCombatVariables();
     }
+
     private void Update()
     {
         UpdateMovement();
         UpdateCombat();
+
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            SceneManager.LoadSceneAsync(0);
+        }
     }
 
     void InitilizeCombatVariables()
     {
-        // variable assigning
         CurrentGunState = GunState.Idle;
         ADSlogic = PlayerComponents.Instance.ADS;
         playerShootLogic = PlayerComponents.Instance.ShootLogic;
         weaponWallBlock = PlayerComponents.Instance.WallBlock;
         playerUI = PlayerComponents.Instance.PlayerUI;
         playerThrowAbleLogic = PlayerComponents.Instance.ThrowAbleLogic;
-        // event subscribing
-        // reload
+
         playerShootLogic.OnReloadEnd += OnReloadEnd;
         playerAnimationLogic.GunMagOut += OnReloadMagOut;
         playerAnimationLogic.GunMagIn += OnReloadMagIn;
 
-        // weapon block
         weaponWallBlock.WallBlockEnd += OnBlockEnd;
         weaponWallBlock.WallBlockStart += OnBlockStart;
 
-        // combat animations
         playerAnimationLogic.CombatAnimationEnd += OnBlockEnd;
         playerAnimationLogic.CombatAnimationStart += OnBlockStart;
         playerAnimationLogic.KnifeStab += OnKNifeStab;
 
-        // nades
         playerAnimationLogic.ThrowAbleRelease += OnNadeThrown;
     }
 
     void ADS()
     {
-        if (Input.GetMouseButtonUp(1))
+        if (adsInputType == InputType.Hold)
         {
-            CurrentGunState = GunState.Idle;
+            HandleHoldADS();
         }
-        if (Input.GetMouseButton(1) && CurrentGunState == GunState.Idle || CurrentGunState == GunState.ADS)
+        else
         {
-            CurrentGunState = GunState.ADS;
+            HandleToggleADS();
+        }
+
+        if (CurrentGunState == GunState.ADS)
+        {
             ADSlogic.ApplyADS();
         }
-        if(CurrentGunState == GunState.Idle)
+
+        if (CurrentGunState == GunState.Idle)
         {
             ADSlogic.RevertADS();
         }
     }
 
+    void HandleHoldADS()
+    {
+        if (Input.GetMouseButtonUp(1))
+        {
+            CurrentGunState = GunState.Idle;
+        }
+
+        if (Input.GetMouseButton(1) && (CurrentGunState == GunState.Idle || CurrentGunState == GunState.ADS))
+        {
+            CurrentGunState = GunState.ADS;
+        }
+    }
+
+    void HandleToggleADS()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (CurrentGunState == GunState.Idle)
+            {
+                CurrentGunState = GunState.ADS;
+            }
+            else if (CurrentGunState == GunState.ADS)
+            {
+                CurrentGunState = GunState.Idle;
+            }
+        }
+    }
+
     void Shoot()
     {
-        if(Input.GetMouseButton(0) && (CurrentGunState== GunState.Idle || CurrentGunState == GunState.ADS))
+        if (Input.GetMouseButton(0) && (CurrentGunState == GunState.Idle || CurrentGunState == GunState.ADS))
         {
             if (!playerShootLogic.CanShoot())
                 return;
@@ -112,11 +152,11 @@ public class InputManager : MonoBehaviour
 
     void Reload()
     {
-        if (Input.GetKeyDown(ReloadKey) && CurrentGunState== GunState.Idle)
+        if (Input.GetKeyDown(ReloadKey) && CurrentGunState == GunState.Idle)
         {
             CurrentGunState = GunState.Reload;
             StartCoroutine(playerShootLogic.Reload());
-            playerAnimationLogic.PlayReloadAnimation(playerShootLogic.CurrentMagazineAmmo==0);
+            playerAnimationLogic.PlayReloadAnimation(playerShootLogic.CurrentMagazineAmmo == 0);
         }
     }
 
@@ -145,8 +185,8 @@ public class InputManager : MonoBehaviour
     {
         if (Input.GetKeyDown(ThrowObjectKey) && CurrentGunState == GunState.Idle)
         {
-            playerAnimationLogic.PlayGrenedeAnimation();
-            // add sound effects and camera shake
+            float controlValue = Input.GetKey(KeyCode.LeftControl) ? 0f : 1f;
+            playerAnimationLogic.PlayGrenedeAnimation(controlValue);
         }
     }
 
@@ -160,17 +200,17 @@ public class InputManager : MonoBehaviour
         playerThrowAbleLogic.ThrowNadeLong();
     }
 
-    void OnReloadEnd(object  sender,EventArgs a)
+    void OnReloadEnd(object sender, EventArgs a)
     {
         CurrentGunState = GunState.Idle;
     }
 
-    void OnBlockStart(object sender,EventArgs a)
+    void OnBlockStart(object sender, EventArgs a)
     {
         CurrentGunState = GunState.Blocked;
     }
 
-    void OnBlockEnd(object sender,EventArgs a)
+    void OnBlockEnd(object sender, EventArgs a)
     {
         CurrentGunState = GunState.Idle;
     }
@@ -179,12 +219,11 @@ public class InputManager : MonoBehaviour
     {
         Reload();
         ThrowObject();
-        KnifeStab();    
+        KnifeStab();
         Shoot();
         ADS();
     }
 
-    // movement
     void InitilizeMovementVariables()
     {
         playerMovementLogic = PlayerComponents.Instance.Movement;
@@ -210,6 +249,7 @@ public class InputManager : MonoBehaviour
     {
         playerMovementLogic.Idle();
     }
+
     void OnJumpOffGround(object Sender, EventArgs a)
     {
         PlayerSoundManager.instance.PlayJump();
@@ -219,6 +259,7 @@ public class InputManager : MonoBehaviour
     {
         PlayerSoundManager.instance.PlayLand();
     }
+
     void Jump()
     {
         if (Input.GetKeyDown(jumpKey))
@@ -235,19 +276,19 @@ public class InputManager : MonoBehaviour
             if (playerMovementLogic.IsGround)
             {
                 PlayerSoundManager.instance.PlayWalk();
-            }   
+            }
         }
     }
 
     void Run()
     {
-        if (Input.GetKey(sprintKey) && CurrentDirection.magnitude> 0.01f)
+        if (Input.GetKey(sprintKey) && CurrentDirection.magnitude > 0.01f)
         {
             playerMovementLogic.Run();
             if (playerMovementLogic.IsGround)
             {
                 PlayerSoundManager.instance.PlayRun();
-            }      
+            }
         }
     }
 
@@ -262,10 +303,11 @@ public class InputManager : MonoBehaviour
     {
         TakeInput();
         playerMovementLogic.Direction = CurrentDirection;
+        Crouch();
         Idle();
         Walk();
-        Crouch();
         Jump();
         Run();
+        playerAnimationLogic.PlayMovementAnimations(playerMovementLogic.CurrentMovementState);
     }
 }

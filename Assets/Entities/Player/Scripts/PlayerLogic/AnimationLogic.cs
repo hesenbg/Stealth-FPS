@@ -1,7 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
-
 public class AnimationLogic : MonoBehaviour
 {
     public Animator Animator { get; private set; }
@@ -25,21 +23,17 @@ public class AnimationLogic : MonoBehaviour
         CrouchOriginalPosition = CrouchObject.localPosition;
     }
 
-    private void Update()
+    public void PlayMovementAnimations(MovementLogic.MovementState State)
     {
-        PlayMovementAnimations();
+        Animator.SetBool("IsWalking", State == MovementLogic.MovementState.Walk || State == MovementLogic.MovementState.Crouch);
+        Animator.SetBool("IsRunning", State == MovementLogic.MovementState.Run);
     }
 
-    void PlayMovementAnimations()
-    {
-        MovementLogic Player= PlayerComponents.Instance.Movement;
 
-        Animator.SetBool("IsWalking", Player.CurrentMovementState == MovementLogic.MovementState.Walk);
-        Animator.SetBool("IsRunning", Player.CurrentMovementState == MovementLogic.MovementState.Run);
-    }
-    
     public void CrouchAnimation(bool IsCrouching)
     {
+        Animator.SetBool("IsWalking", IsCrouching);
+
         if (IsCrouching)
         {
             PlayCrouchAnimation(CrouchSpeed);
@@ -106,8 +100,9 @@ public class AnimationLogic : MonoBehaviour
 
         // procedural animation
     }
-    public void PlayGrenedeAnimation()
+    public void PlayGrenedeAnimation(float NadeThrowType)  // 1 means long and 0 means short
     {
+        Animator.SetFloat("ThrowType", NadeThrowType);
         Animator.SetTrigger("Throw");
     }
 

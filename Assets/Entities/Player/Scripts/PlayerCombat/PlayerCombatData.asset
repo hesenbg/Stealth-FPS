@@ -20,12 +20,12 @@ MonoBehaviour:
   reloadTime: 1.4
   baseDamage: 40
   hsMultipiler: 3
-  recoilRecoverySpeed: 0.6
-  recoilBuildupSpeed: 1
+  recoilRecoverySpeed: 0.4
+  recoilBuildupSpeed: 1.5
   heatDecayDelay: 0.5
   heatDecayRate: 1
   recoilPattern:
-  - {x: 0.04, y: 0.04}
+  - {x: 0.01, y: 0.02}
   - {x: 0.05, y: 0.05}
   - {x: 0.1, y: 0.08}
   - {x: 0.15, y: 0.1}
