@@ -26,7 +26,6 @@ public abstract class StateManager<Estate> : MonoBehaviour where Estate : Enum
         {
             TransitionToState(NextStateKey);
         }
-
     }
 
     public void TransitionToState(Estate state)
@@ -38,6 +37,5 @@ public abstract class StateManager<Estate> : MonoBehaviour where Estate : Enum
 
         CurrentState.OnStateEnter();
         OnTransitioningToState = false;
-
     }
 }

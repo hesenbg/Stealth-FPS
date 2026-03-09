@@ -97,7 +97,7 @@ public class ShootLogic : MonoBehaviour
             }
             if (hit.collider.CompareTag("Destructable"))
             {
-                hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
+                //hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
             }
         }
 
