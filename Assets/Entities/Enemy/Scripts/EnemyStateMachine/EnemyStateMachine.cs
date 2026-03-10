@@ -7,7 +7,6 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 
     private EnemyStateMachineContext context;
 
-
     [SerializeField] Sight EnemySight;
 
     [SerializeField] HealthManager EnemyHealthManager;
@@ -16,10 +15,15 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 
     [SerializeField] NavMeshAgent agent;
 
+    [SerializeField] EnemyAIData data;
+
+    [SerializeField] Rigidbody rb;
+
+    [SerializeField] GameObject Parent;
 
     private void Awake()
     {
-        context = new EnemyStateMachineContext(EnemySight, EnemyHealthManager,EnemyCombat,agent);
+        context = new EnemyStateMachineContext(EnemySight, EnemyHealthManager,EnemyCombat,agent,data,rb, Parent);
 
         InitlizeStates();
     }

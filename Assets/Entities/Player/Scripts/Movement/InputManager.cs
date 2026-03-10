@@ -49,11 +49,6 @@ public class InputManager : MonoBehaviour
     {
         UpdateMovement();
         UpdateCombat();
-
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            SceneManager.LoadSceneAsync(0);
-        }
     }
 
     void InitilizeCombatVariables()

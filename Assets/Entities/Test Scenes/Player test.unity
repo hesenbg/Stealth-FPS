@@ -8660,6 +8660,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1993202087}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
+--- !u!1 &2094740889
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2094740891}
+  - component: {fileID: 2094740890}
+  m_Layer: 0
+  m_Name: Aigizmo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2094740890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094740889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7fc74d9be0ee264f9cf6a35578fcb8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyGizmos
+  data: {fileID: 11400000, guid: 85cccf547536e1344b5bfeecefb2c721, type: 2}
+  Radius: 0.2
+--- !u!4 &2094740891
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094740889}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.77003, y: 0.5, z: 9.6394}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5836147784060695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13281,7 +13327,7 @@ Transform:
   m_GameObject: {fileID: 7525035678143783746}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.09, y: 2.043, z: 10.73}
+  m_LocalPosition: {x: -8, y: 2.03, z: 10.73}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -21171,6 +21217,8 @@ GameObject:
   - component: {fileID: 2886806632234975042}
   - component: {fileID: 7525035678143783747}
   - component: {fileID: 7525035678143783748}
+  - component: {fileID: 7525035678143783749}
+  - component: {fileID: 7525035678143783750}
   m_Layer: 8
   m_Name: PhysicalEnemy
   m_TagString: Enemy
@@ -21188,7 +21236,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.3
-  m_Speed: 3.5
+  m_Speed: 1
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -21216,6 +21264,59 @@ MonoBehaviour:
   EnemyHealthManager: {fileID: 2171505132040435833}
   EnemyCombat: {fileID: 1151168785}
   agent: {fileID: 7525035678143783747}
+  data: {fileID: 11400000, guid: 85cccf547536e1344b5bfeecefb2c721, type: 2}
+  rb: {fileID: 7525035678143783749}
+  Parent: {fileID: 7525035678143783746}
+--- !u!54 &7525035678143783749
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7525035678143783746}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 1
+--- !u!136 &7525035678143783750
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7525035678143783746}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 1.75
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.21, z: 0}
 --- !u!4 &7533123485330811327
 Transform:
   m_ObjectHideFlags: 0
@@ -23790,3 +23891,4 @@ SceneRoots:
   - {fileID: 1385575152}
   - {fileID: 1993202087}
   - {fileID: 364844713}
+  - {fileID: 2094740891}
