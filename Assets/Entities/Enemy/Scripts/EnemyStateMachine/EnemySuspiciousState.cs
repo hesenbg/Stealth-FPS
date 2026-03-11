@@ -9,9 +9,7 @@ public class EnemySuspiciousState : EnemyState
 
     public override EnemyStateMachine.EnemyState GetNextState()
     {
-        EnemyStateMachine.EnemyState state = EnemyStateMachine.EnemyState.Idle;
-
-        return state;
+        return EnemyStateMachine.EnemyState.Suspicious;
     }
 
 

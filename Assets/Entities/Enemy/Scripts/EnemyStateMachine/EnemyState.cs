@@ -8,4 +8,6 @@ public abstract class EnemyState : BaseState<EnemyStateMachine.EnemyState>
     {
         context = _context;
     }
+
+
 }

@@ -5,6 +5,8 @@ public class EnemyIdleState : EnemyState
     int currentPathIndex = 0;
     bool usingRigidbody = false;
 
+    EnemyStateMachine.EnemyState NextState;
+
     public EnemyIdleState(EnemyStateMachineContext _context, EnemyStateMachine.EnemyState statekey)
         : base(_context, statekey)
     {
@@ -13,18 +15,30 @@ public class EnemyIdleState : EnemyState
 
     public override EnemyStateMachine.EnemyState GetNextState()
     {
-        return EnemyStateMachine.EnemyState.Idle;
+        return NextState;
     }
 
     public override void OnStateEnter()
     {
         usingRigidbody = false;
         SetAgentDestination(context.enemyAIData.PatrolPositions[currentPathIndex]);
+        context.enemySight.OnTargetinSIght += OnTargetInSight;
+        context.enemySight.OnTargetoutSIght += OnTargetOutSite;
+    }
+
+    private void OnTargetOutSite(object sender, System.EventArgs e)
+    {
+        NextState = EnemyStateMachine.EnemyState.Idle;
+    }
+
+    private void OnTargetInSight(object sender, System.EventArgs e)
+    {
+        NextState = EnemyStateMachine.EnemyState.Suspicious;
     }
 
     public override void OnStateExit()
     {
-        SwitchToAgent(); // ensure agent is re-enabled for other states
+        SwitchToAgent(); 
         context.agent.ResetPath();
     }
 
@@ -32,7 +46,6 @@ public class EnemyIdleState : EnemyState
     {
         if (!usingRigidbody)
         {
-            // Wait until path is ready before checking distance
             if (!context.agent.pathPending && context.agent.remainingDistance < 0.1f)
             {
                 currentPathIndex = (currentPathIndex + 1) % context.enemyAIData.PatrolPositions.Length;
@@ -43,7 +56,6 @@ public class EnemyIdleState : EnemyState
         {
             MoveRigidbody();
 
-            // Hand back to NavMeshAgent once close enough
             if (CheckArrivedRigidbody(context.enemyAIData.PatrolPositions[currentPathIndex]))
             {
                 SwitchToAgent();
@@ -62,14 +74,14 @@ public class EnemyIdleState : EnemyState
     void SwitchToRigidbody()
     {
         context.agent.ResetPath();
-        context.agent.enabled = false; // KEY: stop agent from fighting the rigidbody
+        context.agent.enabled = false; 
         context.rb.linearVelocity = Vector3.zero;
         usingRigidbody = true;
     }
 
     void SwitchToAgent()
     {
-        context.rb.linearVelocity = Vector3.zero; // stop residual momentum
+        context.rb.linearVelocity = Vector3.zero; 
         context.agent.enabled = true;
         usingRigidbody = false;
     }
