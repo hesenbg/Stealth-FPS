@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class EnemyAlarmState : EnemyState
 {
+    EnemyStateMachine.EnemyState NextState;
+
     public EnemyAlarmState(EnemyStateMachineContext _context, EnemyStateMachine.EnemyState statekey) : base(_context, statekey)
     {
         context = _context;
@@ -16,6 +18,17 @@ public class EnemyAlarmState : EnemyState
 
 
     public override void OnStateEnter()
+    {
+        context.enemySight.OnTargetinSIght += OnEnemyInSight;
+        context.enemySight.OnTargetoutSIght += OnEnemyOutSite;
+    }
+
+    private void OnEnemyOutSite(object sender, System.EventArgs e)
+    {
+        NextState = EnemyStateMachine.EnemyState.Search;
+    }
+
+    private void OnEnemyInSight(object sender, System.EventArgs e)
     {
 
     }

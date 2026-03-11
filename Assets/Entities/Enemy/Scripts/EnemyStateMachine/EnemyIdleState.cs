@@ -21,6 +21,7 @@ public class EnemyIdleState : EnemyState
     public override void OnStateEnter()
     {
         usingRigidbody = false;
+        currentPathIndex = 0;
         SetAgentDestination(context.enemyAIData.PatrolPositions[currentPathIndex]);
         context.enemySight.OnTargetinSIght += OnTargetInSight;
         context.enemySight.OnTargetoutSIght += OnTargetOutSite;
@@ -33,7 +34,7 @@ public class EnemyIdleState : EnemyState
 
     private void OnTargetInSight(object sender, System.EventArgs e)
     {
-        NextState = EnemyStateMachine.EnemyState.Suspicious;
+        NextState = EnemyStateMachine.EnemyState.Alarmed;
     }
 
     public override void OnStateExit()
