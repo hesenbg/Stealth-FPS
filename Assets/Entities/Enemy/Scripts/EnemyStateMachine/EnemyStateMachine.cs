@@ -4,7 +4,7 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 {
     public enum EnemyState { Idle, Suspicious, Alarmed, Search }
 
-    private EnemyStateMachineContext context;
+    public EnemyStateMachineContext context {  get; private set; }
 
     [SerializeField] Sight EnemySight;
 
@@ -19,6 +19,8 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
     [SerializeField] Rigidbody rb;
 
     [SerializeField] GameObject Parent;
+
+    [SerializeField] Audiotary audiotary;
 
     private void Awake()
     {

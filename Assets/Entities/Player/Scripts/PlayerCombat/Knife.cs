@@ -31,7 +31,7 @@ public class Knife : MonoBehaviour
 
         PlayerSoundManager.instance.PlayKnifeSlash(transform.position);
 
-        if (Physics.SphereCast(Origin.position, Radius, Origin.forward, out HitInfo, Distance))
+        if (Physics.SphereCast(Origin.position, Radius, Origin.forward, out HitInfo, Distance,Enemy,QueryTriggerInteraction.Collide))
         {
             if (HitInfo.collider.CompareTag("Head") || HitInfo.collider.CompareTag("Body"))
             {

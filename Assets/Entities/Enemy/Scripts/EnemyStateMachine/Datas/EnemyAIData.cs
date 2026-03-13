@@ -9,5 +9,10 @@ public class EnemyAIData : ScriptableObject
 
     [Header("Suspicious State")]
     public float WonderTimer;
-    public float SuspiciousState;   
+    public float SuspiciousState;
+
+
+
+    [Header("data")]
+    public float Range;
 }

@@ -132,6 +132,11 @@ public class InputManager : MonoBehaviour
                 return;
             playerShootLogic.CalculateRecoil();
 
+            if(playerMovementLogic.CurrentMovementState == MovementLogic.MovementState.Run)
+            {
+                //playerAnimationLogic.Animator.setla
+            }
+
             playerShootLogic.Shoot();
 
             PlayerRecoil.RecoilFire(CurrentGunState == GunState.ADS);
@@ -277,6 +282,7 @@ public class InputManager : MonoBehaviour
 
     void Run()
     {
+
         if (Input.GetKey(sprintKey) && CurrentDirection.magnitude > 0.01f)
         {
             playerMovementLogic.Run();
@@ -303,6 +309,7 @@ public class InputManager : MonoBehaviour
         Walk();
         Jump();
         Run();
+        playerMovementLogic.CurrentMovementState = MovementLogic.MovementState.Run;
         playerAnimationLogic.PlayMovementAnimations(playerMovementLogic.CurrentMovementState);
     }
 }
