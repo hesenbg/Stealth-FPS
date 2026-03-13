@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 public class Audiotary : MonoBehaviour
 {
@@ -7,6 +8,19 @@ public class Audiotary : MonoBehaviour
     public event EventHandler soundGive;
 
     GameObject closestObject;
+
+    private void Awake()
+    {
+        List<GameObject> enemyList = new List<GameObject>();
+
+        foreach (Transform child in GetComponentsInChildren<Transform>())
+        {
+            if (child.GetComponent<EnemyStateMachine>() != null)
+                enemyList.Add(child.gameObject);
+        }
+
+        enemies = enemyList.ToArray();
+    }
 
     public void CheckEnemyClose(Vector3 pos, float range)
     {
@@ -28,7 +42,6 @@ public class Audiotary : MonoBehaviour
             }
         }
 
-
-
+        Debug.Log(closestObject.name);
     }
 }
