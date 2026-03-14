@@ -250,7 +250,8 @@ public class InputManager : MonoBehaviour
 
     void Idle()
     {
-        playerMovementLogic.Idle();
+        if(CurrentDirection.magnitude<0.01f)
+            playerMovementLogic.Idle();
     }
 
     void OnJumpOffGround(object Sender, EventArgs a)

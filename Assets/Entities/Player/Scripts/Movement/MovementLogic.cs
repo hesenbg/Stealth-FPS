@@ -2,10 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-// how does it works
-// it only updates the procedural logic.
-// you give the direction vector as data  and inputs apply the effect
-// effects are applies regardless of the direction input
+
 public class MovementLogic : MonoBehaviour
 {
     [Header("Data Reference")]
@@ -15,14 +12,14 @@ public class MovementLogic : MonoBehaviour
     public Vector3 CurrentVelocity;
     public MovementState CurrentMovementState;
     public enum MovementState { Walk, Run, Crouch, Jump, Idle }
-    
+
     [Header("Control States")]
     [HideInInspector] public Vector2 MoveInput;
     [HideInInspector] public bool IsSprinting;
 
     [Header("Detection")]
     [SerializeField] float RayDistance = 1.5f;
-    public bool IsGround  { get; private set; }
+    public bool IsGround { get; private set; }
     [SerializeField] bool IsOnSlope = false;
     [SerializeField] Transform DetetctionSource;
 
@@ -40,25 +37,24 @@ public class MovementLogic : MonoBehaviour
     private float currMaxVelocity;
     private float currAcc;
     public Vector3 Direction;
+    private Vector3 currentSurfaceNormal = Vector3.up;
 
     #region Unity Lifecycle
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         DefoultCollider = GetComponent<CapsuleCollider>();
+        OnStepOnGround += HandleLanding;
     }
 
     private void Update()
     {
-        Direction = UpdateDirection();
+        //Direction = new Vector3(MoveInput.x, 0, MoveInput.y);
     }
     #endregion
 
 
     #region Procedural Logic
-    // Add this field at the top with the other private fields
-    private Vector3 currentSurfaceNormal = Vector3.up;
-
     Vector3 UpdateDirection()
     {
         Vector3 surfaceNormal = Vector3.up;
@@ -74,64 +70,64 @@ public class MovementLogic : MonoBehaviour
             IsGround = false;
         }
 
-        currentSurfaceNormal = surfaceNormal; 
+        currentSurfaceNormal = surfaceNormal;
 
         float slopeAngle = Vector3.Angle(Vector3.up, surfaceNormal);
         IsOnSlope = slopeAngle > 5f && slopeAngle < 45f;
 
-        if (IsOnSlope && IsGround)
+        if (IsOnSlope && IsGround && CurrentMovementState != MovementState.Jump)
         {
             rb.useGravity = false;
-            rb.linearDamping = data.WalkSpeed; 
+            rb.linearDamping = data.WalkSpeed;
 
             Vector3 rawInputDirection = new Vector3(MoveInput.x, 0, MoveInput.y);
             return Vector3.ProjectOnPlane(rawInputDirection, surfaceNormal).normalized;
         }
 
         rb.useGravity = true;
-        rb.linearDamping = 0; 
+        rb.linearDamping = 0;
         return new Vector3(MoveInput.x, 0, MoveInput.y);
     }
-
     #endregion
 
+
     #region External Executable Functions
-    // each function adds effect of its own then applies the direction vector as movement(regardless of the value of vector)
     public void Jump()
     {
         if (IsGround || IsOnSlope)
         {
             OnStepOffGround?.Invoke(this, EventArgs.Empty);
-            CurrentVelocity = rb.linearVelocity;
             CurrentVelocity.y = data.JumpForce;
             CurrentMovementState = MovementState.Jump;
-            rb.linearVelocity = CurrentVelocity;
+            rb.linearVelocity = CurrentVelocity;   
         }
     }
 
     public void Walk()
     {
-        CurrentMovementState = MovementState.Walk;
         currAcc = data.WalkAcceleration;
         currMaxVelocity = data.WalkSpeed;
 
+        if (IsGround) CurrentMovementState = MovementState.Walk;
         ApplyHorizontalMovement();
     }
 
     public void Idle()
     {
-        CurrentMovementState = MovementState.Idle;
         currAcc = 0f;
         currMaxVelocity = 0f;
+
+        CurrentMovementState = MovementState.Idle;
+
         ApplyHorizontalMovement();
     }
 
     public void Run()
     {
-        CurrentMovementState = MovementState.Run;
         currAcc = data.RunAcceleration;
         currMaxVelocity = data.RunSpeed;
 
+        if (IsGround) CurrentMovementState = MovementState.Run;
         ApplyHorizontalMovement();
     }
 
@@ -139,10 +135,11 @@ public class MovementLogic : MonoBehaviour
     {
         if (IsPressed)
         {
-            CurrentMovementState = MovementState.Crouch;
             currAcc = data.CrouchAcceleration;
             currMaxVelocity = data.CrouchSpeed;
             ApplyCrouchHitbox();
+
+            if (IsGround) CurrentMovementState = MovementState.Crouch;
             ApplyHorizontalMovement();
         }
         else
@@ -152,12 +149,13 @@ public class MovementLogic : MonoBehaviour
     }
     #endregion
 
+
     #region Internal Movement Logic
     void ApplyHorizontalMovement()
     {
         CurrentVelocity = rb.linearVelocity;
 
-        if (IsOnSlope && IsGround)
+        if (IsOnSlope && IsGround && CurrentMovementState != MovementState.Jump)
             CurrentVelocity = Vector3.ProjectOnPlane(CurrentVelocity, currentSurfaceNormal);
 
         if (Direction.magnitude > 0)
@@ -166,7 +164,7 @@ public class MovementLogic : MonoBehaviour
         Clamp();
         rb.linearVelocity = CurrentVelocity;
     }
-    // limits the max velocity
+
     void Clamp()
     {
         if (CurrentMovementState == MovementState.Jump) return;
@@ -196,7 +194,7 @@ public class MovementLogic : MonoBehaviour
     void ApplyCrouchHitbox()
     {
         DefoultCollider.enabled = false;
-        CrouchCollider.enabled = true;  
+        CrouchCollider.enabled = true;
     }
 
     void ReverseCrouchHitbox()
@@ -204,19 +202,28 @@ public class MovementLogic : MonoBehaviour
         DefoultCollider.enabled = true;
         CrouchCollider.enabled = false;
     }
+
+    private void HandleLanding(object sender, EventArgs e)
+    {
+        CurrentMovementState = MovementState.Idle;
+    }
     #endregion
 
+
     #region Physics Detection
-    // 13 ground layer
     private void OnTriggerEnter(Collider other)
     {
         Ground = other.gameObject.transform;
-        if(!IsGround && other.gameObject.layer !=3)
+        if (!IsGround && other.gameObject.layer != 3)
             OnStepOnGround?.Invoke(this, EventArgs.Empty);
     }
+
     private void OnTriggerStay(Collider other) => IsGround = true;
+
     private void OnTriggerExit(Collider other)
     {
+        CurrentMovementState = MovementState.Jump;
+
         IsGround = false;
     }
 
@@ -245,7 +252,7 @@ public class MovementLogic : MonoBehaviour
             Gizmos.DrawRay(transform.position, moveDir * 2f);
         }
 
-        Gizmos.color = Color.red;  // velocity visual vector
+        Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + CurrentVelocity.normalized * 1.5f);
     }
     #endregion

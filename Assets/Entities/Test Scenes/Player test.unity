@@ -5727,11 +5727,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86ec8d7da35650a408d36ef8b17aba3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShootLogic
-  data: {fileID: 11400000, guid: b3b3fd9386857ef4c923b1d9c9eafc0c, type: 2}
+  data: {fileID: 11400000, guid: 03031332a27acf9488a571bff45d278f, type: 2}
   Origin: {fileID: 1151168784}
   mask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 0
   TotalCurrentRecoil: {x: 0, y: 0, z: 0}
 --- !u!1 &1185345680
 GameObject:
@@ -10210,18 +10210,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3252864362077942370}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 09703cf470255a74197a289c8f7522fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Recoil
   Mesh: {fileID: 8785605775701073503}
   Camera: {fileID: 3252864362077942370}
-  CameraEffectWeight: 1.5
-  MeshEffectWeight: 0
-  Snappines: 20
-  returnSpeed: 3
-  returnDelay: 0.15
+  CameraEffectWeight: 1
+  MeshEffectWeight: 0.5
+  Snappines: 10
+  returnSpeed: 5
+  returnDelay: 0
   ADSmultipiler: 1
   RecoilRotValue: {x: 2, y: 6.5, z: 1}
   RecoilPosValue: {x: 0, y: 0, z: 0.1}
@@ -10642,12 +10642,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 3c896f516c01a7c46ab4ee19d3c35bc4, type: 3}
   - {fileID: 8300000, guid: 07d42a422ec20214da43b16da570b323, type: 3}
   headhitSound:
-  - {fileID: 8300000, guid: e9b8b0df3b70f5c43b09b60759144be0, type: 3}
+  - {fileID: 8300000, guid: aa3ac2fdb40708a428888d69110377c9, type: 3}
   bodyHitSound:
   - {fileID: 8300000, guid: 9dbd5d948a6d2d9478137c325ea48938, type: 3}
   MagIn: {fileID: 8300000, guid: e125a121968e8e549b47df3ea87dc1c7, type: 3}
   MagOut: {fileID: 8300000, guid: 2b19b1e7f193988478f16babfb801c55, type: 3}
-  KnifeSlash: {fileID: 8300000, guid: 5dc2b6412d1f35043bf6ced4e38e9d70, type: 3}
+  KnifeSlash: {fileID: 8300000, guid: ea497b1ca4719ed409733db11ad1b93c, type: 3}
   KnifeStab: {fileID: 8300000, guid: ceae9c22c72d9094d9a657141da0cab0, type: 3}
   walkStepInterval: 0.6
   runStepInterval: 0.4
@@ -10655,11 +10655,11 @@ MonoBehaviour:
   RunSpeed: 1.1
   JumpVolume: 7
   LandVolume: 0.5
-  ShootVolume: 0.35
+  ShootVolume: 1
   StepVolume: 0.4
   KnifeSlashVolume: 1
-  KnifeStabVolume: 0.4
-  ReloadVolume: 0.6
+  KnifeStabVolume: 1
+  ReloadVolume: 1
 --- !u!114 &572037095379050556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11291,7 +11291,7 @@ MonoBehaviour:
   Origin: {fileID: 215398804707119033}
   mask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 4294967295
   TotalCurrentRecoil: {x: 0, y: 0, z: 0}
 --- !u!1 &1062945458231433096
 GameObject:
@@ -12017,7 +12017,7 @@ MonoBehaviour:
   ADS_key: 0
   KnifeStabKey: 102
   ThrowObjectKey: 103
-  adsInputType: 1
+  adsInputType: 0
   CurrentGunState: 0
 --- !u!1 &1506221045670473109
 GameObject:
@@ -13028,11 +13028,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealthManager
   MaxHealth: 100
   CurrentHealth: 0
-  Head: {fileID: 3988259802000770577}
-  Body: {fileID: 3862050736741504917}
-  OriginalHips: {fileID: 4159908306265761956}
-  CoreObjectToBeDestroyed: {fileID: 7525035678143783746}
-  Ragdoll: {fileID: 7020811005462348016, guid: c3393b208e8c0b14e854633197b50917, type: 3}
+  Head: {fileID: 0}
+  Body: {fileID: 0}
+  OriginalHips: {fileID: 0}
+  CoreObjectToBeDestroyed: {fileID: 0}
+  Ragdoll: {fileID: 0}
 --- !u!1 &2181043684348752650
 GameObject:
   m_ObjectHideFlags: 0
@@ -13722,7 +13722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimationLogic
   CrouchSpeed: 6
-  CrouchObject: {fileID: 5501051453960248370}
+  CrouchObject: {fileID: 582441369394063623}
   CrouchHeight: -0.5
 --- !u!114 &2632209020508212583
 MonoBehaviour:
@@ -16795,7 +16795,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Length: 50
   LaserQuad: {fileID: 126726920882240069}
-  surfaceOffset: 0.001
+  surfaceOffset: 0.02
 --- !u!1 &4319172649453797614
 GameObject:
   m_ObjectHideFlags: 0
@@ -18717,7 +18717,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3790899238485368277}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.1572459, y: 0.706776, z: 0.021629123, w: 0.68940085}
+  m_LocalRotation: {x: -0.15724592, y: 0.706776, z: 0.021629125, w: 0.68940085}
   m_LocalPosition: {x: -0.000089002606, y: -0.0004849261, z: 0.008768225}
   m_LocalScale: {x: 1, y: 0.99999994, z: 1}
   m_ConstrainProportionsScale: 0
@@ -19684,7 +19684,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 248892742163864652}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.02518311, y: -0.013863529, z: -0.05374165, w: 0.998141}
+  m_LocalRotation: {x: 0.025183111, y: -0.013863529, z: -0.053741653, w: 0.998141}
   m_LocalPosition: {x: 0.0042216983, y: 0.000000028572975, z: -0.0000000011001248}
   m_LocalScale: {x: 0.9999988, y: 0.9999992, z: 0.99999976}
   m_ConstrainProportionsScale: 0
@@ -20436,7 +20436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d1231c8254bc51409f408357fe58418, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  swayAmount: 1
+  swayAmount: 1.5
   swaySpeed: 8
   maxSway: 2
   moveSwayAmount: 0.05
@@ -20445,13 +20445,13 @@ MonoBehaviour:
   jumpBobMultiplier: 2
   MoveMultipiler: 0
   maxLeanAngle: 15
-  maxCameraXOffset: -0.4
-  leanSpeed: 12
-  leanThreshold: 0.001
+  maxCameraXOffset: 0.25
+  leanSpeed: 8
+  leanThreshold: 0.01
   currentLeanMode: 0
   playerMovementData: {fileID: 11400000, guid: 520ffee29f7fdbe4e8984dbfea7d9980, type: 2}
   PlayerMesh: {fileID: 2827847787055283956}
-  CheckOrigin: {fileID: 2094184612894710943}
+  CheckOrigin: {fileID: 7991144731243903825}
   leanCheckRadius: 0.25
   leanCheckDistance: 0.5
   IsRightBlocked: 0
@@ -21421,14 +21421,14 @@ MonoBehaviour:
   animationLogic: {fileID: 2622955724012765635}
   shootLogic: {fileID: 1058328929136261130}
   healthManager: {fileID: 0}
-  inputManager: {fileID: 1498982728036306249}
-  throwAbleLogic: {fileID: 7724833480360133778}
-  Player: {fileID: 3861332371555999539}
-  combatAnimation: {fileID: 2632209020508212583}
+  inputManager: {fileID: 0}
+  throwAbleLogic: {fileID: 0}
+  Player: {fileID: 0}
+  combatAnimation: {fileID: 0}
   playerMainCamera: {fileID: 8811145354267596106}
-  wallBlock: {fileID: 7714233263648318566}
-  ads: {fileID: 5254121143418794999}
-  playerUI: {fileID: 3330265093323648770}
+  wallBlock: {fileID: 0}
+  ads: {fileID: 0}
+  playerUI: {fileID: 0}
 --- !u!1 &7120982601019971061
 GameObject:
   m_ObjectHideFlags: 0
@@ -22236,7 +22236,7 @@ MonoBehaviour:
   PosOffset: {x: 0, y: 0, z: 0}
   weaponPullRig: {fileID: 9044458087159753785}
   weightSpeed: 3.09
-  MinWeightBlock: 0.3
+  MinWeightBlock: 0
   targetTransform: {fileID: 8352566085180432065}
   maxPullbackOffset: {x: 0, y: 0, z: 0}
   maxRotationOffset: {x: 0, y: -84.04, z: 61.88}
@@ -22244,7 +22244,7 @@ MonoBehaviour:
   Blocked: 0
   BlockAble:
     serializedVersion: 2
-    m_Bits: 8255
+    m_Bits: 0
   currentWeight: 0
 --- !u!114 &7724833480360133778
 MonoBehaviour:
@@ -22258,8 +22258,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd06a92e4cd1bde428c8d52264f20c19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThrowAbleLogic
-  flashNade: {fileID: 694764899396780350, guid: 9e645702c39eb3848bb5d217f3678011, type: 3}
-  smokeNade: {fileID: 317389184234881959, guid: 81cd61e5527188b4bbb522a621ef58e6, type: 3}
+  flashNade: {fileID: 0}
+  smokeNade: {fileID: 0}
 --- !u!4 &7726116952743324930
 Transform:
   m_ObjectHideFlags: 0
@@ -22871,7 +22871,7 @@ MonoBehaviour:
   CrouchCollider: {fileID: 4192320945751731953}
   GroundMask:
     serializedVersion: 2
-    m_Bits: 8503
+    m_Bits: 8192
   Radius: 0.3
   Direction: {x: 0, y: 0, z: 0}
 --- !u!1 &8049805408692336210
