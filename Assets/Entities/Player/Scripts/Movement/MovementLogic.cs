@@ -48,7 +48,7 @@ public class MovementLogic : MonoBehaviour
         DefoultCollider = GetComponent<CapsuleCollider>();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         Direction = UpdateDirection();
     }
@@ -56,6 +56,8 @@ public class MovementLogic : MonoBehaviour
 
 
     #region Procedural Logic
+    // Add this field at the top with the other private fields
+    private Vector3 currentSurfaceNormal = Vector3.up;
 
     Vector3 UpdateDirection()
     {
@@ -72,20 +74,22 @@ public class MovementLogic : MonoBehaviour
             IsGround = false;
         }
 
+        currentSurfaceNormal = surfaceNormal; 
+
         float slopeAngle = Vector3.Angle(Vector3.up, surfaceNormal);
         IsOnSlope = slopeAngle > 5f && slopeAngle < 45f;
 
         if (IsOnSlope && IsGround)
         {
             rb.useGravity = false;
-            rb.linearDamping = data.WalkSpeed;
+            rb.linearDamping = data.WalkSpeed; 
 
             Vector3 rawInputDirection = new Vector3(MoveInput.x, 0, MoveInput.y);
             return Vector3.ProjectOnPlane(rawInputDirection, surfaceNormal).normalized;
         }
 
-        rb.linearDamping = 0;
         rb.useGravity = true;
+        rb.linearDamping = 0; 
         return new Vector3(MoveInput.x, 0, MoveInput.y);
     }
 
@@ -153,10 +157,12 @@ public class MovementLogic : MonoBehaviour
     {
         CurrentVelocity = rb.linearVelocity;
 
+        if (IsOnSlope && IsGround)
+            CurrentVelocity = Vector3.ProjectOnPlane(CurrentVelocity, currentSurfaceNormal);
+
         if (Direction.magnitude > 0)
-        {
             CurrentVelocity += Direction * currAcc * Time.deltaTime;
-        }
+
         Clamp();
         rb.linearVelocity = CurrentVelocity;
     }
@@ -205,7 +211,7 @@ public class MovementLogic : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Ground = other.gameObject.transform;
-        if(!IsGround)
+        if(!IsGround && other.gameObject.layer !=3)
             OnStepOnGround?.Invoke(this, EventArgs.Empty);
     }
     private void OnTriggerStay(Collider other) => IsGround = true;

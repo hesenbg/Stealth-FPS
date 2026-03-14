@@ -6,6 +6,7 @@ public class ShootLogic : MonoBehaviour
 {
     [SerializeField] CombatData data;
     [SerializeField] Transform Origin;
+    [SerializeField] LayerMask mask;
 
     public int CurrentMagazineAmmo { get; private set; }
     public int CurrentTotalAmmo { get; private set; }
@@ -80,7 +81,7 @@ public class ShootLogic : MonoBehaviour
 
         Ray ray = new Ray(Origin.position, Origin.forward + TotalCurrentRecoil);
 
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        if (Physics.Raycast(ray, out RaycastHit hit,100f,mask,QueryTriggerInteraction.Collide))
         {
             if (hit.collider.CompareTag("Untagged"))
             {
@@ -97,7 +98,7 @@ public class ShootLogic : MonoBehaviour
             }
             if (hit.collider.CompareTag("Destructable"))
             {
-                hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
+                //hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
             }
         }
 

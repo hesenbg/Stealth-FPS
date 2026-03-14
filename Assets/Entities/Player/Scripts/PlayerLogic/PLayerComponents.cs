@@ -13,6 +13,7 @@ public class PlayerComponents : MonoBehaviour
     [SerializeField] private HealthManager healthManager;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private ThrowAbleLogic throwAbleLogic;
+    [SerializeField] public GameObject Player;
 
     [Header("Technical/Visual")]
     [SerializeField] private Rig combatAnimation;

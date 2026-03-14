@@ -49,21 +49,11 @@ public class InputManager : MonoBehaviour
     {
         UpdateMovement();
         UpdateCombat();
-
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            SceneManager.LoadSceneAsync(0);
-        }
     }
 
     void InitilizeCombatVariables()
     {
         CurrentGunState = GunState.Idle;
-        ADSlogic = PlayerComponents.Instance.ADS;
-        playerShootLogic = PlayerComponents.Instance.ShootLogic;
-        weaponWallBlock = PlayerComponents.Instance.WallBlock;
-        playerUI = PlayerComponents.Instance.PlayerUI;
-        playerThrowAbleLogic = PlayerComponents.Instance.ThrowAbleLogic;
 
         playerShootLogic.OnReloadEnd += OnReloadEnd;
         playerAnimationLogic.GunMagOut += OnReloadMagOut;
@@ -77,6 +67,8 @@ public class InputManager : MonoBehaviour
         playerAnimationLogic.KnifeStab += OnKNifeStab;
 
         playerAnimationLogic.ThrowAbleRelease += OnNadeThrown;
+
+        playerAnimationLogic.GunShoot += OnShoot;
     }
 
     void ADS()
@@ -135,17 +127,15 @@ public class InputManager : MonoBehaviour
         {
             if (!playerShootLogic.CanShoot())
                 return;
-            playerShootLogic.CalculateRecoil();
 
-            playerShootLogic.Shoot();
-
-            PlayerRecoil.RecoilFire(CurrentGunState == GunState.ADS);
-
-            playerShootLogic.CalculateRecoilDaper(CurrentGunState == GunState.ADS, playerMovementLogic.CurrentVelocity.magnitude);
-
-            playerAnimationLogic.PlayShootAnimation(playerShootLogic.CurrentMagazineAmmo);
-
-            PlayerSoundManager.instance.PlayShootSound();
+            if(playerMovementLogic.CurrentMovementState == MovementLogic.MovementState.Run)
+            {
+                playerAnimationLogic.Animator.SetTrigger("RunShoot");
+            }
+            else
+            {
+                playerAnimationLogic.PlayShootAnimation(playerShootLogic.CurrentMagazineAmmo);
+            }
         }
         playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
     }
@@ -158,6 +148,19 @@ public class InputManager : MonoBehaviour
             StartCoroutine(playerShootLogic.Reload());
             playerAnimationLogic.PlayReloadAnimation(playerShootLogic.CurrentMagazineAmmo == 0);
         }
+    }
+
+    void OnShoot(object sender, EventArgs e)
+    {
+        playerShootLogic.CalculateRecoil();
+
+        playerShootLogic.Shoot();
+
+        PlayerSoundManager.instance.PlayShootSound();
+
+        PlayerRecoil.RecoilFire(CurrentGunState == GunState.ADS);
+
+        playerShootLogic.CalculateRecoilDaper(CurrentGunState == GunState.ADS, playerMovementLogic.CurrentVelocity.magnitude);
     }
 
     void OnReloadMagOut(object sender, EventArgs a)
@@ -282,6 +285,7 @@ public class InputManager : MonoBehaviour
 
     void Run()
     {
+
         if (Input.GetKey(sprintKey) && CurrentDirection.magnitude > 0.01f)
         {
             playerMovementLogic.Run();

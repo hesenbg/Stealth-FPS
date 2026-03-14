@@ -17,6 +17,8 @@ public class AnimationLogic : MonoBehaviour
     public event EventHandler GunMagIn;
     public event EventHandler KnifeStab;
 
+    public event EventHandler GunShoot;
+
     private void Start()
     {
         Animator = GetComponent<Animator>();  
@@ -107,6 +109,11 @@ public class AnimationLogic : MonoBehaviour
     }
 
     // event fires
+
+    public void FireGunShoot()
+    {
+        GunShoot?.Invoke(this, EventArgs.Empty);
+    }
 
     public void FireKnifeStab()
     {

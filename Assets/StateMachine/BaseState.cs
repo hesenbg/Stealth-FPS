@@ -1,5 +1,4 @@
 using System;
-
 public abstract class BaseState<Estate> where Estate : Enum
 {
     public Estate StateKey { get; private set;}
