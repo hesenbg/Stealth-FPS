@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public abstract class EnemyState : BaseState<EnemyStateMachine.EnemyState>
 {
     protected EnemyStateMachineContext context;

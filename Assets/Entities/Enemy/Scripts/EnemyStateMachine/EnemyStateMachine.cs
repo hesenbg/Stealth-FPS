@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.AI;
 public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 {
+    [SerializeField] EnemyStateMachine.EnemyState current;
+
     public enum EnemyState { Idle, Suspicious, Alarmed, Search }
 
     public EnemyStateMachineContext context {  get; private set; }
@@ -25,8 +27,12 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
     private void Awake()
     {
         context = new EnemyStateMachineContext(EnemySight, EnemyHealthManager,EnemyCombat,agent,data,rb, Parent);
-
         InitlizeStates();
+    }
+
+    public override void UpdateStateMachine()
+    {
+        current = CurrentState.StateKey;
     }
 
     private void InitlizeStates()

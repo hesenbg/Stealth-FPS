@@ -14,12 +14,14 @@ public class MovementLogic : MonoBehaviour
     public enum MovementState { Walk, Run, Crouch, Jump, Idle }
 
     [Header("Control States")]
-    [HideInInspector] public Vector2 MoveInput;
+    [SerializeField] public Vector2 MoveInput;
     [HideInInspector] public bool IsSprinting;
 
     [Header("Detection")]
     [SerializeField] float RayDistance = 1.5f;
-    public bool IsGround { get; private set; }
+
+    public bool IsGround;
+
     [SerializeField] bool IsOnSlope = false;
     [SerializeField] Transform DetetctionSource;
 
@@ -46,13 +48,12 @@ public class MovementLogic : MonoBehaviour
         DefoultCollider = GetComponent<CapsuleCollider>();
         OnStepOnGround += HandleLanding;
     }
+    #endregion
 
     private void Update()
     {
-        //Direction = new Vector3(MoveInput.x, 0, MoveInput.y);
+        Direction = UpdateDirection();
     }
-    #endregion
-
 
     #region Procedural Logic
     Vector3 UpdateDirection()
@@ -75,7 +76,7 @@ public class MovementLogic : MonoBehaviour
         float slopeAngle = Vector3.Angle(Vector3.up, surfaceNormal);
         IsOnSlope = slopeAngle > 5f && slopeAngle < 45f;
 
-        if (IsOnSlope && IsGround && CurrentMovementState != MovementState.Jump)
+        if (IsOnSlope && IsGround)
         {
             rb.useGravity = false;
             rb.linearDamping = data.WalkSpeed;
@@ -99,9 +100,12 @@ public class MovementLogic : MonoBehaviour
             OnStepOffGround?.Invoke(this, EventArgs.Empty);
             CurrentVelocity.y = data.JumpForce;
             CurrentMovementState = MovementState.Jump;
-            rb.linearVelocity = CurrentVelocity;   
+            rb.linearVelocity = CurrentVelocity;
+            //ApplyHorizontalMovement();
         }
     }
+
+
 
     public void Walk()
     {
@@ -155,9 +159,6 @@ public class MovementLogic : MonoBehaviour
     {
         CurrentVelocity = rb.linearVelocity;
 
-        if (IsOnSlope && IsGround && CurrentMovementState != MovementState.Jump)
-            CurrentVelocity = Vector3.ProjectOnPlane(CurrentVelocity, currentSurfaceNormal);
-
         if (Direction.magnitude > 0)
             CurrentVelocity += Direction * currAcc * Time.deltaTime;
 
@@ -167,7 +168,6 @@ public class MovementLogic : MonoBehaviour
 
     void Clamp()
     {
-        if (CurrentMovementState == MovementState.Jump) return;
 
         float verticalVel = CurrentVelocity.y;
         Vector3 horizontalVel = new Vector3(CurrentVelocity.x, 0, CurrentVelocity.z);
@@ -239,18 +239,6 @@ public class MovementLogic : MonoBehaviour
         Gizmos.DrawLine(start, end);
         Gizmos.DrawWireSphere(start, Radius);
         Gizmos.DrawWireSphere(end, Radius);
-
-        if (IsGround)
-        {
-            Gizmos.color = Color.cyan;
-            Vector3 rawInputDirection = new Vector3(MoveInput.x, 0, MoveInput.y);
-            Vector3 moveDir = UpdateDirection();
-
-            Gizmos.DrawRay(transform.position, rawInputDirection * 2f);
-
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawRay(transform.position, moveDir * 2f);
-        }
 
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + CurrentVelocity.normalized * 1.5f);

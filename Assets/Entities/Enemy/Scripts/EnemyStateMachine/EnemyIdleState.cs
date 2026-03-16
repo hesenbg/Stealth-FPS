@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class EnemyIdleState : EnemyState
 {
     int currentPathIndex = 0;
@@ -20,11 +19,21 @@ public class EnemyIdleState : EnemyState
 
     public override void OnStateEnter()
     {
+        NextState = EnemyStateMachine.EnemyState.Idle;
+
         usingRigidbody = false;
         currentPathIndex = 0;
         SetAgentDestination(context.enemyAIData.PatrolPositions[currentPathIndex]);
-        context.enemySight.OnTargetinSIght += OnTargetInSight;
-        context.enemySight.OnTargetoutSIght += OnTargetOutSite;
+        //context.enemySight.TargetSuspiciousSight += OnTargetInSight;
+        //context.enemySight.TargetoutSight += OnTargetOutSite;
+        //context.enemySight.TargetFullySeen += OnTargetFullySeen;
+    }
+
+    
+
+    private void OnTargetFullySeen(object sender, System.EventArgs e)
+    {
+        NextState = EnemyStateMachine.EnemyState.Alarmed;
     }
 
     private void OnTargetOutSite(object sender, System.EventArgs e)
@@ -34,7 +43,7 @@ public class EnemyIdleState : EnemyState
 
     private void OnTargetInSight(object sender, System.EventArgs e)
     {
-        NextState = EnemyStateMachine.EnemyState.Alarmed;
+        NextState = EnemyStateMachine.EnemyState.Suspicious;
     }
 
     public override void OnStateExit()
@@ -45,6 +54,9 @@ public class EnemyIdleState : EnemyState
 
     public override void OnStateUpdate()
     {
+        Debug.Log("idle state");
+
+
         if (!usingRigidbody)
         {
             if (!context.agent.pathPending && context.agent.remainingDistance < 0.1f)
@@ -92,8 +104,6 @@ public class EnemyIdleState : EnemyState
         Vector3 toTarget = context.enemyAIData.PatrolPositions[currentPathIndex] - context.parent.transform.position;
         toTarget.y = 0f;
         context.rb.linearVelocity = toTarget.normalized * context.enemyAIData.IdleSpeed;
-
-        Debug.Log(context.rb.linearVelocity);
     }
 
     bool CheckArrivedRigidbody(Vector3 target)

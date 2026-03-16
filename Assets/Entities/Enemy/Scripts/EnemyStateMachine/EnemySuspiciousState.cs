@@ -25,6 +25,6 @@ public class EnemySuspiciousState : EnemyState
 
     public override void OnStateUpdate()
     {
-        Debug.Log("suspicious state");
+        Debug.Log("sus state");
     }
 }

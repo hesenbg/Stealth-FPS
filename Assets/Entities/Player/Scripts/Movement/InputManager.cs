@@ -307,7 +307,7 @@ public class InputManager : MonoBehaviour
     void UpdateMovement()
     {
         TakeInput();
-        playerMovementLogic.Direction = CurrentDirection;
+        playerMovementLogic.MoveInput = new Vector2(CurrentDirection.x,CurrentDirection.z);
         Crouch();
         Idle();
         Walk();

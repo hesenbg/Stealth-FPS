@@ -26,7 +26,11 @@ public abstract class StateManager<Estate> : MonoBehaviour where Estate : Enum
         {
             TransitionToState(NextStateKey);
         }
+
+        UpdateStateMachine();
     }
+
+    public abstract void UpdateStateMachine();
 
     public void TransitionToState(Estate state)
     {

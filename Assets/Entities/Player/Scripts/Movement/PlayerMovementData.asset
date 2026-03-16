@@ -19,9 +19,9 @@ MonoBehaviour:
   walkAcceleration: 10
   runAcceleration: 15
   crouchAcceleration: 10
-  jumpAcceleration: 10
+  jumpAcceleration: 2
   hookAcceleration: 0
-  jumpForce: 5
+  jumpForce: 4
   jumpMass: 2
   crouchHitboxHeight: 1
   crouchLerpSpeed: 12

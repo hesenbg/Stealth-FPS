@@ -1,6 +1,17 @@
 using System;
-using Unity.Collections;
 using UnityEngine;
+
+
+public class SightData : EventArgs
+{
+    public SightData(Vector3 dir)
+    {
+        Direction = dir;
+    }
+    public float Awareness;
+
+    public Vector3 Direction;
+}
 
 public class Sight : MonoBehaviour
 {
@@ -24,12 +35,15 @@ public class Sight : MonoBehaviour
     public float upCos;
 
     [Header("Awarness Parameter")]
-    public float MaxAwareness;
+    public float AlarmAwareness;
+    public float SuspiciousAwareness;
     public float currentAwareness=0f;
     public float AwarenessSpeed;
 
-    public event EventHandler OnTargetinSIght;
-    public event EventHandler OnTargetoutSIght;
+    public static event EventHandler TargetSuspiciousSight;
+    public static event EventHandler TargetoutSight;
+    public static event EventHandler TargetFullySeen;
+    public static event EventHandler TargetEnterSight;
 
     private bool inSight;
     private bool inCone;
@@ -48,17 +62,35 @@ public class Sight : MonoBehaviour
             return true;
     }
 
-    private void Update()
+    void UpdateAwareness()
     {
-        if (!CheckUpdate())
+        bool IsEntered = false;
+
+        if (Mathf.Abs(currentAwareness - SuspiciousAwareness) < 0.01f)
         {
-            return;
+            TargetSuspiciousSight?.Invoke(this, EventArgs.Empty);
+        }
+        else if (Mathf.Abs(currentAwareness - AlarmAwareness) < 0.01f)
+        {
+            TargetFullySeen?.Invoke(this, EventArgs.Empty);
+        }
+        else if (currentAwareness < 0.01f)
+        {
+            TargetoutSight?.Invoke(this, EventArgs.Empty);
+            IsEntered = false;
+        }
+        else if(IsEntered && currentAwareness > 0.5f)
+        {
+            SightData data = new SightData((Target.transform.position - transform.position).normalized);
+
+            TargetEnterSight?.Invoke(this,data);
+            IsEntered = true;
         }
 
 
         if (inSight)
         {
-            if (currentAwareness < MaxAwareness)
+            if (currentAwareness < AlarmAwareness)
                 currentAwareness += AwarenessSpeed * Time.deltaTime;
         }
         else
@@ -66,6 +98,17 @@ public class Sight : MonoBehaviour
             if (currentAwareness > 0)
                 currentAwareness -= AwarenessSpeed * Time.deltaTime;
         }
+    }
+
+    private void Update()
+    {
+        UpdateAwareness();
+
+        if (!CheckUpdate())
+        {
+            return;
+        }
+
 
         Vector3 direction = (Target.transform.position - transform.position).normalized;
 
@@ -101,10 +144,10 @@ public class Sight : MonoBehaviour
 
         if (inSight != previousInSight)
         {
-            if (inSight && currentAwareness>MaxAwareness*0.95f)
-                OnTargetinSIght?.Invoke(this, EventArgs.Empty);
+            if (inSight && currentAwareness>AlarmAwareness*0.95f)
+                TargetSuspiciousSight?.Invoke(this, EventArgs.Empty);
             else if(currentAwareness<0.01f)
-                OnTargetoutSIght?.Invoke(this, EventArgs.Empty);
+                TargetoutSight?.Invoke(this, EventArgs.Empty);
 
             previousInSight = inSight;
         }
