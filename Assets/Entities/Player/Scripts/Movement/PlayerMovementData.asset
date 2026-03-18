@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fc9c3bb77b43814c9e2d610ea63b128, type: 3}
   m_Name: PlayerMovementData
   m_EditorClassIdentifier: Assembly-CSharp::MovementData
-  walkSpeed: 3
-  runSpeed: 4
+  walkSpeed: 2
+  runSpeed: 3
   crouchSpeed: 2
   hookSpeed: 0
-  walkAcceleration: 10
+  walkAcceleration: 20
   runAcceleration: 15
   crouchAcceleration: 10
   jumpAcceleration: 2

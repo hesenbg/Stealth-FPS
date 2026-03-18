@@ -54,8 +54,6 @@ public class EnemyIdleState : EnemyState
 
     public override void OnStateUpdate()
     {
-        Debug.Log("idle state");
-
 
         if (!usingRigidbody)
         {

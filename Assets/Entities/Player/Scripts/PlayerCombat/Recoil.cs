@@ -10,8 +10,13 @@ public class Recoil : MonoBehaviour
     private float CurrMeshEffectWeight;
     private float CurrCameraEffectWeight;
 
+    [SerializeField] float rotMultipiler;
+
     [SerializeField] GameObject Mesh;
     [SerializeField] GameObject Camera;
+    [SerializeField] Transform rigParent;
+
+    [SerializeField] Vector3 rigParentOriginalRot;
 
     [SerializeField] float CameraEffectWeight;
     [SerializeField] float MeshEffectWeight;
@@ -28,32 +33,33 @@ public class Recoil : MonoBehaviour
 
     [SerializeField] Vector3 RecoilPosValue;
 
-    private void Start()
+    void Start()
     {
         CurrMeshEffectWeight = MeshEffectWeight;
         CurrCameraEffectWeight = CameraEffectWeight;
+        rigParentOriginalRot = rigParent.localRotation.eulerAngles;
+        TargetRotation = rigParentOriginalRot; // add this
+        CurrRotation = rigParentOriginalRot;   // add this
     }
 
 
     private void Update()
     {
-        if (currentReturnTimer > 0)
-        {
-            currentReturnTimer -= Time.deltaTime;
-        }
-        else
-        {
-            TargetRotation = Vector3.Slerp(TargetRotation, Vector3.zero, returnSpeed * Time.deltaTime);
-        }
         TargetPos = Vector3.Lerp(TargetPos, Vector3.zero, returnSpeed * Time.deltaTime);
-
-        CurrRotation = Vector3.Slerp(CurrRotation, TargetRotation, Snappines * Time.deltaTime);
         CurrPos = Vector3.Lerp(CurrPos, TargetPos, Snappines * Time.deltaTime);
 
-        Camera.transform.localRotation = Quaternion.Euler(CurrRotation * CurrCameraEffectWeight);
-        Mesh.transform.localRotation = Quaternion.Euler(CurrRotation * CurrMeshEffectWeight);
 
-        Mesh.transform.localPosition = CurrPos;
+
+        CurrRotation = Vector3.Slerp(CurrRotation, TargetRotation, Snappines * Time.deltaTime);
+        TargetRotation = Vector3.Slerp(TargetRotation, rigParentOriginalRot, returnSpeed * Time.deltaTime);
+
+        //Camera.transform.localRotation = Quaternion.Euler(CurrRotation * CurrCameraEffectWeight);
+        //Mesh.transform.localRotation = Quaternion.Euler(CurrRotation * CurrMeshEffectWeight);
+
+        //Mesh.transform.localPosition = CurrPos;
+
+        float recoilWeight = Vector3.Distance(CurrRotation, rigParentOriginalRot) < 0.1f ? 0f : 1f;
+        GunRigController.Instance.ApplyRotationWeight(CurrRotation * rotMultipiler, recoilWeight);
     }
 
     public void RecoilFire(bool IsADS)

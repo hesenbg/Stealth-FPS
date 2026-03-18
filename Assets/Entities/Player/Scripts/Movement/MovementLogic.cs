@@ -16,6 +16,7 @@ public class MovementLogic : MonoBehaviour
     [Header("Control States")]
     [SerializeField] public Vector2 MoveInput;
     [HideInInspector] public bool IsSprinting;
+    [SerializeField] public float SlopeDampMultipiler; 
 
     [Header("Detection")]
     [SerializeField] float RayDistance = 1.5f;
@@ -34,12 +35,10 @@ public class MovementLogic : MonoBehaviour
     [SerializeField] CapsuleCollider CrouchCollider;
     [SerializeField] LayerMask GroundMask;
     [SerializeField] float Radius;
-    private Transform Ground;
 
     private float currMaxVelocity;
     private float currAcc;
     public Vector3 Direction;
-    private Vector3 currentSurfaceNormal = Vector3.up;
 
     #region Unity Lifecycle
     void Start()
@@ -63,7 +62,6 @@ public class MovementLogic : MonoBehaviour
         if (Physics.SphereCast(DetetctionSource.position, Radius, Vector3.down, out RaycastHit hit, RayDistance, GroundMask))
         {
             surfaceNormal = hit.normal;
-            Ground = hit.transform;
             IsGround = true;
         }
         else
@@ -71,15 +69,13 @@ public class MovementLogic : MonoBehaviour
             IsGround = false;
         }
 
-        currentSurfaceNormal = surfaceNormal;
-
         float slopeAngle = Vector3.Angle(Vector3.up, surfaceNormal);
         IsOnSlope = slopeAngle > 5f && slopeAngle < 45f;
 
         if (IsOnSlope && IsGround)
         {
             rb.useGravity = false;
-            rb.linearDamping = data.WalkSpeed;
+            rb.linearDamping = data.WalkSpeed*SlopeDampMultipiler;
 
             Vector3 rawInputDirection = new Vector3(MoveInput.x, 0, MoveInput.y);
             return Vector3.ProjectOnPlane(rawInputDirection, surfaceNormal).normalized;
@@ -101,11 +97,8 @@ public class MovementLogic : MonoBehaviour
             CurrentVelocity.y = data.JumpForce;
             CurrentMovementState = MovementState.Jump;
             rb.linearVelocity = CurrentVelocity;
-            //ApplyHorizontalMovement();
         }
     }
-
-
 
     public void Walk()
     {
@@ -206,6 +199,11 @@ public class MovementLogic : MonoBehaviour
     private void HandleLanding(object sender, EventArgs e)
     {
         CurrentMovementState = MovementState.Idle;
+
+        if (IsOnSlope)
+        {
+            rb.linearVelocity = Vector3.zero;
+        }
     }
     #endregion
 
@@ -213,12 +211,14 @@ public class MovementLogic : MonoBehaviour
     #region Physics Detection
     private void OnTriggerEnter(Collider other)
     {
-        Ground = other.gameObject.transform;
         if (!IsGround && other.gameObject.layer != 3)
             OnStepOnGround?.Invoke(this, EventArgs.Empty);
     }
 
-    private void OnTriggerStay(Collider other) => IsGround = true;
+    private void OnTriggerStay(Collider other)
+    {
+
+    }
 
     private void OnTriggerExit(Collider other)
     {

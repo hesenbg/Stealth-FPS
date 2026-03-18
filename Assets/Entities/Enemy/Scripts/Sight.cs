@@ -22,6 +22,8 @@ public class Sight : MonoBehaviour
     [SerializeField] float UpMax;
     [SerializeField] GameObject Target;
 
+    Vector3 direction;
+
     [SerializeField] int ChecksPerSecond = 10;
     
     [Header("dots")]
@@ -100,34 +102,23 @@ public class Sight : MonoBehaviour
         }
     }
 
-    private void Update()
+    void UpdateLogic()
     {
-        UpdateAwareness();
+        direction = (Target.transform.position - transform.position).normalized;
 
-        if (!CheckUpdate())
-        {
-            return;
-        }
-
-
-        Vector3 direction = (Target.transform.position - transform.position).normalized;
-
-        // dot product calculation
-        ForwardDot = Vector3.Dot(direction, transform.forward);
-        RightDot = Vector3.Dot(direction, transform.right);
-        UpDot = Vector3.Dot(direction, transform.up);
-
-        // angle calculation
-        forwardCos = Mathf.Acos(ForwardDot) * Mathf.Rad2Deg;
-        rightCos = Mathf.Acos(RightDot) * Mathf.Rad2Deg;
-        upCos = Mathf.Acos(UpDot) * Mathf.Rad2Deg;
+        forwardCos = MathFunc.ForwardSight(direction, transform.forward);
+        rightCos = MathFunc.RightSight(direction, transform.right);
+        upCos = MathFunc.UpSight(direction, transform.right);
 
         // cone checks if it inside cone
         inCone = (rightCos > Angle && rightCos < Angle + 90f)
                 && (ForwardDot > ForwardMin)
                 && (Target.transform.position - transform.position).magnitude < ForwardMax
                 && (upCos > UpMin && upCos < UpMax);
+    }
 
+    void CheckInSight()
+    {
         if (inCone)
         {
             // sight is when the raycast checks for obstacle which can block the sight
@@ -144,13 +135,27 @@ public class Sight : MonoBehaviour
 
         if (inSight != previousInSight)
         {
-            if (inSight && currentAwareness>AlarmAwareness*0.95f)
+            if (inSight && currentAwareness > AlarmAwareness * 0.95f)
                 TargetSuspiciousSight?.Invoke(this, EventArgs.Empty);
-            else if(currentAwareness<0.01f)
+            else if (currentAwareness < 0.01f)
                 TargetoutSight?.Invoke(this, EventArgs.Empty);
 
             previousInSight = inSight;
         }
+    }
+
+    private void Update()
+    {
+        UpdateAwareness();
+
+        if (!CheckUpdate())
+        {
+            return;
+        }
+
+        UpdateLogic();
+
+        CheckInSight();
     }
 
 #if UNITY_EDITOR
