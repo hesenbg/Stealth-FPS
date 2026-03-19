@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+
 public class ADS : MonoBehaviour
 {
     [SerializeField] Transform ADSpos;
@@ -21,20 +22,17 @@ public class ADS : MonoBehaviour
     {
         originalLocalPos = RigParent.localPosition;
         originalFOV = PlayerComponents.Instance.MainCamera.fieldOfView;
-        Position = originalLocalPos; 
+        Position = originalLocalPos;
+        Weight = minWeight;
     }
 
     public bool ApplyADS()
     {
-        Weight = Mathf.Lerp(
-            Weight,
-            maxWeight,
-            speed * Time.deltaTime
-        );
+        Weight = maxWeight;
 
         Position = Vector3.Lerp(
             Position,
-            ADSpos.transform.localPosition,
+            ADSpos.localPosition,
             speed * Time.deltaTime
         );
 
@@ -44,27 +42,27 @@ public class ADS : MonoBehaviour
             speed * Time.deltaTime
         );
 
-        GunRigController.Instance.ApplyPosWeigth(Position, Weight);
+        float distance = Vector3.Distance(Position, ADSpos.localPosition);
+        float fovDiff = Mathf.Abs(PlayerComponents.Instance.MainCamera.fieldOfView - zoomFOV);
 
-        if (Vector3.Distance(Position, ADSpos.localPosition) < 0.01f)
+        if (distance < 0.1f && fovDiff < 0.1f)
         {
+            Position = ADSpos.localPosition;
+            PlayerComponents.Instance.MainCamera.fieldOfView = zoomFOV;
+            GunRigController.Instance.ApplyPosWeigth(Position, Weight);
             return true;
         }
-        else
-        {
-            return false;
-        }
+
+        GunRigController.Instance.ApplyPosWeigth(Position, Weight);
+        return false;
     }
 
-    public void RevertADS() // revert ads doesnt set values after reaching a certain treshold
+    public void RevertADS()
     {
-        if (Weight <= minWeight + 0.001f) return;
-
-        Weight = Mathf.Lerp(
-            Weight,
-            minWeight,
-            speed * Time.deltaTime
-        );
+        if (Vector3.Distance(Position, originalLocalPos) < 0.001f && Weight == minWeight)
+        {
+            return;
+        }
 
         Position = Vector3.Lerp(
             Position,
@@ -78,16 +76,22 @@ public class ADS : MonoBehaviour
             speed * Time.deltaTime
         );
 
-        GunRigController.Instance.ApplyPosWeigth(Position,Weight);
+        float distance = Vector3.Distance(Position, originalLocalPos);
+        float fovDiff = Mathf.Abs(PlayerComponents.Instance.MainCamera.fieldOfView - originalFOV);
 
-        if (Weight <= minWeight + 0.001f)
+        if (distance < 0.01f && fovDiff < 0.1f)
         {
-            Weight = minWeight;
             Position = originalLocalPos;
             PlayerComponents.Instance.MainCamera.fieldOfView = originalFOV;
+            Weight = minWeight;
         }
-    }
+        else
+        {
+            Weight = maxWeight;
+        }
 
+        GunRigController.Instance.ApplyPosWeigth(Position, Weight);
+    }
 
     public void ResetADS()
     {

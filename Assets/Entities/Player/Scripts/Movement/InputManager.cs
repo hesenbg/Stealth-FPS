@@ -2,9 +2,11 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 public class InputManager : MonoBehaviour
 {
     public enum InputType { Hold, Toggle }
+    public event EventHandler TriggerState;
 
     [Header("References")]
     [SerializeField] private MovementLogic playerMovementLogic;
@@ -39,16 +41,25 @@ public class InputManager : MonoBehaviour
     public GunState CurrentGunState;
     public enum GunState { Idle, Blocked, Reload, ADS }
 
+    private MovementLogic.MovementState lastMovementState;
+    private GunState lastGunState;
+
     private void Start()
     {
         InitilizeMovementVariables();
         InitilizeCombatVariables();
+
+        TriggerState += OnTriggerState;
+
+        lastMovementState = playerMovementLogic.CurrentMovementState;
+        lastGunState = CurrentGunState;
     }
 
     private void Update()
     {
         UpdateMovement();
         UpdateCombat();
+        FireTriggerState();
     }
 
     void InitilizeCombatVariables()
@@ -69,6 +80,22 @@ public class InputManager : MonoBehaviour
         playerAnimationLogic.ThrowAbleRelease += OnNadeThrown;
 
         playerAnimationLogic.GunShoot += OnShoot;
+    }
+
+    void FireTriggerState()
+    {
+        if (playerMovementLogic.CurrentMovementState != lastMovementState || CurrentGunState != lastGunState)
+        {
+            if (playerMovementLogic.CurrentMovementState == MovementLogic.MovementState.Run
+                || CurrentGunState == GunState.Reload
+                || CurrentGunState == GunState.Blocked)
+            {
+                TriggerState?.Invoke(this, EventArgs.Empty);
+            }
+
+            lastMovementState = playerMovementLogic.CurrentMovementState;
+            lastGunState = CurrentGunState;
+        }
     }
 
     void ADS()
@@ -128,7 +155,7 @@ public class InputManager : MonoBehaviour
             if (!playerShootLogic.CanShoot())
                 return;
 
-            if(playerMovementLogic.CurrentMovementState == MovementLogic.MovementState.Run)
+            if (playerMovementLogic.CurrentMovementState == MovementLogic.MovementState.Run)
             {
                 playerAnimationLogic.Animator.SetTrigger("RunShoot");
             }
@@ -150,16 +177,18 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    private void OnTriggerState(object sender, EventArgs e)
+    {
+        ADSlogic.ResetADS();
+        PlayerRecoil.RecoilReset();
+    }
+
     void OnShoot(object sender, EventArgs e)
     {
         playerShootLogic.CalculateRecoil();
-
         playerShootLogic.Shoot();
-
         PlayerSoundManager.instance.PlayShootSound();
-
         PlayerRecoil.RecoilFire(CurrentGunState == GunState.ADS);
-
         playerShootLogic.CalculateRecoilDaper(CurrentGunState == GunState.ADS, playerMovementLogic.CurrentVelocity.magnitude);
     }
 
@@ -250,7 +279,7 @@ public class InputManager : MonoBehaviour
 
     void Idle()
     {
-        if(CurrentDirection.magnitude<0.01f)
+        if (CurrentDirection.magnitude < 0.01f)
             playerMovementLogic.Idle();
     }
 
@@ -286,7 +315,6 @@ public class InputManager : MonoBehaviour
 
     void Run()
     {
-
         if (Input.GetKey(sprintKey) && CurrentDirection.magnitude > 0.01f)
         {
             playerMovementLogic.Run();
@@ -307,7 +335,7 @@ public class InputManager : MonoBehaviour
     void UpdateMovement()
     {
         TakeInput();
-        playerMovementLogic.MoveInput = new Vector2(CurrentDirection.x,CurrentDirection.z);
+        playerMovementLogic.MoveInput = new Vector2(CurrentDirection.x, CurrentDirection.z);
         Crouch();
         Idle();
         Walk();

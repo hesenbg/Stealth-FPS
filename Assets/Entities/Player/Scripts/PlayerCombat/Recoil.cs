@@ -7,6 +7,8 @@ public class Recoil : MonoBehaviour
     private Vector3 TargetRotation;
     private Vector3 TargetPos;
 
+    bool _IsADS = false;
+
     private float CurrMeshEffectWeight;
     private float CurrCameraEffectWeight;
 
@@ -30,40 +32,77 @@ public class Recoil : MonoBehaviour
     [SerializeField] float ADSmultipiler;
 
     [SerializeField] Vector3 RecoilRotValue;
-
     [SerializeField] Vector3 RecoilPosValue;
+
+    private bool isRecoiling;
 
     void Start()
     {
         CurrMeshEffectWeight = MeshEffectWeight;
         CurrCameraEffectWeight = CameraEffectWeight;
         rigParentOriginalRot = rigParent.localRotation.eulerAngles;
-        TargetRotation = rigParentOriginalRot; // add this
-        CurrRotation = rigParentOriginalRot;   // add this
+        TargetRotation = rigParentOriginalRot;
+        CurrRotation = rigParentOriginalRot;
     }
-
 
     private void Update()
     {
+        UpdatePos();
+        UpdateRecoilRig();
+        UpdateMeshRecoil();
+        UpdateCameraRecoil();
+    }
+
+    void UpdatePos()
+    {
         TargetPos = Vector3.Lerp(TargetPos, Vector3.zero, returnSpeed * Time.deltaTime);
         CurrPos = Vector3.Lerp(CurrPos, TargetPos, Snappines * Time.deltaTime);
+    }
 
+    void UpdateMeshRecoil()
+    {
+        Mesh.transform.localPosition = Vector3.Lerp(Mesh.transform.localPosition, CurrPos, returnSpeed * Time.deltaTime * MeshEffectWeight);
+    }
 
+    void UpdateCameraRecoil()
+    {
+        Vector3 recoilOffset = CurrRotation - rigParentOriginalRot;
 
-        CurrRotation = Vector3.Slerp(CurrRotation, TargetRotation, Snappines * Time.deltaTime);
+        Quaternion targetCameraRot = Quaternion.Euler(recoilOffset.x * CurrCameraEffectWeight, recoilOffset.y * CurrCameraEffectWeight, recoilOffset.z * CurrCameraEffectWeight);
+
+        Camera.transform.localRotation = Quaternion.Slerp(
+            Camera.transform.localRotation,
+            targetCameraRot,
+            Snappines * Time.deltaTime
+        );
+    }
+
+    void UpdateRecoilRig()
+    {
+        if (!isRecoiling) return;
+
         TargetRotation = Vector3.Slerp(TargetRotation, rigParentOriginalRot, returnSpeed * Time.deltaTime);
+        CurrRotation = Vector3.Slerp(CurrRotation, TargetRotation, Snappines * Time.deltaTime);
 
-        //Camera.transform.localRotation = Quaternion.Euler(CurrRotation * CurrCameraEffectWeight);
-        //Mesh.transform.localRotation = Quaternion.Euler(CurrRotation * CurrMeshEffectWeight);
+        float distRot = Vector3.Distance(CurrRotation, rigParentOriginalRot);
 
-        //Mesh.transform.localPosition = CurrPos;
-
-        float recoilWeight = Vector3.Distance(CurrRotation, rigParentOriginalRot) < 0.1f ? 0f : 1f;
-        GunRigController.Instance.ApplyRotationWeight(CurrRotation * rotMultipiler, recoilWeight);
+        if (distRot < 0.1f)
+        {
+            CurrRotation = rigParentOriginalRot;
+            TargetRotation = rigParentOriginalRot;
+            GunRigController.Instance.ApplyRotationWeight(CurrRotation * rotMultipiler, _IsADS ? 1f : 0f);
+            isRecoiling = false;
+        }
+        else
+        {
+            GunRigController.Instance.ApplyRotationWeight(CurrRotation * rotMultipiler, 1f);
+        }
     }
 
     public void RecoilFire(bool IsADS)
     {
+        _IsADS = IsADS;
+        isRecoiling = true;
         currentReturnTimer = returnDelay;
 
         TargetRotation -= new Vector3(RecoilRotValue.y,
@@ -74,7 +113,7 @@ public class Recoil : MonoBehaviour
 
         if (IsADS)
         {
-            CurrMeshEffectWeight = MeshEffectWeight * 0f;
+            CurrMeshEffectWeight = MeshEffectWeight;
             CurrCameraEffectWeight = CameraEffectWeight * ADSmultipiler;
         }
         else
@@ -82,5 +121,20 @@ public class Recoil : MonoBehaviour
             CurrCameraEffectWeight = CameraEffectWeight;
             CurrMeshEffectWeight = MeshEffectWeight;
         }
+    }
+
+    public void RecoilReset()
+    {
+        TargetRotation = rigParentOriginalRot;
+        CurrRotation = rigParentOriginalRot;
+        TargetPos = Vector3.zero;
+        CurrPos = Vector3.zero;
+        currentReturnTimer = 0;
+
+        GunRigController.Instance.ApplyRotationWeight(CurrRotation * rotMultipiler, 0f);
+        isRecoiling = false;
+
+        // Reset camera to neutral
+        Camera.transform.localRotation = Quaternion.identity;
     }
 }
