@@ -42,10 +42,9 @@ public static class MathFunc
 
     public static Vector3 SODUpdate(ref SODState state, float T, Vector3 x, Vector3? xd = null)
     {
-        Vector3 vel = xd ?? (x - state.xp) / T;   // estimate velocity if not supplied
+        Vector3 vel = xd ?? (x - state.xp) / T;   
         if (xd == null) state.xp = x;
 
-        // Clamp k2 to guarantee stability without jitter
         float k2Stable = Mathf.Max(state.k2,
                         Mathf.Max(T * T / 2f + T * state.k1 / 2f,
                         T * state.k1));

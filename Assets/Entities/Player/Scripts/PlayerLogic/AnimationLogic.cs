@@ -25,8 +25,9 @@ public class AnimationLogic : MonoBehaviour
         CrouchOriginalPosition = CrouchObject.localPosition;
     }
 
-    public void PlayMovementAnimations(MovementLogic.MovementState State)
+    public void PlayMovementAnimations(MovementLogic.MovementState State, float VelocityMagnitute)
     {
+        Animator.SetFloat("Speed",VelocityMagnitute);
         Animator.SetBool("IsWalking", State == MovementLogic.MovementState.Walk || State == MovementLogic.MovementState.Crouch);
         Animator.SetBool("IsRunning", State == MovementLogic.MovementState.Run);
     }

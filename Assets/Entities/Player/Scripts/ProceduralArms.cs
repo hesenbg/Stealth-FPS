@@ -82,7 +82,7 @@ public class ProceduralArms : MonoBehaviour
 
     private void FixedUpdate()
     {
-        CheckCanLean();
+        //CheckCanLean();
     }
 
     void GetInput()
@@ -95,30 +95,30 @@ public class ProceduralArms : MonoBehaviour
 
     void HandleLeanInput()
     {
-        if (IsRightBlocked && targetLeanAngle == -maxLeanAngle)
+        if (IsRightBlocked && targetLeanAngle == maxLeanAngle)
         {
-            targetLeanAngle = 0f;
+            //targetLeanAngle = 0f;
         }
 
-        if (IsLeftBlocked && targetLeanAngle == maxLeanAngle)
+        if (IsLeftBlocked && targetLeanAngle == -maxLeanAngle)
         {
-            targetLeanAngle = 0f;
+            //targetLeanAngle = 0f;
         }
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (Mathf.Approximately(targetLeanAngle, maxLeanAngle))
+            if (Mathf.Approximately(targetLeanAngle, -maxLeanAngle))
                 targetLeanAngle = 0f; // Toggle off
             else if (!IsLeftBlocked)
-                targetLeanAngle = maxLeanAngle; // Lean if clear
+                targetLeanAngle = -maxLeanAngle; // Lean if clear
         }
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (Mathf.Approximately(targetLeanAngle, -maxLeanAngle))
+            if (Mathf.Approximately(targetLeanAngle, maxLeanAngle))
                 targetLeanAngle = 0f; // Toggle off
             else if (!IsRightBlocked)
-                targetLeanAngle = -maxLeanAngle; // Lean if clear
+                targetLeanAngle = maxLeanAngle; // Lean if clear
         }
     }
 
@@ -145,7 +145,7 @@ public class ProceduralArms : MonoBehaviour
         IsLeftBlocked = Physics.SphereCast(CheckOrigin.position, leanCheckRadius, - CheckOrigin.right, out _, leanCheckDistance);
     }
 
-    private void OnaDrawGizmos()
+    private void OanDrawGizmos()
     {   
         // right
         Gizmos.color = IsRightBlocked ? Color.red : Color.green;

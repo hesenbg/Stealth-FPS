@@ -7,11 +7,8 @@ public class GunRigController : MonoBehaviour
 
     [SerializeField] Rig GunRig;
     [SerializeField] public Transform RigParent;
-    [SerializeField] float Speed;
-
 
     private Vector3 OriginalPos;
-
 
     private Quaternion OriginalRot;
 
@@ -26,16 +23,20 @@ public class GunRigController : MonoBehaviour
         OriginalRot = RigParent.localRotation;
     }
 
-    private void Update()
-    {
-
-    }
-
-
     public void ApplyPosWeigth(Vector3 pos, float weight)
     {
         GunRig.weight = weight;
         RigParent.localPosition = pos;
+    }
+
+    public void ApplyPos(Vector3 pos)
+    {
+        RigParent.localPosition = pos;
+    }
+
+    public void ApplyRot(Vector3 rot)
+    {
+        RigParent.localRotation = Quaternion.Euler(rot);
     }
 
     public void ApplyRotationWeight(Vector3 rot, float weight)

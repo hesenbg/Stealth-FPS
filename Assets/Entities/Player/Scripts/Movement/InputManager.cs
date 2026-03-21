@@ -1,8 +1,6 @@
 ﻿using System;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-
 public class InputManager : MonoBehaviour
 {
     public enum InputType { Hold, Toggle }
@@ -86,8 +84,7 @@ public class InputManager : MonoBehaviour
     {
         if (playerMovementLogic.CurrentMovementState != lastMovementState || CurrentGunState != lastGunState)
         {
-            if (playerMovementLogic.CurrentMovementState == MovementLogic.MovementState.Run
-                || CurrentGunState == GunState.Reload
+            if (CurrentGunState == GunState.Reload
                 || CurrentGunState == GunState.Blocked)
             {
                 TriggerState?.Invoke(this, EventArgs.Empty);
@@ -188,7 +185,7 @@ public class InputManager : MonoBehaviour
         playerShootLogic.CalculateRecoil();
         playerShootLogic.Shoot();
         PlayerSoundManager.instance.PlayShootSound();
-        PlayerRecoil.RecoilFire(CurrentGunState == GunState.ADS);
+        PlayerRecoil.RecoilFire();
         playerShootLogic.CalculateRecoilDaper(CurrentGunState == GunState.ADS, playerMovementLogic.CurrentVelocity.magnitude);
     }
 
@@ -303,7 +300,7 @@ public class InputManager : MonoBehaviour
 
     void Walk()
     {
-        if (CurrentDirection.sqrMagnitude > 0.1f && !Input.GetKey(sprintKey))
+        if (CurrentDirection.sqrMagnitude > 0.1f && playerMovementLogic.CurrentMovementState != MovementLogic.MovementState.Run)
         {
             playerMovementLogic.Walk();
             if (playerMovementLogic.IsGround)
@@ -317,7 +314,7 @@ public class InputManager : MonoBehaviour
     {
         if (Input.GetKey(sprintKey) && CurrentDirection.magnitude > 0.01f)
         {
-            playerMovementLogic.Run();
+            playerMovementLogic.Run();  
             if (playerMovementLogic.IsGround)
             {
                 PlayerSoundManager.instance.PlayRun();
@@ -341,6 +338,6 @@ public class InputManager : MonoBehaviour
         Walk();
         Jump();
         Run();
-        playerAnimationLogic.PlayMovementAnimations(playerMovementLogic.CurrentMovementState);
+        playerAnimationLogic.PlayMovementAnimations(playerMovementLogic.CurrentMovementState, playerMovementLogic.CurrentVelocity.magnitude);
     }
 }

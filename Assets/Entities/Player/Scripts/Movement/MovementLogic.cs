@@ -16,7 +16,9 @@ public class MovementLogic : MonoBehaviour
     [Header("Control States")]
     [SerializeField] public Vector2 MoveInput;
     [HideInInspector] public bool IsSprinting;
-    [SerializeField] public float SlopeDampMultipiler; 
+    [SerializeField] public float SlopeDampMultipiler;
+
+    
 
     [Header("Detection")]
     [SerializeField] float RayDistance = 1.5f;
@@ -36,7 +38,7 @@ public class MovementLogic : MonoBehaviour
     [SerializeField] LayerMask GroundMask;
     [SerializeField] float Radius;
 
-    private float currMaxVelocity;
+    [SerializeField ] private float currMaxVelocity;
     private float currAcc;
     public Vector3 Direction;
 

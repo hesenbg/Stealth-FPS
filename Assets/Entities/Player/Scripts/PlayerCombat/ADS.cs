@@ -15,6 +15,8 @@ public class ADS : MonoBehaviour
     [SerializeField] float minWeight = 0f;
     [SerializeField] float zoomFOV = 40f;
 
+    [SerializeField] AnimationCurve InterpolationCurve;
+
     Vector3 originalLocalPos;
     float originalFOV;
 
@@ -28,13 +30,9 @@ public class ADS : MonoBehaviour
 
     public bool ApplyADS()
     {
-        Weight = maxWeight;
+        Weight = Mathf.MoveTowards(Weight, maxWeight, speed * Time.deltaTime);
 
-        Position = Vector3.Lerp(
-            Position,
-            ADSpos.localPosition,
-            speed * Time.deltaTime
-        );
+        Position = RigParent.localPosition+InterpolationCurve.Evaluate(Weight)*(ADSpos.localPosition- RigParent.localPosition);
 
         PlayerComponents.Instance.MainCamera.fieldOfView = Mathf.Lerp(
             PlayerComponents.Instance.MainCamera.fieldOfView,
@@ -76,6 +74,8 @@ public class ADS : MonoBehaviour
             speed * Time.deltaTime
         );
 
+        Weight = Mathf.Lerp(Weight, minWeight, speed * Time.deltaTime);
+
         float distance = Vector3.Distance(Position, originalLocalPos);
         float fovDiff = Mathf.Abs(PlayerComponents.Instance.MainCamera.fieldOfView - originalFOV);
 
@@ -84,10 +84,6 @@ public class ADS : MonoBehaviour
             Position = originalLocalPos;
             PlayerComponents.Instance.MainCamera.fieldOfView = originalFOV;
             Weight = minWeight;
-        }
-        else
-        {
-            Weight = maxWeight;
         }
 
         GunRigController.Instance.ApplyPosWeigth(Position, Weight);
