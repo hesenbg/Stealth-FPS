@@ -33,6 +33,7 @@ public class Recoil : MonoBehaviour
 
     [SerializeField] Vector3 RecoilRotValue;
     [SerializeField] Vector3 RecoilPosValue;
+    [SerializeField] float RecoilWeightSpeed;
 
     [SerializeField] private bool isRecoiling;
     private float currentWeight;
@@ -104,16 +105,16 @@ public class Recoil : MonoBehaviour
             MathFunc.Lerp(
                 currentWeight,
                 targetWeight,
-                Snappines,
-                0.1f,
+                RecoilWeightSpeed,
+                0.01f,
                 (v) => currentWeight = v
             );
 
-            if (currentWeight > 0.1f)
+            if (currentWeight > 0.01f)
             {
                 GunRigController.Instance.ApplyRotationWeight(CurrRotation * rotMultipiler, currentWeight);
             }
-            else if (currentWeight > 0.00001f)
+            else if (currentWeight !=0 )
             {
                 currentWeight = 0f;
                 GunRigController.Instance.ApplyRotationWeight(CurrRotation * rotMultipiler, 0f);

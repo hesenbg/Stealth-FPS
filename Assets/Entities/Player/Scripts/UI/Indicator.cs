@@ -7,11 +7,19 @@ public class Indicator : MonoBehaviour
 
     private void Start()
     {
-        image = GetComponent<RawImage>();
+        image = GetComponentInChildren<RawImage>();
     }
 
-    private void Update()
+    public void UpdateIndicator(float AwarenessValue, float max)
     {
-        //image.material.SetFloat("Width",)
+        image.material.SetFloat("Width", AwarenessValue/max);
+        if(AwarenessValue < 0.1f)
+        {
+            image.material.SetFloat("Height", 0f);
+        }
+        else
+        {
+            image.material.SetFloat("Height", 1f);
+        }
     }
 }

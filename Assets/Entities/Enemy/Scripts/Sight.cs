@@ -1,18 +1,6 @@
 using System;
 using UnityEngine;
 
-
-public class SightData : EventArgs
-{
-    public SightData(Vector3 dir)
-    {
-        Direction = dir;
-    }
-    public float Awareness;
-
-    public Vector3 Direction;
-}
-
 public class Sight : MonoBehaviour
 {
     [SerializeField] float ForwardMax;
@@ -25,7 +13,7 @@ public class Sight : MonoBehaviour
     Vector3 direction;
 
     [SerializeField] int ChecksPerSecond = 10;
-    
+
     [Header("dots")]
     public float ForwardDot;
     public float RightDot;
@@ -39,56 +27,38 @@ public class Sight : MonoBehaviour
     [Header("Awarness Parameter")]
     public float AlarmAwareness;
     public float SuspiciousAwareness;
-    public float currentAwareness=0f;
+    public float currentAwareness = 0f;
     public float AwarenessSpeed;
 
-    public static event EventHandler TargetSuspiciousSight;
-    public static event EventHandler TargetoutSight;
-    public static event EventHandler TargetFullySeen;
-    public static event EventHandler TargetEnterSight;
+    public event EventHandler TargetSuspiciousSight;
+    public event EventHandler TargetoutSight;
+    public event EventHandler TargetFullySeen;
+    public event EventHandler TargetEnterSight;
 
     private bool inSight;
     private bool inCone;
-    private bool previousInSight;
     private float timer;
+    private bool suspiciousFired;
+    private bool alarmFired;
+
+    private void Awake()
+    {
+        TargetEnterSight += OnTargetEnterSight;
+        TargetoutSight += OnTargetoutSight;
+    }
 
     bool CheckUpdate()
     {
         timer += Time.deltaTime;
         float interval = ChecksPerSecond > 0 ? 1f / ChecksPerSecond : float.MaxValue;
-
-        if (timer < interval)
-            return false;
-        else
-            timer = 0f;
-            return true;
+        if (timer < interval) return false;
+        timer = 0f;
+        return true;
     }
 
     void UpdateAwareness()
     {
-        bool IsEntered = false;
-
-        if (Mathf.Abs(currentAwareness - SuspiciousAwareness) < 0.01f)
-        {
-            TargetSuspiciousSight?.Invoke(this, EventArgs.Empty);
-        }
-        else if (Mathf.Abs(currentAwareness - AlarmAwareness) < 0.01f)
-        {
-            TargetFullySeen?.Invoke(this, EventArgs.Empty);
-        }
-        else if (currentAwareness < 0.01f)
-        {
-            TargetoutSight?.Invoke(this, EventArgs.Empty);
-            IsEntered = false;
-        }
-        else if(IsEntered && currentAwareness > 0.5f)
-        {
-            SightData data = new SightData((Target.transform.position - transform.position).normalized);
-
-            TargetEnterSight?.Invoke(this,data);
-            IsEntered = true;
-        }
-
+        float prev = currentAwareness;
 
         if (inSight)
         {
@@ -97,9 +67,34 @@ public class Sight : MonoBehaviour
         }
         else
         {
-            if (currentAwareness > 0)
+            if (currentAwareness > 0f)
                 currentAwareness -= AwarenessSpeed * Time.deltaTime;
         }
+
+        currentAwareness = Mathf.Clamp(currentAwareness, 0f, AlarmAwareness);
+
+        if (!suspiciousFired && currentAwareness >= SuspiciousAwareness)
+        {
+            suspiciousFired = true;
+            TargetSuspiciousSight?.Invoke(this, EventArgs.Empty);
+        }
+        else if (suspiciousFired && currentAwareness < SuspiciousAwareness)
+        {
+            suspiciousFired = false;
+        }
+
+        if (!alarmFired && currentAwareness >= AlarmAwareness)
+        {
+            alarmFired = true;
+            TargetFullySeen?.Invoke(this, EventArgs.Empty);
+        }
+        else if (alarmFired && currentAwareness < AlarmAwareness)
+        {
+            alarmFired = false;
+        }
+
+        if (prev > 0f && currentAwareness <= 0f)
+            TargetoutSight?.Invoke(this, EventArgs.Empty);
     }
 
     void UpdateLogic()
@@ -108,53 +103,57 @@ public class Sight : MonoBehaviour
 
         forwardCos = MathFunc.ForwardSight(direction, transform.forward);
         rightCos = MathFunc.RightSight(direction, transform.right);
-        upCos = MathFunc.UpSight(direction, transform.right);
+        upCos = MathFunc.UpSight(direction, transform.up); // was transform.right
 
-        // cone checks if it inside cone
         inCone = (rightCos > Angle && rightCos < Angle + 90f)
-                && (ForwardDot > ForwardMin)
+                && (forwardCos > ForwardMin) // was ForwardDot (never assigned)
                 && (Target.transform.position - transform.position).magnitude < ForwardMax
                 && (upCos > UpMin && upCos < UpMax);
     }
 
     void CheckInSight()
     {
+        bool newInSight = false;
+
         if (inCone)
         {
-            // sight is when the raycast checks for obstacle which can block the sight
             float distance = (Target.transform.position - transform.position).magnitude;
             if (Physics.Raycast(transform.position, direction, out RaycastHit hit, distance))
-                inSight = hit.collider.gameObject == Target;
-            else
-                inSight = false;
-        }
-        else
-        {
-            inSight = false;
+                newInSight = hit.collider.gameObject == Target;
         }
 
-        if (inSight != previousInSight)
-        {
-            if (inSight && currentAwareness > AlarmAwareness * 0.95f)
-                TargetSuspiciousSight?.Invoke(this, EventArgs.Empty);
-            else if (currentAwareness < 0.01f)
-                TargetoutSight?.Invoke(this, EventArgs.Empty);
+        if (newInSight && !inSight)
+            TargetEnterSight?.Invoke(this, EventArgs.Empty);
 
-            previousInSight = inSight;
-        }
+        inSight = newInSight;
+    }
+
+    private void OnTargetoutSight(object sender, EventArgs e)
+    {
+        Destroy(SightIndicator);
+    }
+
+    private void OnTargetEnterSight(object sender, EventArgs e)
+    {
+        SightIndicator = PlayerComponents.Instance.PlayerUI.CreateIndicator();
+    }
+
+    private Indicator SightIndicator;
+
+    void UpdateUI()
+    {
+        if (SightIndicator == null) return;
+        SightIndicator.UpdateIndicator(currentAwareness, AlarmAwareness);
     }
 
     private void Update()
     {
+        UpdateUI();
         UpdateAwareness();
 
-        if (!CheckUpdate())
-        {
-            return;
-        }
+        if (!CheckUpdate()) return;
 
         UpdateLogic();
-
         CheckInSight();
     }
 

@@ -32,7 +32,13 @@ public class ADS : MonoBehaviour
     {
         Weight = Mathf.MoveTowards(Weight, maxWeight, speed * Time.deltaTime);
 
-        Position = RigParent.localPosition+InterpolationCurve.Evaluate(Weight)*(ADSpos.localPosition- RigParent.localPosition);
+        //Position = RigParent.localPosition+InterpolationCurve.Evaluate(Weight)*(ADSpos.localPosition- RigParent.localPosition);
+
+        Position = Vector3.Lerp(
+            Position,
+            ADSpos.localPosition,
+            speed * Time.deltaTime
+        );
 
         PlayerComponents.Instance.MainCamera.fieldOfView = Mathf.Lerp(
             PlayerComponents.Instance.MainCamera.fieldOfView,
@@ -55,38 +61,34 @@ public class ADS : MonoBehaviour
         return false;
     }
 
-    public void RevertADS()
+    public bool RevertADS()
     {
         if (Vector3.Distance(Position, originalLocalPos) < 0.001f && Weight == minWeight)
-        {
-            return;
-        }
+            return true;
 
-        Position = Vector3.Lerp(
-            Position,
-            originalLocalPos,
-            speed * Time.deltaTime
-        );
+        Position = Vector3.Lerp(Position, originalLocalPos, speed * Time.deltaTime);
 
         PlayerComponents.Instance.MainCamera.fieldOfView = Mathf.Lerp(
-            PlayerComponents.Instance.MainCamera.fieldOfView,
-            originalFOV,
-            speed * Time.deltaTime
-        );
+            PlayerComponents.Instance.MainCamera.fieldOfView, originalFOV, speed * Time.deltaTime);
 
         Weight = Mathf.Lerp(Weight, minWeight, speed * Time.deltaTime);
 
-        float distance = Vector3.Distance(Position, originalLocalPos);
-        float fovDiff = Mathf.Abs(PlayerComponents.Instance.MainCamera.fieldOfView - originalFOV);
-
-        if (distance < 0.01f && fovDiff < 0.1f)
+        if (Vector3.Distance(Position, originalLocalPos) < 0.01f &&
+            Mathf.Abs(PlayerComponents.Instance.MainCamera.fieldOfView - originalFOV) < 0.1f)
         {
             Position = originalLocalPos;
+
             PlayerComponents.Instance.MainCamera.fieldOfView = originalFOV;
+
             Weight = minWeight;
+
+            GunRigController.Instance.ApplyPosWeigth(Position, Weight);
+
+            return true;
         }
 
         GunRigController.Instance.ApplyPosWeigth(Position, Weight);
+        return false;
     }
 
     public void ResetADS()

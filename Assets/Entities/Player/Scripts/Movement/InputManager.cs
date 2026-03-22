@@ -39,6 +39,7 @@ public class InputManager : MonoBehaviour
     public GunState CurrentGunState;
     public enum GunState { Idle, Blocked, Reload, ADS }
 
+    private bool isReverting = false;
     private MovementLogic.MovementState lastMovementState;
     private GunState lastGunState;
 
@@ -95,52 +96,62 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    void ADS()
-    {
-        if (adsInputType == InputType.Hold)
-        {
-            HandleHoldADS();
-        }
-        else
-        {
-            HandleToggleADS();
-        }
-
-        if (CurrentGunState == GunState.ADS)
-        {
-            ADSlogic.ApplyADS();
-        }
-
-        if (CurrentGunState == GunState.Idle)
-        {
-            ADSlogic.RevertADS();
-        }
-    }
 
     void HandleHoldADS()
     {
-        if (Input.GetMouseButtonUp(1))
+        if (Input.GetMouseButtonUp(1) && CurrentGunState == GunState.ADS)
+            isReverting = true;
+
+        if (Input.GetMouseButtonDown(1) && CurrentGunState == GunState.ADS)
         {
-            CurrentGunState = GunState.Idle;
+            isReverting = false;
+            ADSlogic.ApplyADS();
         }
 
-        if (Input.GetMouseButton(1) && (CurrentGunState == GunState.Idle || CurrentGunState == GunState.ADS))
+        if (Input.GetMouseButtonDown(1) && CurrentGunState == GunState.Idle)
         {
+            isReverting = false;
             CurrentGunState = GunState.ADS;
+            ADSlogic.ApplyADS();
         }
     }
 
     void HandleToggleADS()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (!Input.GetMouseButtonDown(1)) return;
+
+        if (CurrentGunState == GunState.Idle)
         {
-            if (CurrentGunState == GunState.Idle)
+            isReverting = false;
+            CurrentGunState = GunState.ADS;
+            ADSlogic.ApplyADS();
+        }
+        else if (CurrentGunState == GunState.ADS)
+        {
+            isReverting = true;
+        }
+    }
+
+    void ADS()
+    {
+        if (adsInputType == InputType.Hold)
+            HandleHoldADS();
+        else
+            HandleToggleADS();
+
+        if (CurrentGunState == GunState.ADS)
+        {
+            if (isReverting)
             {
-                CurrentGunState = GunState.ADS;
+                if (ADSlogic.RevertADS())
+                {
+                    CurrentGunState = GunState.Idle;
+                    isReverting = false;
+                }
             }
-            else if (CurrentGunState == GunState.ADS)
+            else
             {
-                CurrentGunState = GunState.Idle;
+                ADSlogic.ApplyADS();
             }
         }
     }

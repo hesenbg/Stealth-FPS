@@ -13,11 +13,6 @@ public class PlayerParameters : MonoBehaviour
     private void Awake()
     {
         instance = this;
-
-        Sight.TargetSuspiciousSight += OnTargetSuspiciousSight;
-        Sight.TargetEnterSight += OnTargetEnterSight;
-        Sight.TargetFullySeen += OnTargetFullySeen;
-        Sight.TargetoutSight += OnTargetoutSight;
     }
 
     private void OnTargetoutSight(object sender, System.EventArgs e)

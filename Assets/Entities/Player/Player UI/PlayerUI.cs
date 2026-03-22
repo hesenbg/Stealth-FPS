@@ -7,19 +7,18 @@ public class PlayerUI : MonoBehaviour
 {
 
     [SerializeField] TextMeshProUGUI PlayerGunText;
-    [SerializeField] RawImage indicatorImage;
     [SerializeField] GameObject indicatorObject;
+    [SerializeField] Canvas PlayerUIcanvas;
 
     private void Awake()
     {
-        Sight.TargetEnterSight += OnTargetEnterSight;
     }
 
-
-
-    private void OnTargetEnterSight(object sender, EventArgs e)
+    public Indicator CreateIndicator()
     {
-        Instantiate(indicatorObject, transform);
+        GameObject indicator = Instantiate(indicatorObject,PlayerUIcanvas.gameObject.transform);
+
+        return indicator.GetComponent<Indicator>();
     }
 
     public void UpdateGunUI(int CurrentMag, int TotalMag)
