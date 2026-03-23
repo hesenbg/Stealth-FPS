@@ -18,7 +18,7 @@ public class PlayerUI : MonoBehaviour
     {
         GameObject indicator = Instantiate(indicatorObject,PlayerUIcanvas.gameObject.transform);
 
-        return indicator.GetComponent<Indicator>();
+        return indicator.GetComponentInChildren<Indicator>();
     }
 
     public void UpdateGunUI(int CurrentMag, int TotalMag)

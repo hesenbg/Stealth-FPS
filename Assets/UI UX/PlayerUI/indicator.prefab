@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b57ce91c93464704a98f74052bc1f403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Indicator
+  parent: {fileID: 135903258940552059}
 --- !u!1 &7980152759433144288
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,7 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
-  m_Material: {fileID: 2100000, guid: d52c833162ca5134ab01bf0580179d6b, type: 2}
+  m_Material: {fileID: -876546973899608171, guid: 380578d1b1d2a48498a2d1df3eac08af, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}

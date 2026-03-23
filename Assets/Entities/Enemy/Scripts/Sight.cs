@@ -130,20 +130,32 @@ public class Sight : MonoBehaviour
 
     private void OnTargetoutSight(object sender, EventArgs e)
     {
-        Destroy(SightIndicator);
+        Destroy(SightIndicator.parent);
     }
 
     private void OnTargetEnterSight(object sender, EventArgs e)
     {
+        if(SightIndicator != null)
+        {
+            Destroy(SightIndicator.parent);
+        }
         SightIndicator = PlayerComponents.Instance.PlayerUI.CreateIndicator();
     }
 
     private Indicator SightIndicator;
 
+    [SerializeField] float diff;
+
     void UpdateUI()
     {
         if (SightIndicator == null) return;
-        SightIndicator.UpdateIndicator(currentAwareness, AlarmAwareness);
+
+        Vector3 direction = (transform.position - PlayerComponents.Instance.Player.transform.position).normalized;
+        float angle = Vector3.SignedAngle(direction, PlayerComponents.Instance.Player.transform.forward, Vector3.up);
+
+        angle -= diff;
+
+        SightIndicator.UpdateIndicator(currentAwareness, AlarmAwareness, angle);
     }
 
     private void Update()
@@ -155,6 +167,11 @@ public class Sight : MonoBehaviour
 
         UpdateLogic();
         CheckInSight();
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(SightIndicator.parent);
     }
 
 #if UNITY_EDITOR
