@@ -9,6 +9,8 @@ abstract public class BaseNade : MonoBehaviour
 
     [SerializeField] Mesh NadeMesh;
 
+    [SerializeField] float Damping;
+
     [SerializeField] ParticleSystem NadeEffect;
 
     [SerializeField]  Rigidbody rb;
@@ -22,6 +24,9 @@ abstract public class BaseNade : MonoBehaviour
     private void Awake()
     {
         Transform cam = PlayerComponents.Instance.MainCamera.transform;
+
+        rb.linearDamping = Damping;
+
         if(ThrowType == NadeThrowType.Long)
             rb.AddForce((cam.forward).normalized * LongThrowForce, ForceMode.Impulse);
         else
@@ -43,6 +48,8 @@ abstract public class BaseNade : MonoBehaviour
 
     private void ExecuteNadeEffects()
     {
+        if (NadeEffect == null)
+            return;
         Instantiate(NadeEffect, transform.position, Quaternion.Euler(-90f,0f,0f));
     }
 

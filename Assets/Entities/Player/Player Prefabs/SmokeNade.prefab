@@ -100,7 +100,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 899028545691431591}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: c49528b9b17af85498338b9fb65acf24, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -129,9 +129,10 @@ MonoBehaviour:
   FuseTimer: 2
   EffectRadius: 0
   NadeMesh: {fileID: 0}
+  Damping: 3
   NadeEffect: {fileID: 2894886092556123163, guid: f8030db448a5dfd4ab1bd98c778e15b4, type: 3}
   rb: {fileID: 5938030649727521357}
-  LongThrowForce: 5
+  LongThrowForce: 15
   ShortThrowForce: 3
   ThrowType: 0
 --- !u!54 &5938030649727521357

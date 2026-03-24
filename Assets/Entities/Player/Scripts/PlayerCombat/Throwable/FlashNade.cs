@@ -4,6 +4,6 @@ public class FlashNade : BaseNade
 {
     public override void ExecuteNadeLogic()
     {
-
+        Destroy(gameObject);
     }
 }

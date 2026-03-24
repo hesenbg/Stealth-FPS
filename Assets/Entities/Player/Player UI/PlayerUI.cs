@@ -9,9 +9,16 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI PlayerGunText;
     [SerializeField] GameObject indicatorObject;
     [SerializeField] Canvas PlayerUIcanvas;
+    [SerializeField] GameObject Cross;
 
-    private void Awake()
+    private void Update()
     {
+        UpdateCross();
+    }
+
+    void UpdateCross()
+    {
+        Cross.SetActive(PlayerComponents.Instance.InputManager.CurrentGunState != InputManager.GunState.ADS);
     }
 
     public Indicator CreateIndicator()

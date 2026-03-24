@@ -17,7 +17,7 @@ public class ThrowAbleLogic : MonoBehaviour
 
     private void Start()
     {
-        CurrentNade = smokeNade;
+        CurrentNade = flashNade;
     }
 
     public void ThrowNadeShort()

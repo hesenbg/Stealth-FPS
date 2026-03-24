@@ -6,9 +6,11 @@ public class LaserDot : MonoBehaviour
     LineRenderer Laser;
     [SerializeField] GameObject LaserQuad;
     [SerializeField] float surfaceOffset = 0.02f;
+    GameObject quad;
     
     void Start()
     {
+        quad= Instantiate(LaserQuad, transform.position, transform.rotation);
         Laser = GetComponent<LineRenderer>();
         Laser.useWorldSpace = false;
     }
@@ -23,15 +25,15 @@ public class LaserDot : MonoBehaviour
             Vector3 localHitPoint = transform.InverseTransformPoint(LaserHit.point);
             Laser.SetPosition(1, localHitPoint);
 
-            LaserQuad.SetActive(true);
+            quad.SetActive(true);
 
-            LaserQuad.transform.position = LaserHit.point + (LaserHit.normal * surfaceOffset);
-            LaserQuad.transform.rotation = Quaternion.LookRotation(-LaserHit.normal);
+            quad.transform.position = LaserHit.point + (LaserHit.normal * surfaceOffset);
+            quad.transform.rotation = Quaternion.LookRotation(-LaserHit.normal);
         }
         else
         {
             Laser.SetPosition(1, Vector3.forward * Length);
-            LaserQuad.SetActive(false);
+            quad.SetActive(false);
         }
     }
 }

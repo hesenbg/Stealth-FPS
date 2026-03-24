@@ -18,8 +18,6 @@ public class MovementLogic : MonoBehaviour
     [HideInInspector] public bool IsSprinting;
     [SerializeField] public float SlopeDampMultipiler;
 
-    
-
     [Header("Detection")]
     [SerializeField] float RayDistance = 1.5f;
 
@@ -214,7 +212,8 @@ public class MovementLogic : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!IsGround && other.gameObject.layer != 3)
-            OnStepOnGround?.Invoke(this, EventArgs.Empty);
+            { return; }
+            //OnStepOnGround?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnTriggerStay(Collider other)

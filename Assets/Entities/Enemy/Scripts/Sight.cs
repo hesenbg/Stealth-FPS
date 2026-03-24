@@ -171,6 +171,7 @@ public class Sight : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (SightIndicator == null) return;
         Destroy(SightIndicator.parent);
     }
 
