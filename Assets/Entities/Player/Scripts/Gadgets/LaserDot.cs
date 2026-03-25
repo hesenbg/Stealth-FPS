@@ -5,7 +5,8 @@ public class LaserDot : MonoBehaviour
     [SerializeField] float Length = 50f;
     LineRenderer Laser;
     [SerializeField] GameObject LaserQuad;
-    [SerializeField] float surfaceOffset = 0.02f;
+    [SerializeField] float surfaceOffset ;
+    [SerializeField] float LaserThickness;
     GameObject quad;
     
     void Start()
@@ -13,10 +14,14 @@ public class LaserDot : MonoBehaviour
         quad= Instantiate(LaserQuad, transform.position, transform.rotation);
         Laser = GetComponent<LineRenderer>();
         Laser.useWorldSpace = false;
+
     }
 
     void LateUpdate()
     {
+        Laser.endWidth = LaserThickness;
+        Laser.startWidth = LaserThickness;
+
         Laser.SetPosition(0, Vector3.zero);
 
         RaycastHit LaserHit;

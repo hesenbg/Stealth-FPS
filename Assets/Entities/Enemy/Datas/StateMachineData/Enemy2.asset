@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f0e6e3f7c61eee47bbe7f7ddda2a6d7, type: 3}
+  m_Name: Enemy2
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAIData
+  PatrolPositions:
+  - {x: -18.6, y: 1.6471, z: 11.94}
+  - {x: -15.8, y: 1.6471, z: 10.2}
+  - {x: -18.6, y: 1.6471, z: 6.9}
+  - {x: -21.2, y: 1.6471, z: 7.51}
+  - {x: -21.6, y: 1.6471, z: 12.01}
+  IdleSpeed: 1
+  WonderTimer: 0
+  SuspiciousState: 0
+  Range: 0
+  InterplationSpeed: 8

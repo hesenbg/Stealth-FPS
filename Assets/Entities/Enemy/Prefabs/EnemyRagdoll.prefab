@@ -366,7 +366,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5758188780138308404}
-  - component: {fileID: 9164244690864684908}
   m_Layer: 0
   m_Name: enemy1final
   m_TagString: Untagged
@@ -395,28 +394,6 @@ Transform:
   - {fileID: 4003577185191286088}
   m_Father: {fileID: 2407120842938853659}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &9164244690864684908
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 306761327350227887}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 4030b6324013a3d4c9dd2414893cab9a, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &473401597312609407
 GameObject:
   m_ObjectHideFlags: 0
@@ -3454,6 +3431,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyRagdoll
   ragdollHips: {fileID: 1025843386265261531}
+  RagdollDisableTimer: 5
 --- !u!1 &7375837807355825084
 GameObject:
   m_ObjectHideFlags: 0

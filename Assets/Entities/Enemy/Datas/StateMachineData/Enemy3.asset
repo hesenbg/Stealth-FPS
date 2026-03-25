@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f0e6e3f7c61eee47bbe7f7ddda2a6d7, type: 3}
-  m_Name: Enemy1
+  m_Name: Enemy3
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAIData
   PatrolPositions:
-  - {x: -12.1, y: 1.6471, z: 6.55}
-  - {x: -6.86, y: 1.6471, z: 9.9}
-  - {x: -8.8, y: 1.6471, z: 6.8}
-  IdleSpeed: 1
+  - {x: 0, y: 0, z: 0}
+  IdleSpeed: 0
   WonderTimer: 0
   SuspiciousState: 0
+  Range: 0
+  InterplationSpeed: 0

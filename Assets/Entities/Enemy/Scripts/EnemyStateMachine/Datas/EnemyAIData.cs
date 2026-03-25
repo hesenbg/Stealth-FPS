@@ -15,4 +15,5 @@ public class EnemyAIData : ScriptableObject
 
     [Header("data")]
     public float Range;
+    public float InterplationSpeed;
 }
