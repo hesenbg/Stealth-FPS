@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 public class EnemyStateMachineContext 
 {
-    private Sight EnemySight;
+    private VisionCone EnemySight;
     private HealthManager EnemyHealthManager;
     private ShootLogic EnemyCombat;
     private NavMeshAgent Agent;
@@ -11,7 +11,7 @@ public class EnemyStateMachineContext
     private Rigidbody Rb;
     private GameObject Parent;
 
-    public EnemyStateMachineContext(Sight enemySight, HealthManager enemyHealthManager,
+    public EnemyStateMachineContext(VisionCone enemySight, HealthManager enemyHealthManager,
         ShootLogic enemyCombat, NavMeshAgent agent, EnemyAIData data, Rigidbody rb, GameObject parent)
     {
         Agent = agent;
@@ -25,7 +25,7 @@ public class EnemyStateMachineContext
     public GameObject parent => Parent;
     public Rigidbody rb => Rb;
     public EnemyAIData enemyAIData => Data;
-    public Sight enemySight => EnemySight;
+    public VisionCone enemySight => EnemySight;
     public HealthManager healthManager => EnemyHealthManager;
     public ShootLogic enemyCombat => EnemyCombat; 
     public NavMeshAgent agent => Agent;

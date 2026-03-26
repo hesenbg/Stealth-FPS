@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Sight : MonoBehaviour
+public class VisionCone : MonoBehaviour
 {
     [SerializeField] float ForwardMax;
     [SerializeField] float Angle;
@@ -9,6 +9,7 @@ public class Sight : MonoBehaviour
     [SerializeField] float UpMin;
     [SerializeField] float UpMax;
     [SerializeField] GameObject Target;
+    [SerializeField] float IndicatorAngleDiff;
 
     Vector3 direction;
 
@@ -34,6 +35,8 @@ public class Sight : MonoBehaviour
     public event EventHandler TargetoutSight;
     public event EventHandler TargetFullySeen;
     public event EventHandler TargetEnterSight;
+    private Indicator SightIndicator;
+
 
     private bool inSight;
     private bool inCone;
@@ -142,9 +145,6 @@ public class Sight : MonoBehaviour
         SightIndicator = PlayerComponents.Instance.PlayerUI.CreateIndicator();
     }
 
-    private Indicator SightIndicator;
-
-    [SerializeField] float diff;
 
     void UpdateUI()
     {
@@ -153,7 +153,7 @@ public class Sight : MonoBehaviour
         Vector3 direction = (transform.position - PlayerComponents.Instance.Player.transform.position).normalized;
         float angle = Vector3.SignedAngle(direction, PlayerComponents.Instance.Player.transform.forward, Vector3.up);
 
-        angle -= diff;
+        angle -= IndicatorAngleDiff;
 
         SightIndicator.UpdateIndicator(currentAwareness, AlarmAwareness, angle);
     }

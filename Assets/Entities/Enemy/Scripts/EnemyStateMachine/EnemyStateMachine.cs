@@ -8,7 +8,7 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 
     public EnemyStateMachineContext context {  get; private set; }
 
-    [SerializeField] Sight EnemySight;
+    [SerializeField] VisionCone EnemySight;
 
     [SerializeField] HealthManager EnemyHealthManager;
 

@@ -311,7 +311,7 @@ public class InputManager : MonoBehaviour
 
     void Walk()
     {
-        if (CurrentDirection.sqrMagnitude > 0.1f && playerMovementLogic.CurrentMovementState != MovementLogic.MovementState.Run)
+        if (CurrentDirection.sqrMagnitude > 0.1f && !Input.GetKey(sprintKey))
         {
             playerMovementLogic.Walk();
             if (playerMovementLogic.IsGround)

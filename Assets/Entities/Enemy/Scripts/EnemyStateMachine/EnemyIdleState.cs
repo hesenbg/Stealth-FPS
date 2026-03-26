@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class EnemyIdleState : EnemyState
 {
     int currentPathIndex = 0;

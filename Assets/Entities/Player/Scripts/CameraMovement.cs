@@ -5,22 +5,17 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] float XAmount = 0.02f;
     [SerializeField] float YAmount = 0.02f;
     [SerializeField] float ZAmount = 0.02f;
-
     [SerializeField] float SpeedEffectiveness = 1f;
     [SerializeField] float Frequency = 6f;
     [SerializeField] float InterpolationSpeed = 10f;
-
     [SerializeField] GameObject mesh;
-
     [SerializeField] float MeshEffectivnes;
-
     float time;
 
     private void Update()
     {
         float speed = PlayerComponents.Instance.Movement.CurrentVelocity.magnitude;
 
-        // accumulate time manually (more stable control)
         time += Time.deltaTime * Frequency * speed;
 
         float sin = Mathf.Sin(time);

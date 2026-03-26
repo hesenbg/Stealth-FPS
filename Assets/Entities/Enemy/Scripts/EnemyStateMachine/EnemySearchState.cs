@@ -14,7 +14,6 @@ public class EnemySearchState : EnemyState
         return state;
     }
 
-
     public override void OnStateEnter()
     {
 

@@ -19,8 +19,7 @@ public class EnemyAlarmState : EnemyState
 
     public override void OnStateEnter()
     {
-        //context.enemySight.TargetSuspiciousSight += OnEnemyInSight;
-        //context.enemySight.TargetoutSight += OnEnemyOutSite;
+
     }
 
     private void OnEnemyOutSite(object sender, System.EventArgs e)

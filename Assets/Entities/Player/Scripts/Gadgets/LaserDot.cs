@@ -14,7 +14,6 @@ public class LaserDot : MonoBehaviour
         quad= Instantiate(LaserQuad, transform.position, transform.rotation);
         Laser = GetComponent<LineRenderer>();
         Laser.useWorldSpace = false;
-
     }
 
     void LateUpdate()
