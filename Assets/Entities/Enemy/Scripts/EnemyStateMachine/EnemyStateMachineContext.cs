@@ -10,9 +10,10 @@ public class EnemyStateMachineContext
     private EnemyAIData Data;
     private Rigidbody Rb;
     private GameObject Parent;
+    private EnemyEvents Events;
 
     public EnemyStateMachineContext(VisionCone enemySight, HealthManager enemyHealthManager,
-        ShootLogic enemyCombat, NavMeshAgent agent, EnemyAIData data, Rigidbody rb, GameObject parent)
+        ShootLogic enemyCombat, NavMeshAgent agent, EnemyAIData data, Rigidbody rb, GameObject parent, EnemyEvents events   )
     {
         Agent = agent;
         EnemySight = enemySight;
@@ -21,7 +22,9 @@ public class EnemyStateMachineContext
         Data = data;
         Rb = rb;
         Parent = parent;
+        Events = events;
     }
+    public EnemyEvents events { get; private set; }
     public GameObject parent => Parent;
     public Rigidbody rb => Rb;
     public EnemyAIData enemyAIData => Data;

@@ -14,10 +14,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAIData
   PatrolPositions:
   - {x: -5.8, y: 1.6471, z: 6.55}
-  - {x: -6.86, y: 1.6471, z: 9.9}
-  - {x: -8.8, y: 1.6471, z: 6.8}
-  IdleSpeed: 1
+  - {x: -6.86, y: 1.6471, z: 11.29}
+  - {x: -8.45, y: 1.6471, z: 6.8}
+  IdleSpeed: 0
   WonderTimer: 0
-  SuspiciousState: 0
+  SuspiciousPosition: {x: 0, y: 0, z: 0}
   Range: 0
   InterplationSpeed: 8
+  Idle:
+    Range: 5
+    AwarenessSpeed: 8
+    Speed: 6
+    AroundCheckAngle: 35
+    AroundCheckSpeed: 15
+    AroundCheckDelay: 0.5
+  Suspicious:
+    Range: 0
+    AwarenessSpeed: 0
+    Speed: 0
+    AroundCheckAngle: 45
+    AroundCheckSpeed: 20
+    AroundCheckDelay: 0.3
+  Alarmed:
+    Range: 0
+    AwarenessSpeed: 0
+    Speed: 0
+    AroundCheckAngle: 55
+    AroundCheckSpeed: 30
+    AroundCheckDelay: 0
+  current:
+    Range: 5
+    AwarenessSpeed: 8
+    Speed: 6
+    AroundCheckAngle: 35
+    AroundCheckSpeed: 15
+    AroundCheckDelay: 0.5

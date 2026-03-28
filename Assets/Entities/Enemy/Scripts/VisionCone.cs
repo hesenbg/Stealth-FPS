@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class VisionCone : MonoBehaviour
@@ -10,6 +11,8 @@ public class VisionCone : MonoBehaviour
     [SerializeField] float UpMax;
     [SerializeField] GameObject Target;
     [SerializeField] float IndicatorAngleDiff;
+
+    public EnemyAIData data;
 
     Vector3 direction;
 
@@ -35,19 +38,57 @@ public class VisionCone : MonoBehaviour
     public event EventHandler TargetoutSight;
     public event EventHandler TargetFullySeen;
     public event EventHandler TargetEnterSight;
-    private Indicator SightIndicator;
-
 
     private bool inSight;
     private bool inCone;
     private float timer;
     private bool suspiciousFired;
     private bool alarmFired;
+    private Indicator SightIndicator;
 
     private void Awake()
     {
         TargetEnterSight += OnTargetEnterSight;
         TargetoutSight += OnTargetoutSight;
+
+    }
+
+    private void Start()
+    {   
+        data = GetComponentInParent<EnemyStateMachine>().context.enemyAIData;
+        RotateSight();
+
+    }
+
+    private Coroutine _rotateSightCoroutine;
+    private float _baseYRotation;
+
+    void RotateSight()
+    {
+        if (_rotateSightCoroutine != null) StopCoroutine(_rotateSightCoroutine);
+        //_baseYRotation = transform.localEulerAngles.y;
+        _rotateSightCoroutine = StartCoroutine(RotateSightRoutine());
+    }
+
+    IEnumerator RotateSightRoutine()
+    {
+        float[] stops = {data.current.AroundCheckAngle, -data.current.AroundCheckAngle };
+        int idx = 0;
+        while (true)
+        {
+            float target = stops[idx];
+
+            while (Mathf.Abs(Mathf.DeltaAngle(transform.localEulerAngles.y, target)) > 0.1f)
+            {
+                float current = Mathf.MoveTowardsAngle(transform.localEulerAngles.y, target, data.current.AroundCheckSpeed * Time.deltaTime);
+                transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, current, transform.localEulerAngles.z);
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(data.current.AroundCheckDelay);
+
+            idx = (idx + 1) % stops.Length;
+        }
     }
 
     bool CheckUpdate()
@@ -144,7 +185,6 @@ public class VisionCone : MonoBehaviour
         }
         SightIndicator = PlayerComponents.Instance.PlayerUI.CreateIndicator();
     }
-
 
     void UpdateUI()
     {

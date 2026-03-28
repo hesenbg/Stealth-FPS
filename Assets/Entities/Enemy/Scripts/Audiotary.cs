@@ -3,32 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Audiotary : MonoBehaviour
 {
-    GameObject[] enemies;
+    EnemyStateMachine[] enemies;
 
     public event EventHandler soundGive;
 
-    GameObject closestObject;
+    EnemyStateMachine closestObject;
 
     private void Awake()
     {
-        List<GameObject> enemyList = new List<GameObject>();
+        List<EnemyStateMachine> enemyList = new List<EnemyStateMachine>();
 
         foreach (Transform child in GetComponentsInChildren<Transform>())
         {
             if (child.GetComponent<EnemyStateMachine>() != null)
-                enemyList.Add(child.gameObject);
+                enemyList.Add(child.gameObject.GetComponent<EnemyStateMachine>());
         }
 
         enemies = enemyList.ToArray();
     }
 
-    public void CheckEnemyClose(Vector3 pos, float range)
+    public EnemyStateMachine CheckEnemyClose(Vector3 pos)
     {
-        foreach (GameObject enemy in enemies)
+        foreach (EnemyStateMachine enemy in enemies)
         {
             EnemyStateMachineContext cont = enemy.GetComponent<EnemyStateMachine>().context;
 
-            if(Vector3.Distance(enemy.transform.position, pos) < range)
+            if(Vector3.Distance(enemy.transform.position, pos) < enemy.context.enemyAIData.Range)
             {
                 Vector3 direction = (enemy.transform.position- pos).normalized;
 
@@ -41,7 +41,7 @@ public class Audiotary : MonoBehaviour
                 }
             }
         }
-
         Debug.Log(closestObject.name);
+        return closestObject;
     }
 }
