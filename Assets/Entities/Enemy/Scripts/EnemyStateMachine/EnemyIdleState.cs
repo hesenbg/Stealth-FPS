@@ -56,14 +56,13 @@ public class EnemyIdleState : EnemyState
         return Vector3.Distance(context.parent.transform.position, flat) < 0.2f;
     }
 
-    private void OnSuspiciousEventHappen(object sender, System.EventArgs e){
+    private void OnSuspiciousEventHappen(object sender, EventArgs e){
         NextState = EnemyStateMachine.EnemyState.Suspicious;
-        Debug.Log("SUs event happend negga");
     }
-    private void OnTargetFullySeen(object sender, System.EventArgs e) =>
+    private void OnTargetFullySeen(object sender, EventArgs e) =>
         NextState = EnemyStateMachine.EnemyState.Alarmed;
-    private void OnTargetOutSite(object sender, System.EventArgs e) =>
+    private void OnTargetOutSite(object sender, EventArgs e) =>
         NextState = EnemyStateMachine.EnemyState.Idle;
-    private void OnTargetInSight(object sender, System.EventArgs e) =>
+    private void OnTargetInSight(object sender, EventArgs e) =>
         NextState = EnemyStateMachine.EnemyState.Suspicious;
 }

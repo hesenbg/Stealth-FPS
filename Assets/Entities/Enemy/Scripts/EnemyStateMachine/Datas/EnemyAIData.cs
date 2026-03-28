@@ -9,6 +9,24 @@ public struct EnemyAwarnesParams
     public float AroundCheckSpeed;
     public float AroundCheckDelay;
 }
+[System.Serializable]
+public struct SuspiciousPoint
+{
+    public void SetValue( Vector3 pos)
+    {
+        Position = pos;
+        IsActive = true;
+    }
+
+    public void Reset()
+    {
+        IsActive = false;
+    }
+
+    public Vector3 Position;
+    public bool IsActive;
+}
+
 
 [CreateAssetMenu(menuName = "EnemyStateMachine/Datas")]
 public class EnemyAIData : ScriptableObject
@@ -19,7 +37,7 @@ public class EnemyAIData : ScriptableObject
 
     [Header("Suspicious State")]
     public float WonderTimer;
-    public Vector3 SuspiciousPosition;
+    public SuspiciousPoint last;
 
     [Header("Alarm State")]
 

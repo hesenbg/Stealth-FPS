@@ -7,10 +7,6 @@ public class Destructable : MonoBehaviour
 
     public void DestroyObject()
     {
-        //AudioSource.PlayClipAtPoint(SFX,transform.position);
-        if(VFX!=null)
-            //Instantiate(VFX);
-
         EnemyManager.instance.AlertClosestEnemy(transform.position);
 
         Destroy(gameObject);

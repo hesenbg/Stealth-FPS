@@ -24,7 +24,7 @@ public class EnemyStateMachineContext
         Parent = parent;
         Events = events;
     }
-    public EnemyEvents events { get; private set; }
+    public EnemyEvents events => Events;
     public GameObject parent => Parent;
     public Rigidbody rb => Rb;
     public EnemyAIData enemyAIData => Data;

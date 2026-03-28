@@ -17,6 +17,8 @@ public class EnemyManager : MonoBehaviour
 
     public void AlertClosestEnemy(Vector3 pos)
     {
-        audiotary.CheckEnemyClose(pos).context.events.FireSusEvent();
+        EnemyStateMachine detected = audiotary.CheckEnemyClose(pos);
+        detected.context.events.FireSusEvent();
+        detected.context.enemyAIData.last.SetValue(pos);
     }
 }

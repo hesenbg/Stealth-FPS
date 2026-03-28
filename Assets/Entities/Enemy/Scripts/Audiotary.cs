@@ -24,24 +24,25 @@ public class Audiotary : MonoBehaviour
 
     public EnemyStateMachine CheckEnemyClose(Vector3 pos)
     {
+        closestObject = null;
+        float closestDist = float.MaxValue;
+
         foreach (EnemyStateMachine enemy in enemies)
         {
-            EnemyStateMachineContext cont = enemy.GetComponent<EnemyStateMachine>().context;
-
-            if(Vector3.Distance(enemy.transform.position, pos) < enemy.context.enemyAIData.Range)
+            float dist = Vector3.Distance(enemy.transform.position, pos);
+            if (dist < enemy.context.enemyAIData.Range && dist < closestDist)
             {
-                Vector3 direction = (enemy.transform.position- pos).normalized;
-
-                float distance = Mathf.Abs(Vector3.Distance(enemy.transform.position, pos));
-
-                if (Physics.Raycast(pos, direction, out RaycastHit hit, distance + 0.5f))
+                Vector3 direction = (enemy.transform.position - pos).normalized;
+                if (Physics.Raycast(pos, direction, out RaycastHit hit, dist + 0.5f))
                 {
-                    if(hit.collider.gameObject == enemy)
+                    if (hit.collider.gameObject == enemy.gameObject)
+                    {
                         closestObject = enemy;
+                        closestDist = dist;
+                    }
                 }
             }
         }
-        Debug.Log(closestObject.name);
         return closestObject;
     }
 }

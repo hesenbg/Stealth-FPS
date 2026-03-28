@@ -15,7 +15,7 @@ public class EnemySuspiciousState : EnemyState
 
     public override void OnStateEnter()
     {
-
+        context.agent.SetDestination(context.enemyAIData.last.Position);
     }
 
     public override void OnStateExit()
@@ -25,6 +25,6 @@ public class EnemySuspiciousState : EnemyState
 
     public override void OnStateUpdate()
     {
-        Debug.Log("sus state");
+
     }
 }

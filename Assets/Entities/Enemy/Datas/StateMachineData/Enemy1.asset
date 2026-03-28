@@ -18,8 +18,10 @@ MonoBehaviour:
   - {x: -8.45, y: 1.6471, z: 6.8}
   IdleSpeed: 0
   WonderTimer: 0
-  SuspiciousPosition: {x: 0, y: 0, z: 0}
-  Range: 0
+  last:
+    Position: {x: -7.2486997, y: 0.75, z: 7.6709104}
+    IsActive: 1
+  Range: 12
   InterplationSpeed: 8
   Idle:
     Range: 5

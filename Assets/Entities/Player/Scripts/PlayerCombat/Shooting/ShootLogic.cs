@@ -83,6 +83,10 @@ public class ShootLogic : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit,100f,mask,QueryTriggerInteraction.Collide))
         {
+            if (hit.collider.CompareTag("Destructable"))
+            {
+                hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
+            }
             if (hit.collider.CompareTag("Untagged"))
             {
                 data.Trace.ApplyRandomTexture();
@@ -95,10 +99,6 @@ public class ShootLogic : MonoBehaviour
             if (hit.collider.CompareTag("Body"))
             {
                 hit.collider.gameObject.GetComponentInParent<HealthManager>().GetDamage(data.BaseDamage);
-            }
-            if (hit.collider.CompareTag("Destructable"))
-            {
-                hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
             }
         }
 
