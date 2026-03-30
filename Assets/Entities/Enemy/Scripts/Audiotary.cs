@@ -11,6 +11,11 @@ public class Audiotary : MonoBehaviour
 
     private void Awake()
     {
+        CheckEnemies();
+    }
+
+    public void CheckEnemies()
+    {
         List<EnemyStateMachine> enemyList = new List<EnemyStateMachine>();
 
         foreach (Transform child in GetComponentsInChildren<Transform>())
@@ -24,6 +29,8 @@ public class Audiotary : MonoBehaviour
 
     public EnemyStateMachine CheckEnemyClose(Vector3 pos)
     {
+        CheckEnemies();
+
         closestObject = null;
         float closestDist = float.MaxValue;
 

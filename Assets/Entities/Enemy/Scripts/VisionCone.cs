@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class VisionCone : MonoBehaviour
 {
-    [SerializeField] float ForwardMax;
-    [SerializeField] float Angle;
+    [SerializeField] float Range;
     [SerializeField] float ForwardMin;
-    [SerializeField] float UpMin;
-    [SerializeField] float UpMax;
+    [SerializeField] float ForwardMax;
     [SerializeField] GameObject Target;
     [SerializeField] float IndicatorAngleDiff;
 
@@ -17,11 +15,6 @@ public class VisionCone : MonoBehaviour
     Vector3 direction;
 
     [SerializeField] int ChecksPerSecond = 10;
-
-    [Header("dots")]
-    public float ForwardDot;
-    public float RightDot;
-    public float UpDot;
 
     [Header("angles")]
     public float forwardCos;
@@ -45,12 +38,13 @@ public class VisionCone : MonoBehaviour
     private bool suspiciousFired;
     private bool alarmFired;
     private Indicator SightIndicator;
+    [SerializeField] LayerMask VisionMask;
+
 
     private void Awake()
     {
         TargetEnterSight += OnTargetEnterSight;
         TargetoutSight += OnTargetoutSight;
-
     }
 
     private void Start()
@@ -61,12 +55,10 @@ public class VisionCone : MonoBehaviour
     }
 
     private Coroutine _rotateSightCoroutine;
-    private float _baseYRotation;
 
     void RotateSight()
     {
         if (_rotateSightCoroutine != null) StopCoroutine(_rotateSightCoroutine);
-        //_baseYRotation = transform.localEulerAngles.y;
         _rotateSightCoroutine = StartCoroutine(RotateSightRoutine());
     }
 
@@ -147,29 +139,27 @@ public class VisionCone : MonoBehaviour
 
         forwardCos = MathFunc.ForwardSight(direction, transform.forward);
         rightCos = MathFunc.RightSight(direction, transform.right);
-        upCos = MathFunc.UpSight(direction, transform.up); // was transform.right
+        upCos = MathFunc.UpSight(direction, transform.up);
 
-        inCone = (rightCos > Angle && rightCos < Angle + 90f)
-                && (forwardCos > ForwardMin) // was ForwardDot (never assigned)
-                && (Target.transform.position - transform.position).magnitude < ForwardMax
-                && (upCos > UpMin && upCos < UpMax);
+        inCone = (forwardCos > ForwardMin && forwardCos < ForwardMax);
     }
 
     void CheckInSight()
     {
-        bool newInSight = false;
+        bool previousInSight = inSight;
+        inSight = false;
 
         if (inCone)
         {
-            float distance = (Target.transform.position - transform.position).magnitude;
-            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, distance))
-                newInSight = hit.collider.gameObject == Target;
+            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, Range, VisionMask, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider.gameObject == Target)
+                    inSight = true;
+            }
         }
 
-        if (newInSight && !inSight)
+        if (inSight && !previousInSight)
             TargetEnterSight?.Invoke(this, EventArgs.Empty);
-
-        inSight = newInSight;
     }
 
     private void OnTargetoutSight(object sender, EventArgs e)
@@ -202,11 +192,11 @@ public class VisionCone : MonoBehaviour
     {
         UpdateUI();
         UpdateAwareness();
-
         if (!CheckUpdate()) return;
-
-        UpdateLogic();
         CheckInSight();
+        UpdateLogic();
+
+
     }
 
     private void OnDestroy()
@@ -218,23 +208,26 @@ public class VisionCone : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        float halfCone = 90f - Angle;
+        float halfCone = 90f - ForwardMax;
         Gizmos.color = inSight ? Color.green : Color.red;
 
         Vector3 leftDir = Quaternion.AngleAxis(-halfCone, transform.up) * transform.forward;
         Vector3 rightDir = Quaternion.AngleAxis(halfCone, transform.up) * transform.forward;
-        Gizmos.DrawLine(transform.position, transform.position + leftDir * ForwardMax);
-        Gizmos.DrawLine(transform.position, transform.position + rightDir * ForwardMax);
+        Gizmos.DrawLine(transform.position, transform.position + leftDir * Range);
+        Gizmos.DrawLine(transform.position, transform.position + rightDir * Range);
 
         int steps = 8;
         Vector3 prev = Vector3.zero;
         for (int i = 0; i <= steps; i++)
         {
             float a = Mathf.Lerp(-halfCone, halfCone, (float)i / steps);
-            Vector3 p = transform.position + (Quaternion.AngleAxis(a, transform.up) * transform.forward) * ForwardMax;
+            Vector3 p = transform.position + (Quaternion.AngleAxis(a, transform.up) * transform.forward) * Range;
             if (i > 0) Gizmos.DrawLine(prev, p);
             prev = p;
         }
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, transform.position+ direction * Range);
     }
 #endif
 }

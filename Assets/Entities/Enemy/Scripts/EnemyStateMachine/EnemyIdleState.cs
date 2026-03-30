@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 public class EnemyIdleState : EnemyState
 {
-    int currentPathIndex = 0;
     EnemyStateMachine.EnemyState NextState;
     public EnemyIdleState(EnemyStateMachineContext _context, EnemyStateMachine.EnemyState statekey)
         : base(_context, statekey)
@@ -14,13 +13,12 @@ public class EnemyIdleState : EnemyState
     public override void OnStateEnter()
     {
         NextState = EnemyStateMachine.EnemyState.Idle;
-        currentPathIndex = 0;
-
         context.events.SuspiciosEvent += OnSuspiciousEventHappen;
     }
 
     public override void OnStateExit()
     {
+        context.events.SuspiciosEvent -= OnSuspiciousEventHappen;
         context.rb.linearVelocity = Vector3.zero;
     }
 
@@ -28,20 +26,20 @@ public class EnemyIdleState : EnemyState
     {
         MoveRigidbody();
         UpdateDirection();
-        if (CheckArrivedRigidbody(context.enemyAIData.PatrolPositions[currentPathIndex]))
-            currentPathIndex = (currentPathIndex + 1) % context.enemyAIData.PatrolPositions.Length;
+        if (CheckArrivedRigidbody(context.enemyAIData.PatrolPositions[context.enemyAIData.CurrentPatrolPos]))
+            context.enemyAIData.CurrentPatrolPos = (context.enemyAIData.CurrentPatrolPos + 1) % context.enemyAIData.PatrolPositions.Length;
     }
 
     void MoveRigidbody()
     {
-        Vector3 toTarget = context.enemyAIData.PatrolPositions[currentPathIndex] - context.parent.transform.position;
+        Vector3 toTarget = context.enemyAIData.PatrolPositions[context.enemyAIData.CurrentPatrolPos] - context.parent.transform.position;
         toTarget.y = 0f;
         context.rb.linearVelocity = toTarget.normalized * context.enemyAIData.IdleSpeed;
     }
         
     void UpdateDirection()
     {
-        Vector3 toTarget = context.enemyAIData.PatrolPositions[currentPathIndex] - context.parent.transform.position;
+        Vector3 toTarget = context.enemyAIData.PatrolPositions[context.enemyAIData.CurrentPatrolPos] - context.parent.transform.position;
         toTarget.y = 0f;
         if (toTarget.sqrMagnitude > 0.001f)
             context.parent.transform.rotation = Quaternion.Slerp(
@@ -57,6 +55,7 @@ public class EnemyIdleState : EnemyState
     }
 
     private void OnSuspiciousEventHappen(object sender, EventArgs e){
+        Debug.Log("fired");
         NextState = EnemyStateMachine.EnemyState.Suspicious;
     }
     private void OnTargetFullySeen(object sender, EventArgs e) =>

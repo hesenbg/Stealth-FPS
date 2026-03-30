@@ -1,5 +1,6 @@
 using UnityEngine;
-[System.Serializable]
+using System;
+[Serializable]
 public struct EnemyAwarnesParams
 {
     public float Range;
@@ -9,7 +10,7 @@ public struct EnemyAwarnesParams
     public float AroundCheckSpeed;
     public float AroundCheckDelay;
 }
-[System.Serializable]
+[Serializable]
 public struct SuspiciousPoint
 {
     public void SetValue( Vector3 pos)
@@ -34,6 +35,7 @@ public class EnemyAIData : ScriptableObject
     [Header("Idle State")]
     public Vector3[] PatrolPositions;
     public float IdleSpeed;
+    public int CurrentPatrolPos=0;
 
     [Header("Suspicious State")]
     public float WonderTimer;
@@ -46,6 +48,9 @@ public class EnemyAIData : ScriptableObject
     public float InterplationSpeed;
 
     [Header("Awareness effects")]
+
+    float CurrentAwareness;
+
     public EnemyAwarnesParams Idle;
     public EnemyAwarnesParams Suspicious;
     public EnemyAwarnesParams Alarmed;

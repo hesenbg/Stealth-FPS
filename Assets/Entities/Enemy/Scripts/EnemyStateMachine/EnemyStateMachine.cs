@@ -24,7 +24,7 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 
     private void Awake()
     {
-        context = new EnemyStateMachineContext(EnemySight, EnemyHealthManager,EnemyCombat,agent,data,rb, Parent, events);
+        context = new EnemyStateMachineContext(EnemySight, EnemyHealthManager,EnemyCombat,agent,data,rb, Parent, events, this);
         InitlizeStates();
     }
 

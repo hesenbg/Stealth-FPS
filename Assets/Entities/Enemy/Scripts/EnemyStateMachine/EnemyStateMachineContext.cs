@@ -11,9 +11,10 @@ public class EnemyStateMachineContext
     private Rigidbody Rb;
     private GameObject Parent;
     private EnemyEvents Events;
+    private EnemyStateMachine CoreSFM;
 
     public EnemyStateMachineContext(VisionCone enemySight, HealthManager enemyHealthManager,
-        ShootLogic enemyCombat, NavMeshAgent agent, EnemyAIData data, Rigidbody rb, GameObject parent, EnemyEvents events   )
+        ShootLogic enemyCombat, NavMeshAgent agent, EnemyAIData data, Rigidbody rb, GameObject parent, EnemyEvents events, EnemyStateMachine coreSFM   )
     {
         Agent = agent;
         EnemySight = enemySight;
@@ -23,7 +24,9 @@ public class EnemyStateMachineContext
         Rb = rb;
         Parent = parent;
         Events = events;
+        CoreSFM = coreSFM;
     }
+    public EnemyStateMachine coreSFM => CoreSFM;
     public EnemyEvents events => Events;
     public GameObject parent => Parent;
     public Rigidbody rb => Rb;
