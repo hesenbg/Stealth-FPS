@@ -27,15 +27,23 @@ public struct SuspiciousPoint
     public Vector3 Position;
     public bool IsActive;
 }
-
+[Serializable]
+public struct PatrolPoint
+{
+    public Vector3 Position;
+    public float WaitTime;
+}
 
 [CreateAssetMenu(menuName = "EnemyStateMachine/Datas")]
 public class EnemyAIData : ScriptableObject
 {
+    [Header("General")]
+    public bool IsStill = false;
+
     [Header("Idle State")]
-    public Vector3[] PatrolPositions;
+    public PatrolPoint[] PatrolPositions;
     public float IdleSpeed;
-    public int CurrentPatrolPos=0;
+    public int CurrentPatrolPosIndex=0;
 
     [Header("Suspicious State")]
     public float WonderTimer;
@@ -48,12 +56,9 @@ public class EnemyAIData : ScriptableObject
     public float InterplationSpeed;
 
     [Header("Awareness effects")]
-
-    float CurrentAwareness;
-
+    public float CurrentAwareness;
     public EnemyAwarnesParams Idle;
     public EnemyAwarnesParams Suspicious;
     public EnemyAwarnesParams Alarmed;
-
     [HideInInspector] public EnemyAwarnesParams current;
 }

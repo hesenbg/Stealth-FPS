@@ -20,7 +20,7 @@ public class EnemyManager : MonoBehaviour
         EnemyStateMachine detected =  audiotary.CheckEnemyClose(pos);
         if(detected != null)
         {
-            //Debug.Log(detected.gameObject.name);
+            //Debug.Log(detected.gameObject.name);    
             detected.context.events.FireSusEvent();
             detected.context.enemyAIData.last.SetValue(pos);
         } 

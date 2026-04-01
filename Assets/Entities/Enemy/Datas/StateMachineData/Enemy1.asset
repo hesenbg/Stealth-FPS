@@ -12,18 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f0e6e3f7c61eee47bbe7f7ddda2a6d7, type: 3}
   m_Name: Enemy1
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAIData
+  IsStill: 0
   PatrolPositions:
-  - {x: -5.8, y: 1.6471, z: 6.55}
-  - {x: -6.86, y: 1.6471, z: 11.29}
-  - {x: -8.45, y: 1.6471, z: 6.8}
-  IdleSpeed: 8
-  CurrentPatrolPos: 1
+  - Position: {x: 0, y: 0, z: 0}
+    WaitTime: 0
+  - Position: {x: -0.04, y: 0, z: 2.43}
+    WaitTime: 0
+  - Position: {x: -1.59, y: 0, z: 3.48}
+    WaitTime: 8
+  - Position: {x: -2.47, y: 0, z: 1.8}
+    WaitTime: 0
+  - Position: {x: -2.05, y: 0, z: 0.14}
+    WaitTime: 0
+  IdleSpeed: 5
+  CurrentPatrolPosIndex: 1
   WonderTimer: 0
   last:
-    Position: {x: -8.8687, y: 0.75, z: 12.40091}
+    Position: {x: -5.6686997, y: 0.75, z: 2.5909102}
     IsActive: 1
   Range: 12
-  InterplationSpeed: 8
+  InterplationSpeed: 7
+  CurrentAwareness: 0
   Idle:
     Range: 5
     AwarenessSpeed: 8

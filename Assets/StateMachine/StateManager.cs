@@ -12,6 +12,11 @@ public abstract class StateManager<Estate> : MonoBehaviour where Estate : Enum
 
     private void Start()
     {
+        foreach(var state in States)
+        {
+           state.Value.Init();
+        }
+
         CurrentState.OnStateEnter();
     }
 

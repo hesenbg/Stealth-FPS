@@ -15,16 +15,18 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
     [SerializeField] NavMeshAgent agent;
 
     [SerializeField] EnemyAIData data;
-
+        
     [SerializeField] Rigidbody rb;
 
     [SerializeField] GameObject Parent;
 
     [SerializeField] EnemyEvents events;
 
+    [SerializeField] EnemyAnimationLogic anim;
+
     private void Awake()
     {
-        context = new EnemyStateMachineContext(EnemySight, EnemyHealthManager,EnemyCombat,agent,data,rb, Parent, events, this);
+        context = new EnemyStateMachineContext(EnemySight, EnemyHealthManager,EnemyCombat,agent,data,rb, Parent, events, this, anim);
         InitlizeStates();
     }
 

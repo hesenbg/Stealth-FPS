@@ -20,16 +20,29 @@ public class EnemySuspiciousState : EnemyState
 
     // main state machine functions
 
+    public override void Init()
+    {
+        
+    }
+
     public override void OnStateEnter()
     {
         HasReached = false;
         HasInvestigated = false;
         context.agent.SetDestination(context.enemyAIData.last.Position);
+
+        context.animationLogic.InvestigationEnd += OnInvestigationEnd;
+    }
+
+    private void OnInvestigationEnd(object sender, System.EventArgs e)
+    {
+        HasInvestigated = true;
     }
 
     public override void OnStateExit()
     {
         context.agent.ResetPath();
+        context.animationLogic.InvestigationEnd -= OnInvestigationEnd;
     }
 
     public override void OnStateUpdate()
@@ -38,7 +51,8 @@ public class EnemySuspiciousState : EnemyState
         {
             HasReached = true;
             context.agent.ResetPath();
-            context.coreSFM.StartCoroutine(Investigate());
+            //context.coreSFM.StartCoroutine(Investigate());
+            context.animationLogic.PlayInvestigate();
         }
     }
 
@@ -51,5 +65,5 @@ public class EnemySuspiciousState : EnemyState
     {
         yield return new WaitForSeconds(2f);
         HasInvestigated = true;
-    }
+    }   
 }

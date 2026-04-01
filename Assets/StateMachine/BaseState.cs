@@ -7,7 +7,7 @@ public abstract class BaseState<Estate> where Estate : Enum
     {
         StateKey = state;
     }
-
+    public abstract void Init();
     public abstract void OnStateUpdate();
     public abstract void OnStateExit();
     public abstract void OnStateEnter();

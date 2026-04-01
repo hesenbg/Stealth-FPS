@@ -11,15 +11,19 @@ public class EnemyAlarmState : EnemyState
 
     public override EnemyStateMachine.EnemyState GetNextState()
     {
-        EnemyStateMachine.EnemyState state = EnemyStateMachine.EnemyState.Idle;
+        EnemyStateMachine.EnemyState state = EnemyStateMachine.EnemyState.Alarmed;
 
         return state;
+    }
+    public override void Init()
+    {
+        
     }
 
 
     public override void OnStateEnter()
     {
-
+        Debug.Log("Alarm state");
     }
 
     private void OnEnemyOutSite(object sender, System.EventArgs e)

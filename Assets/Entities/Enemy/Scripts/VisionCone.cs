@@ -2,6 +2,11 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+public class SightData : EventArgs
+{
+    public Vector3 Direction;
+}
+
 public class VisionCone : MonoBehaviour
 {
     [SerializeField] float Range;
