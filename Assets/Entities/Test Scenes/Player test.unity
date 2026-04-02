@@ -41334,7 +41334,7 @@ MonoBehaviour:
   Origin: {fileID: 215398804707119033}
   mask:
     serializedVersion: 2
-    m_Bits: 8566
+    m_Bits: 8694
   TotalCurrentRecoil: {x: 0, y: 0, z: 0}
 --- !u!1 &1062945458231433096
 GameObject:
@@ -42511,7 +42511,7 @@ Transform:
   m_GameObject: {fileID: 3861332371555999539}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.6504698, z: -0, w: -0.7595321}
-  m_LocalPosition: {x: -2.73, y: 2.38, z: 10.68}
+  m_LocalPosition: {x: -0.57, y: 2.38, z: 9.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -49452,7 +49452,7 @@ MonoBehaviour:
   Blocked: 0
   BlockAble:
     serializedVersion: 2
-    m_Bits: 8247
+    m_Bits: 8375
   currentWeight: 0
 --- !u!114 &7724833480360133778
 MonoBehaviour:

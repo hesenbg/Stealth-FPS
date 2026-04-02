@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class SightData : EventArgs
 {
+    public SightData(Vector3 dir)
+    {
+        Direction = dir;
+    }
     public Vector3 Direction;
 }
 
@@ -32,10 +36,10 @@ public class VisionCone : MonoBehaviour
     public float currentAwareness = 0f;
     public float AwarenessSpeed;
 
-    public event EventHandler TargetSuspiciousSight;
-    public event EventHandler TargetoutSight;
-    public event EventHandler TargetFullySeen;
-    public event EventHandler TargetEnterSight;
+    public event EventHandler<SightData> TargetFullySeen;
+    public event EventHandler<SightData> TargetSuspiciousSight;
+    public event EventHandler<SightData> TargetoutSight;
+    public event EventHandler<SightData> TargetEnterSight;
 
     private bool inSight;
     private bool inCone;
@@ -55,36 +59,31 @@ public class VisionCone : MonoBehaviour
     private void Start()
     {   
         data = GetComponentInParent<EnemyStateMachine>().context.enemyAIData;
-        RotateSight();
-
     }
 
-    private Coroutine _rotateSightCoroutine;
-
-    void RotateSight()
+    public void RotateSight()
     {
-        if (_rotateSightCoroutine != null) StopCoroutine(_rotateSightCoroutine);
-        _rotateSightCoroutine = StartCoroutine(RotateSightRoutine());
+        StartCoroutine(RotateSightRoutine());
+    }
+
+    public void StopRotateSight()
+    {
+        StopCoroutine(RotateSightRoutine());
+        transform.localRotation = Quaternion.Euler(Vector3.zero);
     }
 
     IEnumerator RotateSightRoutine()
     {
-        float[] stops = {data.current.AroundCheckAngle, -data.current.AroundCheckAngle };
-        int idx = 0;
-        while (true)
+        float[] stops = { data.current.AroundCheckAngle, -data.current.AroundCheckAngle, 0f };
+        foreach (float target in stops)
         {
-            float target = stops[idx];
-
             while (Mathf.Abs(Mathf.DeltaAngle(transform.localEulerAngles.y, target)) > 0.1f)
             {
                 float current = Mathf.MoveTowardsAngle(transform.localEulerAngles.y, target, data.current.AroundCheckSpeed * Time.deltaTime);
                 transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, current, transform.localEulerAngles.z);
                 yield return null;
             }
-
             yield return new WaitForSeconds(data.current.AroundCheckDelay);
-
-            idx = (idx + 1) % stops.Length;
         }
     }
 
@@ -117,17 +116,17 @@ public class VisionCone : MonoBehaviour
         if (!suspiciousFired && currentAwareness >= SuspiciousAwareness)
         {
             suspiciousFired = true;
-            TargetSuspiciousSight?.Invoke(this, EventArgs.Empty);
+            TargetSuspiciousSight?.Invoke(this, new SightData(direction));
         }
         else if (suspiciousFired && currentAwareness < SuspiciousAwareness)
         {
             suspiciousFired = false;
         }
 
-        if (!alarmFired && currentAwareness >= AlarmAwareness)
+        if (currentAwareness >= AlarmAwareness)
         {
             alarmFired = true;
-            TargetFullySeen?.Invoke(this, EventArgs.Empty);
+            TargetFullySeen?.Invoke(this, new SightData(direction));
         }
         else if (alarmFired && currentAwareness < AlarmAwareness)
         {
@@ -135,7 +134,7 @@ public class VisionCone : MonoBehaviour
         }
 
         if (prev > 0f && currentAwareness <= 0f)
-            TargetoutSight?.Invoke(this, EventArgs.Empty);
+            TargetoutSight?.Invoke(this, new SightData(direction));
     }
 
     void UpdateLogic()
@@ -164,7 +163,7 @@ public class VisionCone : MonoBehaviour
         }
 
         if (inSight && !previousInSight)
-            TargetEnterSight?.Invoke(this, EventArgs.Empty);
+            TargetEnterSight?.Invoke(this, new SightData(direction));
     }
 
     private void OnTargetoutSight(object sender, EventArgs e)
@@ -200,8 +199,6 @@ public class VisionCone : MonoBehaviour
         if (!CheckUpdate()) return;
         CheckInSight();
         UpdateLogic();
-
-
     }
 
     private void OnDestroy()

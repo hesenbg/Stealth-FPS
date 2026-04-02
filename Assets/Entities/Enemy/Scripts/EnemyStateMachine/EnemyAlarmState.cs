@@ -4,6 +4,8 @@ public class EnemyAlarmState : EnemyState
 {
     EnemyStateMachine.EnemyState NextState;
 
+    Vector3 PlayerDirection;
+
     public EnemyAlarmState(EnemyStateMachineContext _context, EnemyStateMachine.EnemyState statekey) : base(_context, statekey)
     {
         context = _context;
@@ -20,29 +22,39 @@ public class EnemyAlarmState : EnemyState
         
     }
 
+    public override void OnStateExit()
+    {
+        context.enemySight.TargetFullySeen -= OnPlayerSeen;
+    }
 
     public override void OnStateEnter()
     {
-        Debug.Log("Alarm state");
-    }
-
-    private void OnEnemyOutSite(object sender, System.EventArgs e)
-    {
-        NextState = EnemyStateMachine.EnemyState.Search;
-    }
-
-    private void OnEnemyInSight(object sender, System.EventArgs e)
-    {
-
-    }
-
-    public override void OnStateExit()
-    {
-
+        context.enemySight.TargetFullySeen += OnPlayerSeen;
     }
 
     public override void OnStateUpdate()
     {
+        context.animationLogic.PlayHoldAnimation(true);
+
+        context.parent.transform.localRotation = Quaternion.LookRotation(PlayerDirection);
+    }
+
+    private void OnPlayerOutSite(object sender, SightData data)
+    {
+        NextState = EnemyStateMachine.EnemyState.Search;
+    }
+
+    private void OnPlayerSeen(object sender, SightData e)
+    {
+        PlayerDirection = e.Direction;
+        Debug.Log(e.Direction);
+    }
+
+    private void OnPlayerInSight(object sender, SightData data)
+    {
 
     }
+
+
+
 }
