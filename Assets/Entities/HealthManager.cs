@@ -31,10 +31,9 @@ public class HealthManager : MonoBehaviour
         CheckDie();
     }
 
-    public void GetGrenadeDamage(float DropOut) // how far away nade exploded from our enemy
+    public void GetGrenadeDamage(float Damage) // how far away nade exploded from our enemy
     {
-        DropOut = 1 - DropOut;
-        CurrentHealth -= MaxHealth*DropOut;
+        CurrentHealth -= Damage;
         CheckDie();
     }
 

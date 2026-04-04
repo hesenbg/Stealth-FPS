@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2828675822406946523
+--- !u!1 &3090514773562575575
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,49 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7258063070621239761}
-  - component: {fileID: 5035606423490831533}
-  - component: {fileID: 7981534468193487687}
-  - component: {fileID: 5082312781981825340}
-  - component: {fileID: 694764899396780350}
-  - component: {fileID: -1554174544956269344}
+  - component: {fileID: 1074873925179716335}
+  - component: {fileID: 8054743988352892967}
+  - component: {fileID: 2093122056089286639}
+  - component: {fileID: 4489262999131951871}
+  - component: {fileID: 7059547848967085378}
+  - component: {fileID: -8851835821210217290}
   m_Layer: 0
-  m_Name: FlashNade
+  m_Name: ExplosiveNade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7258063070621239761
+--- !u!4 &1074873925179716335
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2828675822406946523}
+  m_GameObject: {fileID: 3090514773562575575}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.9996672, z: -0, w: -0.025797527}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &5035606423490831533
+--- !u!33 &8054743988352892967
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2828675822406946523}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &7981534468193487687
+  m_GameObject: {fileID: 3090514773562575575}
+  m_Mesh: {fileID: 4300000, guid: 5528b5a385dd26b45bbc7a0729da9522, type: 3}
+--- !u!23 &2093122056089286639
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2828675822406946523}
+  m_GameObject: {fileID: 3090514773562575575}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 07dd38a87c95fd841ba0448785d3a3ca, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -93,55 +93,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &5082312781981825340
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2828675822406946523}
-  m_Material: {fileID: 13400000, guid: 2157fc99803de08469bfe20cadb68afd, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &694764899396780350
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2828675822406946523}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fedeea5e47ef75459cb163e1b7d3168, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FlashNade
-  FuseTimer: 1.5
-  EffectRadius: 0
-  NadeMesh: {fileID: 0}
-  Damping: 3
-  NadeEffect: {fileID: 0}
-  rb: {fileID: -1554174544956269344}
-  LongThrowForce: 20
-  ShortThrowForce: 0
-  ThrowType: 0
---- !u!54 &-1554174544956269344
+--- !u!54 &4489262999131951871
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2828675822406946523}
+  m_GameObject: {fileID: 3090514773562575575}
   serializedVersion: 5
   m_Mass: 1
   m_LinearDamping: 0
@@ -161,4 +119,50 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 2
+--- !u!135 &7059547848967085378
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3090514773562575575}
+  m_Material: {fileID: 13400000, guid: 2157fc99803de08469bfe20cadb68afd, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.05
+  m_Center: {x: 0, y: 0.05, z: 0}
+--- !u!114 &-8851835821210217290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3090514773562575575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3673cd6225ec604f89a97800939aaad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExplosiveNade
+  FuseTimer: 5
+  EffectRadius: 8
+  Damping: 1
+  NadeEffect: {fileID: 0}
+  rb: {fileID: 4489262999131951871}
+  LongThrowForce: 10
+  ShortThrowForce: 0
+  GroundLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  ThrowType: 0
+  Damage: 100
+  DeathClose: 0.4

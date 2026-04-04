@@ -3,9 +3,13 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager instance;
+
+    HealthManager[] EnemyHealths;
+
     private void Awake()
     {
         instance = this;
+        EnemyHealths = GetComponentsInChildren<HealthManager>();
     }
     
     Audiotary audiotary;

@@ -47,14 +47,11 @@ public class EnemyAlarmState : EnemyState
     private void OnPlayerSeen(object sender, SightData e)
     {
         PlayerDirection = e.Direction;
-        Debug.Log(e.Direction);
+        //Debug.Log(e.Direction);
     }
 
     private void OnPlayerInSight(object sender, SightData data)
     {
 
     }
-
-
-
 }

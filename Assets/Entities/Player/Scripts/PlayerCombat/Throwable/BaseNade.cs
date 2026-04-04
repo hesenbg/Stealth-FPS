@@ -1,57 +1,78 @@
+using System;
 using UnityEngine;
-abstract public class BaseNade : MonoBehaviour
+
+public abstract class BaseNade : MonoBehaviour
 {
-    public  float FuseTimer;
-
-    private float CurrFuseTimer;
-
+    public float FuseTimer;
+    protected float CurrFuseTimer;
     public float EffectRadius;
 
-    [SerializeField] Mesh NadeMesh;
-
     [SerializeField] float Damping;
-
     [SerializeField] ParticleSystem NadeEffect;
-
-    [SerializeField]  Rigidbody rb;
-
-    [SerializeField]  float LongThrowForce;
+    [SerializeField] Rigidbody rb;
+    [SerializeField] float LongThrowForce;
     [SerializeField] public float ShortThrowForce;
+    [SerializeField] LayerMask GroundLayer;
 
-    public enum NadeThrowType { Long, Short}
+    public enum NadeThrowType { Long, Short }
     public NadeThrowType ThrowType;
+
+    event EventHandler NadeActivated;
+    event EventHandler NadeDisabled;
+    event EventHandler TouchGround;
+    event EventHandler TimerEnd;
+    SphereCollider NadeCollider;
 
     private void Awake()
     {
         Transform cam = PlayerComponents.Instance.MainCamera.transform;
-
         rb.linearDamping = Damping;
 
-        if(ThrowType == NadeThrowType.Long)
-            rb.AddForce((cam.forward).normalized * LongThrowForce, ForceMode.Impulse);
-        else
-            rb.AddForce((cam.forward+ cam.up).normalized*ShortThrowForce , ForceMode.Impulse);
+        Vector3 throwDir = ThrowType == NadeThrowType.Long
+            ? cam.forward.normalized
+            : (cam.forward + cam.up).normalized;
+
+        float throwForce = ThrowType == NadeThrowType.Long ? LongThrowForce : ShortThrowForce;
+        rb.AddForce(throwDir * throwForce, ForceMode.Impulse);
+    }
+
+    private void Start()
+    {
+        NadeActivated += OnNadeActivated;
+        NadeDisabled += OnNadeDeactivated;
+        TouchGround += OnTouchGround;
     }
 
     public void Update()
     {
         if (CurrFuseTimer < FuseTimer)
-        {
-            CurrFuseTimer +=Time.deltaTime;
-        }
+            CurrFuseTimer += Time.deltaTime;
         else
+            NadeActivated?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if ((GroundLayer.value & (1 << collision.collider.gameObject.layer)) != 0)
         {
-            ExecuteNadeEffects();
-            ExecuteNadeLogic();
+            TouchGround?.Invoke(this, EventArgs.Empty);
         }
     }
 
-    private void ExecuteNadeEffects()
+    protected void ExecuteNadeEffects()
     {
-        if (NadeEffect == null)
-            return;
-        Instantiate(NadeEffect, transform.position, Quaternion.Euler(-90f,0f,0f));
+        if (NadeEffect == null) return;
+        Instantiate(NadeEffect, transform.position, Quaternion.Euler(-90f, 0f, 0f));
     }
 
-    abstract public void ExecuteNadeLogic();
+    protected void DisableNadePhysics()
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.gameObject.SetActive(false);
+        NadeCollider.gameObject.SetActive(false);
+    }
+
+    public abstract void OnTouchGround(object sender, EventArgs e);
+    public abstract void OnNadeActivated(object sender, EventArgs e);
+    public abstract void OnNadeDeactivated(object sender, EventArgs e);
 }
