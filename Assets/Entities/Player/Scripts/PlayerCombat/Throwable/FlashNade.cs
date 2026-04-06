@@ -3,7 +3,10 @@ using UnityEngine;
 
 public class FlashNade : BaseNade
 {
+    public override void Init()
+    {
 
+    }
     public override void OnNadeActivated(object sender, EventArgs e)
     {
 

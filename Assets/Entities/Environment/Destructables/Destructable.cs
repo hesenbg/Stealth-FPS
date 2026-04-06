@@ -7,7 +7,7 @@ public class Destructable : MonoBehaviour
 
     public void DestroyObject()
     {
-        EnemyManager.instance.AlertClosestEnemy(transform.position);
+        //EnemyManager.instance.AlertClosestEnemy(transform.position);
 
         Destroy(gameObject);
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ThrowAbleLogic : MonoBehaviour
 {
-    [SerializeField] ExplosiveNade explosive;
+    [SerializeField] ShockNade Shock;
 
     [SerializeField] SmokeNade smokeNade;
 
@@ -17,7 +17,7 @@ public class ThrowAbleLogic : MonoBehaviour
 
     private void Start()
     {
-        CurrentNade = explosive;
+        CurrentNade = Shock;
     }
 
     public void ThrowNadeLong()

@@ -5780,7 +5780,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &162022765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9825,7 +9825,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &364844713
 Transform:
   m_ObjectHideFlags: 0
@@ -13786,7 +13786,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &591679478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16766,7 +16766,7 @@ MonoBehaviour:
   m_SoftShadowQuality: 0
   m_RenderingLayersMask:
     serializedVersion: 0
-    m_Bits: 1
+    m_Bits: 4294967295
   m_ShadowRenderingLayersMask:
     serializedVersion: 0
     m_Bits: 1
@@ -16792,13 +16792,13 @@ Light:
   m_InnerSpotAngle: 76.759254
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
-    m_Type: 0
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
     m_Bias: 0.05
     m_NormalBias: 0.4
-    m_NearPlane: 0.2
+    m_NearPlane: 0.53
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -16823,8 +16823,8 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 8193
-  m_RenderingLayerMask: 1
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 4294967295
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -19454,7 +19454,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -2.44, y: 1, z: 0.8}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 0.41158}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1993202087}
@@ -22039,8 +22039,8 @@ Transform:
   m_GameObject: {fileID: 1135577188}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.02520375, z: -0, w: 0.9996823}
-  m_LocalPosition: {x: -9.05, y: 1, z: -7.56}
-  m_LocalScale: {x: 0.43, y: 1, z: 1}
+  m_LocalPosition: {x: -15.28, y: 1, z: -8.81}
+  m_LocalScale: {x: 0.8, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1993202087}
@@ -23646,14 +23646,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dabdff11d5929fa4f9aa0398530fd694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraMovement
-  XAmount: 0.01
-  YAmount: 0.07
-  ZAmount: 0.01
+  XAmount: 0.015
+  YAmount: 0.04
+  ZAmount: 0.02
   SpeedEffectiveness: 1
   Frequency: 3
-  InterpolationSpeed: 4
+  InterpolationSpeed: 9
   mesh: {fileID: 5315702645629754252}
-  MeshEffectivnes: 0
+  MeshEffectivnes: 0.2
 --- !u!1 &1199060643
 GameObject:
   m_ObjectHideFlags: 0
@@ -25047,7 +25047,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1261075546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28065,13 +28065,13 @@ Light:
   m_InnerSpotAngle: 76.759254
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
-    m_Type: 0
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
     m_Bias: 0.05
     m_NormalBias: 0.4
-    m_NearPlane: 0.2
+    m_NearPlane: 0.53
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -28096,8 +28096,8 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 8193
-  m_RenderingLayerMask: 1
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 4294967295
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -29325,7 +29325,7 @@ Transform:
   m_GameObject: {fileID: 1513509061}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8, y: 1.719, z: -9}
+  m_LocalPosition: {x: -7.89, y: 1.719, z: -9.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -43046,7 +43046,7 @@ Transform:
   m_GameObject: {fileID: 3861332371555999539}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.04219344, z: -0, w: -0.9991095}
-  m_LocalPosition: {x: -4.03, y: 2.38, z: -8.72}
+  m_LocalPosition: {x: -4.03, y: 2.04, z: -8.72}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -48848,7 +48848,7 @@ MonoBehaviour:
   bobSpeed: 10
   jumpBobMultiplier: 2
   MoveMultipiler: 0.1
-  maxLeanAngle: 15
+  maxLeanAngle: -15
   maxCameraXOffset: 0.25
   leanSpeed: 8
   leanThreshold: 0.01
@@ -49917,8 +49917,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd06a92e4cd1bde428c8d52264f20c19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThrowAbleLogic
-  explosive: {fileID: -8851835821210217290, guid: d778501953b5b954e934889c34402aee, type: 3}
-  smokeNade: {fileID: 2066908288067650666, guid: 81cd61e5527188b4bbb522a621ef58e6, type: 3}
+  Shock: {fileID: 7062461774753568757, guid: d90c9dd9d90f7a4419c607df5f4cf21e, type: 3}
+  smokeNade: {fileID: 2354783043206882074, guid: 81cd61e5527188b4bbb522a621ef58e6, type: 3}
 --- !u!4 &7726116952743324930
 Transform:
   m_ObjectHideFlags: 0

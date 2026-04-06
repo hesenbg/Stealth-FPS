@@ -1,10 +1,11 @@
 using System;
 using UnityEngine;
 
-public class ExplosiveNade : BaseNade
+public class ShockNade : BaseNade
 {
     [SerializeField] float Damage;
     [SerializeField] float DeathClose;
+    Vector3 dir;
 
     void ExecuteNadeLogic()
     {
@@ -14,17 +15,21 @@ public class ExplosiveNade : BaseNade
             HealthManager health = col.GetComponentInChildren<HealthManager>();
             if (health == null) continue;
 
-            Vector3 dir = col.transform.position - transform.position;
+            dir = col.transform.position - transform.position;
             if (Physics.Raycast(transform.position, dir, out RaycastHit hit, EffectRadius))
             {
-                Debug.Log(health.gameObject.name);
-                HealthManager hitHealth = hit.collider.GetComponentInParent<HealthManager>();
+                HealthManager hitHealth = hit.collider.GetComponentInChildren<HealthManager>();
                 if (hitHealth == health)
                 {
-                    Debug.Log(CalculateDropOff(hit.collider.gameObject.transform.position, Damage));
-                }
+                    // call function
+                } 
             }
         }
+    }
+
+    public override void Init()
+    {
+
     }
 
     public override void OnNadeActivated(object sender, EventArgs e)
@@ -52,6 +57,6 @@ public class ExplosiveNade : BaseNade
 
         if(dist < DeathClose)
             return damage;
-        return damage * dropOff;
+        return damage * (1-dropOff);
     }
 }

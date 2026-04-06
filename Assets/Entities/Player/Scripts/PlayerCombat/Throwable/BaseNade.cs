@@ -3,25 +3,29 @@ using UnityEngine;
 
 public abstract class BaseNade : MonoBehaviour
 {
-    public float FuseTimer;
-    protected float CurrFuseTimer;
-    public float EffectRadius;
-
-    [SerializeField] float Damping;
-    [SerializeField] ParticleSystem NadeEffect;
-    [SerializeField] Rigidbody rb;
-    [SerializeField] float LongThrowForce;
-    [SerializeField] public float ShortThrowForce;
-    [SerializeField] LayerMask GroundLayer;
-
     public enum NadeThrowType { Long, Short }
-    public NadeThrowType ThrowType;
 
-    event EventHandler NadeActivated;
-    event EventHandler NadeDisabled;
-    event EventHandler TouchGround;
-    event EventHandler TimerEnd;
-    SphereCollider NadeCollider;
+    public NadeThrowType ThrowType;
+    public float FuseTimer;
+    public float EffectRadius;
+    public float NadeEffectDuration;
+
+    [SerializeField] public float ShortThrowForce;
+    [SerializeField] private float Damping;
+    [SerializeField] private float LongThrowForce;
+    [SerializeField] private ParticleSystem NadeEffect;
+    [SerializeField] private Rigidbody rb;
+    [SerializeField] private LayerMask GroundLayer;
+
+    protected float CurrFuseTimer;
+
+    private bool hasActivated = false;
+    private SphereCollider NadeCollider;
+
+    private event EventHandler NadeActivated;
+    private event EventHandler NadeDisabled;
+    private event EventHandler TouchGround;
+    private event EventHandler TimerEnd;
 
     private void Awake()
     {
@@ -38,17 +42,26 @@ public abstract class BaseNade : MonoBehaviour
 
     private void Start()
     {
+        NadeCollider = GetComponent<SphereCollider>();
+
         NadeActivated += OnNadeActivated;
         NadeDisabled += OnNadeDeactivated;
         TouchGround += OnTouchGround;
+
+        Init();
     }
 
-    public void Update()
+    private void Update()
     {
         if (CurrFuseTimer < FuseTimer)
+        {
             CurrFuseTimer += Time.deltaTime;
-        else
+        }
+        else if (!hasActivated)
+        {
             NadeActivated?.Invoke(this, EventArgs.Empty);
+            hasActivated = true;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -62,16 +75,18 @@ public abstract class BaseNade : MonoBehaviour
     protected void ExecuteNadeEffects()
     {
         if (NadeEffect == null) return;
+
         Instantiate(NadeEffect, transform.position, Quaternion.Euler(-90f, 0f, 0f));
     }
 
     protected void DisableNadePhysics()
     {
         rb.linearVelocity = Vector3.zero;
-        rb.gameObject.SetActive(false);
-        NadeCollider.gameObject.SetActive(false);
+        rb.isKinematic = true;
+        NadeCollider.enabled = false;
     }
 
+    public abstract void Init();
     public abstract void OnTouchGround(object sender, EventArgs e);
     public abstract void OnNadeActivated(object sender, EventArgs e);
     public abstract void OnNadeDeactivated(object sender, EventArgs e);
