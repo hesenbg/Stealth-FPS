@@ -100,7 +100,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4045131143865244676}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 2157fc99803de08469bfe20cadb68afd, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -153,16 +153,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3673cd6225ec604f89a97800939aaad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShockNade
+  ThrowType: 0
   FuseTimer: 0
   EffectRadius: 0
-  Damping: 0
+  NadeEffectDuration: 0
+  ShortThrowForce: 2
+  Damping: 1
+  LongThrowForce: 12
   NadeEffect: {fileID: 0}
   rb: {fileID: 6577614948584931840}
-  LongThrowForce: 15
-  ShortThrowForce: 2
   GroundLayer:
     serializedVersion: 2
-    m_Bits: 0
-  ThrowType: 0
+    m_Bits: 8192
   Damage: 0
   DeathClose: 0

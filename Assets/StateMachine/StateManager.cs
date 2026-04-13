@@ -31,8 +31,15 @@ public abstract class StateManager<Estate> : MonoBehaviour where Estate : Enum
         {
             TransitionToState(NextStateKey);
         }
-
         UpdateStateMachine();
+    }
+
+    private void FixedUpdate()
+    {
+        if (!OnTransitioningToState)
+        {
+            CurrentState.OnStateFixedUpdate();
+        }
     }
 
     public abstract void UpdateStateMachine();

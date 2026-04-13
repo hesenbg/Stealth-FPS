@@ -9,6 +9,7 @@ public abstract class BaseState<Estate> where Estate : Enum
     }
     public abstract void Init();
     public abstract void OnStateUpdate();
+    public abstract void OnStateFixedUpdate();
     public abstract void OnStateExit();
     public abstract void OnStateEnter();
     public abstract Estate GetNextState();

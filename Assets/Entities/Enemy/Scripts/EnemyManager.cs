@@ -9,10 +9,17 @@ public class EnemyManager : MonoBehaviour
     HealthManager[] EnemyHealths;
     GameObject closestObject;
 
+    [SerializeField] int fps;
+
     private void Awake()
     {
         instance = this;
         EnemyHealths = GetComponentsInChildren<HealthManager>();
+    }
+
+    private void Update()
+    {
+        Application.targetFrameRate = fps;
     }
 
     public void CheckEnemies()
@@ -35,7 +42,7 @@ public class EnemyManager : MonoBehaviour
         foreach (GameObject enemy in enemies)
         {
             EnemyStateMachine sm = enemy.GetComponent<EnemyStateMachine>();
-            float navDist = GetNavMeshDistance(enemy.transform.position, pos);
+            float navDist = Vector3.Distance(enemy.transform.position, pos);
 
             if (navDist < sm.context.enemyAIData.Range && navDist < closestDist)
             {
@@ -73,13 +80,14 @@ public class EnemyManager : MonoBehaviour
     float GetNavMeshDistance(Vector3 from, Vector3 to)
     {
         NavMeshPath path = new NavMeshPath();
-        if (NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path))
-        {
-            float dist = 0f;
-            for (int i = 1; i < path.corners.Length; i++)
-                dist += Vector3.Distance(path.corners[i - 1], path.corners[i]);
-            return dist;
-        }
-        return float.MaxValue;
+        NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path);
+
+        if (path.status != NavMeshPathStatus.PathComplete)
+            return float.MaxValue;
+
+        float dist = 0f;
+        for (int i = 1; i < path.corners.Length; i++)
+            dist += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+        return dist;
     }
 }

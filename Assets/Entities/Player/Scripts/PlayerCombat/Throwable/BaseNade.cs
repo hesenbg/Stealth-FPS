@@ -37,7 +37,7 @@ public abstract class BaseNade : MonoBehaviour
             : (cam.forward + cam.up).normalized;
 
         float throwForce = ThrowType == NadeThrowType.Long ? LongThrowForce : ShortThrowForce;
-        rb.AddForce(throwDir * throwForce, ForceMode.Impulse);
+        rb.AddForce(throwDir * throwForce, ForceMode.VelocityChange);
     }
 
     private void Start()

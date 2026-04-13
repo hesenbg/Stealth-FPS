@@ -44,9 +44,9 @@ public class ShockNade : BaseNade
 
     public override void OnTouchGround(object sender, EventArgs e)
     {
-        ExecuteNadeEffects();
-        ExecuteNadeLogic();
-        Destroy(gameObject);
+        //ExecuteNadeEffects();
+        //ExecuteNadeLogic();
+        //Destroy(gameObject);
     }
 
     float CalculateDropOff(Vector3 pos , float damage)

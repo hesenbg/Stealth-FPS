@@ -36239,7 +36239,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bde3f9d84c4e4343b05e276e200e89f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyManager
-  fps: 200
+  fps: 30
 --- !u!114 &1914273773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40875,9 +40875,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   MouseX: 0
   MouseY: 0
-  MouseSensitivity: 1
+  MouseSensitivity: 100
   PlayerTransform: {fileID: 2094184612894710943}
   toggleLookKey: 9
+  recoilKick: 0
+  recoilReturnSpeed: 0
 --- !u!1 &168481127070269714
 GameObject:
   m_ObjectHideFlags: 0

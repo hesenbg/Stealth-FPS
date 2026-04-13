@@ -56,6 +56,11 @@ public class EnemySuspiciousState : EnemyState
         }
     }
 
+    public override void OnStateFixedUpdate()
+    {
+
+    }
+
     bool IsReached(Vector3 pos)
     {
         return Vector3.Distance(context.parent.transform.position, pos) < 1f;

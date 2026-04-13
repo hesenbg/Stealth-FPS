@@ -22,6 +22,11 @@ public class EnemyAlarmState : EnemyState
         
     }
 
+    public override void OnStateFixedUpdate()
+    {
+        
+    }
+
     public override void OnStateExit()
     {
         context.enemySight.TargetFullySeen -= OnPlayerSeen;

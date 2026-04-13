@@ -33,4 +33,9 @@ public class EnemySearchState : EnemyState
     {
 
     }
+
+    public override void OnStateFixedUpdate()
+    {
+
+    }
 }
