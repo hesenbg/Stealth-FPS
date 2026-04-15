@@ -78,14 +78,14 @@ public class ShootLogic : MonoBehaviour
     public void Shoot()
     {
         lastShotTime = Time.time;
-
         Ray ray = new Ray(Origin.position, Origin.forward + TotalCurrentRecoil);
-
-        if (Physics.Raycast(ray, out RaycastHit hit,100f,mask,QueryTriggerInteraction.Collide))
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, mask, QueryTriggerInteraction.Collide))
         {
             if (hit.collider.CompareTag("Destructable"))
             {
-                hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
+                Destructable destructable = hit.collider.GetComponent<Destructable>();
+                if (destructable == null) Debug.LogWarning($"Destructable component missing on {hit.collider.name}", hit.collider.gameObject);
+                else destructable.DestroyObject();
             }
             if (hit.collider.CompareTag("Untagged"))
             {
@@ -94,14 +94,17 @@ public class ShootLogic : MonoBehaviour
             }
             if (hit.collider.CompareTag("Head"))
             {
-                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetHeadShotDamage(data.BaseDamage, data.HsMultipiler);
+                HealthManager hm = hit.collider.GetComponentInParent<HealthManager>();
+                if (hm == null) Debug.LogWarning($"HealthManager missing on parent of {hit.collider.name}", hit.collider.gameObject);
+                else hm.GetHeadShotDamage(data.BaseDamage, data.HsMultipiler);
             }
             if (hit.collider.CompareTag("Body"))
             {
-                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetDamage(data.BaseDamage);
+                HealthManager hm = hit.collider.GetComponentInParent<HealthManager>();
+                if (hm == null) Debug.LogWarning($"HealthManager missing on parent of {hit.collider.name}", hit.collider.gameObject);
+                else hm.GetDamage(data.BaseDamage);
             }
         }
-
         if (CurrentHotValue < MaxHotValue - 1)
         {
             CurrentHotValue++;

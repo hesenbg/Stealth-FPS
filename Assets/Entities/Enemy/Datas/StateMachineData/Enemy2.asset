@@ -26,8 +26,8 @@ MonoBehaviour:
     WaitTime: 0
   - Position: {x: 1.9, y: 0, z: 1.26}
     WaitTime: 0
-  IdleSpeed: 1.5
-  CurrentPatrolPosIndex: 5
+  IdleSpeed: 1
+  CurrentPatrolPosIndex: 2
   WonderTimer: 0
   last:
     Position: {x: 0, y: 0, z: 0}

@@ -27,8 +27,7 @@ public class EnemyIdleState : EnemyState
     {
         NextState = EnemyStateMachine.EnemyState.Idle;
         HasCheckAroundEnded = true;
-        context.agent.updatePosition = false;
-        context.agent.updateRotation = false;
+        context.agent.enabled = false;
         context.events.SuspiciosEvent += OnSuspiciousEventHappen;
         context.enemySight.TargetFullySeen += OnTargetFullySeen;
     }
@@ -91,8 +90,6 @@ public class EnemyIdleState : EnemyState
         Vector3 toTarget = worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex] - context.parent.transform.position;
         toTarget.y = 0f;
         context.rb.linearVelocity = toTarget.normalized * context.enemyAIData.IdleSpeed;
-
-        Debug.Log(context.rb.linearVelocity.magnitude);
     }
 
     // rotate the enemy based on the next patrol position

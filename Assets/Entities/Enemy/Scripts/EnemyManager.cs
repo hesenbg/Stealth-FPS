@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager instance;
@@ -9,20 +8,15 @@ public class EnemyManager : MonoBehaviour
     HealthManager[] EnemyHealths;
     GameObject closestObject;
 
-    [SerializeField] int fps;
-
     private void Awake()
     {
         instance = this;
         EnemyHealths = GetComponentsInChildren<HealthManager>();
     }
 
-    private void Update()
-    {
-        Application.targetFrameRate = fps;
-    }
 
-    public void CheckEnemies()
+    // helper functions
+    void CheckEnemies()
     {
         List<GameObject> enemyList = new List<GameObject>();
         foreach (Transform child in GetComponentsInChildren<Transform>())
@@ -38,11 +32,12 @@ public class EnemyManager : MonoBehaviour
         CheckEnemies();
         closestObject = null;
         float closestDist = float.MaxValue;
+        float navDist = 0;
 
         foreach (GameObject enemy in enemies)
         {
             EnemyStateMachine sm = enemy.GetComponent<EnemyStateMachine>();
-            float navDist = Vector3.Distance(enemy.transform.position, pos);
+            navDist = GetNavMeshDistance(enemy.transform.position, pos);
 
             if (navDist < sm.context.enemyAIData.Range && navDist < closestDist)
             {
@@ -50,10 +45,11 @@ public class EnemyManager : MonoBehaviour
                 closestDist = navDist;
             }
         }
+        Debug.Log(navDist);
         return closestObject;
     }
 
-    public T[] GetEnemiesRange<T>(Vector3 pos, float range) where T : Component
+    T[] GetEnemiesRange<T>(Vector3 pos, float range) where T : Component
     {
         CheckEnemies();
         List<T> result = new List<T>();
@@ -77,17 +73,34 @@ public class EnemyManager : MonoBehaviour
         return result.ToArray();
     }
 
-    float GetNavMeshDistance(Vector3 from, Vector3 to)
+    public static float GetNavMeshDistance(Vector3 from, Vector3 to)
     {
         NavMeshPath path = new NavMeshPath();
-        NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path);
 
-        if (path.status != NavMeshPathStatus.PathComplete)
+        if (!NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path))
             return float.MaxValue;
 
-        float dist = 0f;
-        for (int i = 1; i < path.corners.Length; i++)
-            dist += Vector3.Distance(path.corners[i - 1], path.corners[i]);
-        return dist;
+        if (path.status == NavMeshPathStatus.PathInvalid)
+            return float.MaxValue;
+
+        float distance = 0f;
+        Vector3[] corners = path.corners;
+
+        for (int i = 1; i < corners.Length; i++)
+            distance += Vector3.Distance(corners[i - 1], corners[i]);
+
+        return distance;
+    }
+    // action functions
+
+    public void AlertCLosestEnemy(Vector3 pos)
+    {
+        EnemyStateMachine ClosestSFM = CheckEnemyCloseDirect(transform.position).GetComponent<EnemyStateMachine>();
+
+        if (ClosestSFM == null)
+            return;
+        ClosestSFM.context.events.FireSusEvent();
+        ClosestSFM.context.enemyAIData.last.Position = pos;
+        Debug.Log(ClosestSFM.name);
     }
 }

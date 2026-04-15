@@ -19,13 +19,13 @@ MonoBehaviour:
   - Position: {x: -0.04, y: 0, z: 2.43}
     WaitTime: 0
   - Position: {x: -1.59, y: 0, z: 3.48}
-    WaitTime: 8
+    WaitTime: 1
   - Position: {x: -2.47, y: 0, z: 1.8}
     WaitTime: 0
   - Position: {x: -2.05, y: 0, z: 0.14}
     WaitTime: 0
-  IdleSpeed: 5
-  CurrentPatrolPosIndex: 1
+  IdleSpeed: 1
+  CurrentPatrolPosIndex: 0
   WonderTimer: 0
   last:
     Position: {x: -5.6686997, y: 0.75, z: 2.5909102}

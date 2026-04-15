@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-
 public class EnemySuspiciousState : EnemyState
 {
     bool HasReached=false;
@@ -17,9 +16,7 @@ public class EnemySuspiciousState : EnemyState
             return EnemyStateMachine.EnemyState.Idle;
         return EnemyStateMachine.EnemyState.Suspicious;
     }
-
     // main state machine functions
-
     public override void Init()
     {
         
@@ -27,6 +24,8 @@ public class EnemySuspiciousState : EnemyState
 
     public override void OnStateEnter()
     {
+        context.agent.enabled = true; 
+
         HasReached = false;
         HasInvestigated = false;
         context.agent.SetDestination(context.enemyAIData.last.Position);
@@ -36,7 +35,7 @@ public class EnemySuspiciousState : EnemyState
 
     private void OnInvestigationEnd(object sender, System.EventArgs e)
     {
-        HasInvestigated = true;
+        //HasInvestigated = true;
     }
 
     public override void OnStateExit()
@@ -49,10 +48,11 @@ public class EnemySuspiciousState : EnemyState
     {
         if (IsReached(context.enemyAIData.last.Position) && !HasReached)
         {
+            Debug.Log("reached");
             HasReached = true;
             context.agent.ResetPath();
-            //context.coreSFM.StartCoroutine(Investigate());
             context.animationLogic.PlayInvestigate();
+            context.coreSFM.StartCoroutine(Investigate());
         }
     }
 
@@ -63,6 +63,7 @@ public class EnemySuspiciousState : EnemyState
 
     bool IsReached(Vector3 pos)
     {
+        //Debug.Log(context.parent.transform.position +"  "+ pos);
         return Vector3.Distance(context.parent.transform.position, pos) < 1f;
     }
 
