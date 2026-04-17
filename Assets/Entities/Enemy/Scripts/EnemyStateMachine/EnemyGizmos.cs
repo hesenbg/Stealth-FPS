@@ -11,6 +11,7 @@ public class EnemyGizmos : MonoBehaviour
 
     [SerializeField] EnemyEntry[] enemies;
     [SerializeField] float radius;
+    [SerializeField] bool DrawGizmos = true;
 
     Vector3[][] SpherePos;
 
@@ -32,6 +33,8 @@ public class EnemyGizmos : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (!DrawGizmos)
+            return;
         if (enemies == null) return;
         for (int i = 0; i < enemies.Length; i++)
         {

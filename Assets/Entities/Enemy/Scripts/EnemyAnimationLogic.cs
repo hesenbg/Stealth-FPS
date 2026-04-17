@@ -1,39 +1,67 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-
 public class EnemyAnimationLogic : MonoBehaviour
 {
     Animator animator;
     public event EventHandler InvestigationEnd;
+    public enum MovementState {Idle, Walk, Crouch }
+    public enum UpperBodyState { Idle, PistolHold, LookAround,Walk}
+
+    private static readonly Dictionary<MovementState, float> moveBlendValues = new()
+    {
+        { MovementState.Crouch, 0f },
+        { MovementState.Idle,   0.5f },
+        { MovementState.Walk,   1f }
+    };
+    private static readonly Dictionary<UpperBodyState, float> upperBodyBlendValues = new()
+    {
+        { UpperBodyState.Idle,        0f   },
+        { UpperBodyState.PistolHold,  0.5f },
+        { UpperBodyState.LookAround,  1f   },
+        { UpperBodyState.Walk,        1.5f   }
+    };
 
     private void Start()
     {
         animator = GetComponent<Animator>();
     }
 
-    public void PlayInvestigate()
+    private void PlayMovementAnimation(MovementState state)
     {
-        animator.SetTrigger("Investigate");
+        animator.SetFloat("MoveBlend", moveBlendValues[state], 0f, Time.deltaTime);
     }
 
-    public void PlayLookAround()
+    private void PlayUpperBodyAnimation(UpperBodyState state)
     {
-        animator.SetTrigger("LookAround");
+        animator.SetFloat("UpperBodyBlend", upperBodyBlendValues[state], 0f, Time.deltaTime);
     }
 
-    public void ReturnBackLookAround()
+    public void PlayIdlePistol()
     {
-        animator.SetTrigger("ReturnBack");
+        WholeBody(MovementState.Idle,UpperBodyState.PistolHold);
     }
 
-    public void PlayHoldAnimation(bool IsHolding)
+    public void PlayWalkIdle()
     {
-        animator.SetBool("Still", IsHolding);
+        WholeBody(MovementState.Walk,UpperBodyState.Idle);
     }
 
-    public void PlayMovementAnimation(float VelocityMagnitute) // magnitute of x and z velocit axis
+    public void PlayIdleLookAround()
     {
-        animator.SetFloat("Speed", VelocityMagnitute);
+        WholeBody(MovementState.Idle, UpperBodyState.LookAround);
+    }
+
+    public void PlayWalk()
+    {
+        WholeBody(MovementState.Walk, UpperBodyState.Walk);
+
+    }
+
+    private void WholeBody(MovementState moveState,UpperBodyState upperState)
+    {
+        PlayUpperBodyAnimation(upperState);
+        PlayMovementAnimation(moveState);
     }
 
     public void FireInvestigationEnd()

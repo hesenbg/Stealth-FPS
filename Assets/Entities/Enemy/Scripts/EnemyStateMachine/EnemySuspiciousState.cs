@@ -51,7 +51,6 @@ public class EnemySuspiciousState : EnemyState
             Debug.Log("reached");
             HasReached = true;
             context.agent.ResetPath();
-            context.animationLogic.PlayInvestigate();
             context.coreSFM.StartCoroutine(Investigate());
         }
     }

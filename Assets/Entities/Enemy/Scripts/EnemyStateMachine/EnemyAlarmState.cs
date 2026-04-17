@@ -39,8 +39,6 @@ public class EnemyAlarmState : EnemyState
 
     public override void OnStateUpdate()
     {
-        context.animationLogic.PlayHoldAnimation(true);
-
         context.parent.transform.localRotation = Quaternion.LookRotation(PlayerDirection);
     }
 

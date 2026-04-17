@@ -61,10 +61,10 @@ public class EnemyIdleState : EnemyState
 
     void Patrul()
     {
-        context.animationLogic.PlayMovementAnimation(new Vector2(context.rb.linearVelocity.x, context.rb.linearVelocity.z).magnitude);
         if (!HasCheckAroundEnded) return;
         MoveRigidbody();
         UpdateDirection();
+        context.animationLogic.PlayWalk();
         if (CheckArrivedRigidbody(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]))
         {
             // if there is a no waittime, then dont start coroutine
@@ -82,7 +82,7 @@ public class EnemyIdleState : EnemyState
 
     void Hold()
     {
-        context.animationLogic.PlayHoldAnimation(context.enemyAIData.IsStill);
+        context.animationLogic.PlayIdlePistol();
     }
 
     void MoveRigidbody()
@@ -115,16 +115,14 @@ public class EnemyIdleState : EnemyState
     {
         context.rb.linearVelocity = Vector3.zero;
         if (waitTime > 0)
-            context.animationLogic.PlayLookAround();
+            context.animationLogic.PlayIdleLookAround();
         yield return new WaitForSeconds(waitTime);
-        context.animationLogic.ReturnBackLookAround();
         context.enemyAIData.CurrentPatrolPosIndex = (context.enemyAIData.CurrentPatrolPosIndex + 1) % worldPatrolPositions.Length;
         HasCheckAroundEnded = true;
     }
 
     private void OnSuspiciousEventHappen(object sender, EventArgs e)
     {
-        context.animationLogic.ReturnBackLookAround();
         NextState = EnemyStateMachine.EnemyState.Suspicious;
     }
 
