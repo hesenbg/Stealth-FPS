@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class EnemyAlarmState : EnemyState
 {
@@ -27,14 +28,16 @@ public class EnemyAlarmState : EnemyState
         
     }
 
-    public override void OnStateExit()
+    public override IEnumerator OnStateExit()
     {
         context.enemySight.TargetFullySeen -= OnPlayerSeen;
+        yield return null;
     }
 
-    public override void OnStateEnter()
+    public override IEnumerator OnStateEnter()
     {
         context.enemySight.TargetFullySeen += OnPlayerSeen;
+        yield return null;
     }
 
     public override void OnStateUpdate()

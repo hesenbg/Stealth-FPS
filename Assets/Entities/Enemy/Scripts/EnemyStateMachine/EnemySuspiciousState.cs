@@ -2,8 +2,8 @@ using System.Collections;
 using UnityEngine;
 public class EnemySuspiciousState : EnemyState
 {
-    bool HasReached=false;
-    bool HasInvestigated = false;
+    enum InvestigationPhase { Turning, Navigating, Investigating, Done }
+    InvestigationPhase phase;
 
     public EnemySuspiciousState(EnemyStateMachineContext _context, EnemyStateMachine.EnemyState statekey) : base(_context, statekey)
     {
@@ -12,63 +12,57 @@ public class EnemySuspiciousState : EnemyState
 
     public override EnemyStateMachine.EnemyState GetNextState()
     {
-        if (HasInvestigated)
+        if (phase == InvestigationPhase.Done)
             return EnemyStateMachine.EnemyState.Idle;
-        return EnemyStateMachine.EnemyState.Suspicious;
+        return StateKey;
     }
-    // main state machine functions
-    public override void Init()
+
+    public override void Init() { }
+
+    public override IEnumerator OnStateEnter()
     {
-        
+        phase = InvestigationPhase.Turning;
+        context.agent.enabled = true;
+        yield break;
     }
 
-    public override void OnStateEnter()
-    {
-        context.agent.enabled = true; 
-
-        HasReached = false;
-        HasInvestigated = false;
-        context.agent.SetDestination(context.enemyAIData.last.Position);
-
-        context.animationLogic.InvestigationEnd += OnInvestigationEnd;
-    }
-
-    private void OnInvestigationEnd(object sender, System.EventArgs e)
-    {
-        //HasInvestigated = true;
-    }
-
-    public override void OnStateExit()
+    public override IEnumerator OnStateExit()
     {
         context.agent.ResetPath();
-        context.animationLogic.InvestigationEnd -= OnInvestigationEnd;
+        yield break;
     }
 
     public override void OnStateUpdate()
     {
-        if (IsReached(context.enemyAIData.last.Position) && !HasReached)
+        switch (phase)
         {
-            Debug.Log("reached");
-            HasReached = true;
-            context.agent.ResetPath();
-            context.coreSFM.StartCoroutine(Investigate());
+            case InvestigationPhase.Turning:
+                if (context.UpdateDirection(context.enemyAIData.last.Position))
+                    phase = InvestigationPhase.Navigating;
+                break;
+
+            case InvestigationPhase.Navigating:
+                context.agent.SetDestination(context.enemyAIData.last.Position);
+                if (context.CheckArrived(context.enemyAIData.last.Position, 1f))
+                {
+                    phase = InvestigationPhase.Investigating;
+                    context.coreSFM.StartCoroutine(Investigate());
+                }
+                break;
+
+            case InvestigationPhase.Investigating:
+            case InvestigationPhase.Done:
+                break;
         }
     }
 
-    public override void OnStateFixedUpdate()
-    {
-
-    }
-
-    bool IsReached(Vector3 pos)
-    {
-        //Debug.Log(context.parent.transform.position +"  "+ pos);
-        return Vector3.Distance(context.parent.transform.position, pos) < 1f;
-    }
+    public override void OnStateFixedUpdate() { }
 
     IEnumerator Investigate()
     {
-        yield return new WaitForSeconds(2f);
-        HasInvestigated = true;
-    }   
+        context.animationLogic.PlayIdleLookAround();
+        yield return new WaitForSeconds(context.enemyAIData.WonderTimer);
+        context.animationLogic.PlayWalk();
+        phase = InvestigationPhase.Done;
+    }
 }

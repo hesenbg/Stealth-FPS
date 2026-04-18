@@ -1,16 +1,19 @@
 using System;
-public abstract class BaseState<Estate> where Estate : Enum
-{
-    public Estate StateKey { get; private set;}
+using System.Collections;
 
-    public BaseState(Estate state)
+public abstract class BaseState<EState> where EState : Enum
+{
+    public EState StateKey { get; private set; }
+
+    public BaseState(EState key)
     {
-        StateKey = state;
+        StateKey = key;
     }
-    public abstract void Init();
+
+    public virtual void Init() { }
+    public abstract IEnumerator OnStateEnter();
+    public abstract IEnumerator OnStateExit();
     public abstract void OnStateUpdate();
     public abstract void OnStateFixedUpdate();
-    public abstract void OnStateExit();
-    public abstract void OnStateEnter();
-    public abstract Estate GetNextState();
+    public abstract EState GetNextState();
 }

@@ -92,11 +92,12 @@ public class EnemyManager : MonoBehaviour
         return distance;
     }
     // action functions
-
     public void AlertCLosestEnemy(Vector3 pos)
     {
-        EnemyStateMachine ClosestSFM = CheckEnemyCloseDirect(transform.position).GetComponent<EnemyStateMachine>();
-
+        GameObject closest = CheckEnemyCloseDirect(transform.position);
+        if (closest == null)
+            return;
+        EnemyStateMachine ClosestSFM = closest.GetComponent<EnemyStateMachine>();
         if (ClosestSFM == null)
             return;
         ClosestSFM.context.events.FireSusEvent();

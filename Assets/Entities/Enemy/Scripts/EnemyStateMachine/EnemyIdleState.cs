@@ -23,20 +23,30 @@ public class EnemyIdleState : EnemyState
 
     public override EnemyStateMachine.EnemyState GetNextState() => NextState;
 
-    public override void OnStateEnter()
+    public override IEnumerator OnStateEnter()
     {
-        NextState = EnemyStateMachine.EnemyState.Idle;
-        HasCheckAroundEnded = true;
-        context.agent.enabled = false;
+        NextState = StateKey;
+        HasCheckAroundEnded = false;
         context.events.SuspiciosEvent += OnSuspiciousEventHappen;
         context.enemySight.TargetFullySeen += OnTargetFullySeen;
+
+        context.agent.enabled = true;
+        context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
+        context.animationLogic.PlayWalk();
+
+        while (!context.CheckArrived(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex],0.2f))
+            yield return null;
+
+        context.agent.enabled = false;
+        HasCheckAroundEnded = true;
     }
 
-    public override void OnStateExit()
+    public override IEnumerator OnStateExit()
     {
         context.events.SuspiciosEvent -= OnSuspiciousEventHappen;
         context.enemySight.TargetFullySeen -= OnTargetFullySeen;
         context.rb.linearVelocity = Vector3.zero;
+        yield return null;
     }
 
     // called once the game start in every state
@@ -63,9 +73,9 @@ public class EnemyIdleState : EnemyState
     {
         if (!HasCheckAroundEnded) return;
         MoveRigidbody();
-        UpdateDirection();
+        context.UpdateDirection(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
         context.animationLogic.PlayWalk();
-        if (CheckArrivedRigidbody(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]))
+        if (context.CheckArrived(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex], 0.2f))
         {
             // if there is a no waittime, then dont start coroutine
             HasCheckAroundEnded = false;
@@ -90,24 +100,6 @@ public class EnemyIdleState : EnemyState
         Vector3 toTarget = worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex] - context.parent.transform.position;
         toTarget.y = 0f;
         context.rb.linearVelocity = toTarget.normalized * context.enemyAIData.IdleSpeed;
-    }
-
-    // rotate the enemy based on the next patrol position
-    void UpdateDirection()
-    {
-        Vector3 toTarget = worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex] - context.parent.transform.position;
-        toTarget.y = 0f;
-        if (toTarget.sqrMagnitude > 0.2f)
-                context.parent.transform.rotation = Quaternion.Slerp(
-                        context.parent.transform.rotation,
-                        Quaternion.LookRotation(toTarget.normalized, Vector3.up),
-                        Time.deltaTime * context.enemyAIData.InterplationSpeed);
-    }
-
-    bool CheckArrivedRigidbody(Vector3 worldTarget)
-    {
-        Vector3 flat = new Vector3(worldTarget.x, context.parent.transform.position.y, worldTarget.z);
-        return Vector3.Distance(context.parent.transform.position, flat) < 0.2f;
     }
 
     // checking around when reaching one of the patrul points

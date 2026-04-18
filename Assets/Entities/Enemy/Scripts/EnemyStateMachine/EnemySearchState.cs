@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class EnemySearchState : EnemyState
@@ -19,13 +20,15 @@ public class EnemySearchState : EnemyState
         
     }
 
-    public override void OnStateEnter()
+    public override IEnumerator OnStateEnter()
     {
+        yield return null;
 
     }
 
-    public override void OnStateExit()
+    public override IEnumerator OnStateExit()
     {
+        yield return null;
 
     }
 

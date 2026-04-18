@@ -39,4 +39,28 @@ public class EnemyStateMachineContext
     public HealthManager healthManager => EnemyHealthManager;
     public ShootLogic enemyCombat => EnemyCombat; 
     public NavMeshAgent agent => Agent;
+
+
+    // helper functions for all the enemy states
+    public bool CheckArrived(Vector3 pos, float Accuracy)
+    {
+        return Vector3.Distance(parent.transform.position, pos) < Accuracy;
+    }
+
+    // turns enemy to the given direction
+    public bool UpdateDirection(Vector3 DirectionPos)
+    {
+        Vector3 toTarget = DirectionPos - parent.transform.position;
+        toTarget.y = 0f;
+        if (toTarget.sqrMagnitude > 0.2f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
+            parent.transform.rotation = Quaternion.Slerp(
+                    parent.transform.rotation,
+                    targetRot,
+                    Time.deltaTime * enemyAIData.InterplationSpeed);
+            return Quaternion.Angle(parent.transform.rotation, targetRot) < 1f;
+        }
+        return true;
+    }
 }

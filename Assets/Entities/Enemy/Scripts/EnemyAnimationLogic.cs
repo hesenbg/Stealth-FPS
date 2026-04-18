@@ -22,7 +22,7 @@ public class EnemyAnimationLogic : MonoBehaviour
         { UpperBodyState.Walk,        1.5f   }
     };
 
-    private void Start()
+    private void Awake()
     {
         animator = GetComponent<Animator>();
     }
