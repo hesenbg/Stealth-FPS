@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using System;
 public class EnemySuspiciousState : EnemyState
 {
     enum InvestigationPhase { Turning, Navigating, Investigating, Done }
@@ -21,13 +22,14 @@ public class EnemySuspiciousState : EnemyState
 
     public override IEnumerator OnStateEnter()
     {
-        phase = InvestigationPhase.Turning;
-        context.agent.enabled = true;
+        context.events.SuspiciosEvent += OnSuspiciousTargetOnSight; ;
+        ResetState();
         yield break;
     }
 
     public override IEnumerator OnStateExit()
     {
+        context.events.SuspiciosEvent -= OnSuspiciousTargetOnSight; ;
         context.agent.ResetPath();
         yield break;
     }
@@ -64,5 +66,17 @@ public class EnemySuspiciousState : EnemyState
         yield return new WaitForSeconds(context.enemyAIData.WonderTimer);
         context.animationLogic.PlayWalk();
         phase = InvestigationPhase.Done;
+    }
+
+    private void ResetState()
+    {
+        phase = InvestigationPhase.Turning;
+        context.agent.enabled = true;
+        context.agent.ResetPath();
+    }
+
+    private void OnSuspiciousTargetOnSight(object sender, EventArgs e)
+    {
+        ResetState();
     }
 }

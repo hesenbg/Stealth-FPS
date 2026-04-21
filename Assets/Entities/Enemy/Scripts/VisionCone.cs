@@ -4,51 +4,64 @@ using UnityEngine;
 
 public class SightData : EventArgs
 {
-    public SightData(Vector3 dir)
+    public Vector3 Direction;
+    public Vector3 Position;
+    public SightData(Vector3 dir, Vector3 pos)
     {
         Direction = dir;
+        Position = pos;
     }
-    public Vector3 Direction;
+
+    public SightData() { }
 }
 
 public class VisionCone : MonoBehaviour
 {
+    #region Configuration
     [SerializeField] float Range;
     [SerializeField] float ForwardMin;
     [SerializeField] float ForwardMax;
-    [SerializeField] GameObject Target;
     [SerializeField] float IndicatorAngleDiff;
-
-    public EnemyAIData data;
-
-    Vector3 direction;
-
+    [SerializeField] LayerMask VisionMask;
     [SerializeField] int ChecksPerSecond = 10;
+    #endregion
 
-    [Header("angles")]
-    public float forwardCos;
-    public float rightCos;
-    public float upCos;
-
-    [Header("Awarness Parameter")]
+    #region Awareness Settings
+    [Header("Awareness")]
     public float AlarmAwareness;
     public float SuspiciousAwareness;
-    public float currentAwareness = 0f;
     public float AwarenessSpeed;
+    public float currentAwareness;
+    #endregion
 
-    public event EventHandler<SightData> TargetFullySeen;
-    public event EventHandler<SightData> TargetSuspiciousSight;
-    public event EventHandler<SightData> TargetoutSight;
-    public event EventHandler<SightData> TargetEnterSight;
+    #region Debug & Data
+    [Header("Debug")]
+    public float forwardCos;
 
+    public EnemyAIData data;
+    #endregion
+
+    #region Events
+    // enemy behaviour
+    public event EventHandler<SightData> TargetFullySeen;  // this and anomally fires when current awarenss reaches the alarm but fires based on the observable type.( anomaly and hostile)
+    public event EventHandler<SightData> TargetAnomalySeen;
+    public event EventHandler<SightData> TargetSuspiciousSight; // fires when current awarness reaches suspicious awarness
+    // for ui 
+    private event EventHandler<SightData> TargetoutSight;
+    private event EventHandler<SightData> TargetEnterSight;
+    #endregion
+
+    #region Private State
     private bool inSight;
     private bool inCone;
-    private float timer;
     private bool suspiciousFired;
     private bool alarmFired;
+    private float timer;
     private Indicator SightIndicator;
-    [SerializeField] LayerMask VisionMask;
+    private IObservable MainTargetedObject;
 
+    private enum TargetType { Player, DeadBody }
+    #endregion
 
     private void Awake()
     {
@@ -57,14 +70,19 @@ public class VisionCone : MonoBehaviour
     }
 
     private void Start()
-    {   
+    {
         data = GetComponentInParent<EnemyStateMachine>().context.enemyAIData;
     }
 
-    public void RotateSight()
+    private void Update()
     {
-        StartCoroutine(RotateSightRoutine());
+        UpdateUI();
+        UpdateAwareness();
+        if (!CheckUpdate()) return;
+        UpdateLogic();
     }
+
+    public void RotateSight() => StartCoroutine(RotateSightRoutine());
 
     public void StopRotateSight()
     {
@@ -87,6 +105,7 @@ public class VisionCone : MonoBehaviour
         }
     }
 
+    // logic and update stuff
     bool CheckUpdate()
     {
         timer += Time.deltaTime;
@@ -96,14 +115,51 @@ public class VisionCone : MonoBehaviour
         return true;
     }
 
+    Collider[] Targets;
+
+    void UpdateLogic()
+    {
+        Targets = Physics.OverlapSphere(transform.position, Range, VisionMask);
+
+        IObservable highestPriority = null;
+
+        foreach (Collider target in Targets)
+        {
+            Vector3 direction = (target.transform.position - transform.position).normalized;
+            forwardCos = MathFunc.ForwardSight(direction, transform.forward);
+            inCone = forwardCos > ForwardMin && forwardCos < ForwardMax;
+
+            if (!inCone) continue;
+            if (!CheckInSight(target.gameObject)) continue;
+            if (!target.TryGetComponent<IObservable>(out IObservable observable)) continue;
+
+            if (highestPriority == null || observable.Priority < highestPriority.Priority)
+                highestPriority = observable;
+        }
+
+        MainTargetedObject = highestPriority;
+        inSight = MainTargetedObject != null;
+    }
+
+    bool CheckInSight(GameObject InSightObject)
+    {
+        Vector3 direction = (InSightObject.transform.position - transform.position).normalized;
+        if (inCone && Physics.Raycast(transform.position, direction, out RaycastHit hit, Range, VisionMask, QueryTriggerInteraction.Ignore))
+            if (hit.collider.gameObject == InSightObject)
+                return true;
+        return false;
+    }
+
+    // events firing
     void UpdateAwareness()
     {
+        // awarness update
         float prev = currentAwareness;
 
         if (inSight)
         {
             if (currentAwareness < AlarmAwareness)
-                currentAwareness += AwarenessSpeed * Time.deltaTime;
+                currentAwareness += AwarenessSpeed * MainTargetedObject.observability * Time.deltaTime; // current awarness increases based on the observable params
         }
         else
         {
@@ -113,98 +169,71 @@ public class VisionCone : MonoBehaviour
 
         currentAwareness = Mathf.Clamp(currentAwareness, 0f, AlarmAwareness);
 
-        if (!suspiciousFired && currentAwareness >= SuspiciousAwareness)
+        // event firing
+        if (inSight)
         {
-            suspiciousFired = true;
-            TargetSuspiciousSight?.Invoke(this, new SightData(direction));
-        }
-        else if (suspiciousFired && currentAwareness < SuspiciousAwareness)
-        {
-            suspiciousFired = false;
-        }
+            Vector3 direction = (MainTargetedObject.transform.position - transform.position).normalized;
+            SightData sightData = new SightData(direction,MainTargetedObject.transform.position);
 
-        if (currentAwareness >= AlarmAwareness)
-        {
-            alarmFired = true;
-            TargetFullySeen?.Invoke(this, new SightData(direction));
-        }
-        else if (alarmFired && currentAwareness < AlarmAwareness)
-        {
-            alarmFired = false;
-        }
+            if (prev == 0f)
+                TargetEnterSight?.Invoke(this, sightData);
 
-        if (prev > 0f && currentAwareness <= 0f)
-            TargetoutSight?.Invoke(this, new SightData(direction));
-    }
-
-    void UpdateLogic()
-    {
-        direction = (Target.transform.position - transform.position).normalized;
-
-        forwardCos = MathFunc.ForwardSight(direction, transform.forward);
-        rightCos = MathFunc.RightSight(direction, transform.right);
-        upCos = MathFunc.UpSight(direction, transform.up);
-
-        inCone = (forwardCos > ForwardMin && forwardCos < ForwardMax);
-    }
-
-    void CheckInSight()
-    {
-        bool previousInSight = inSight;
-        inSight = false;
-
-        if (inCone)
-        {
-            if (Physics.Raycast(transform.position, direction, out RaycastHit hit, Range, VisionMask, QueryTriggerInteraction.Ignore))
+            // suspicious event firing
+            if (!suspiciousFired && currentAwareness >= SuspiciousAwareness)
             {
-                if (hit.collider.gameObject == Target)
-                    inSight = true;
+                suspiciousFired = true;
+                TargetSuspiciousSight?.Invoke(this, sightData);
+            }
+
+            // player seen or anomally seen events fire
+            if (!alarmFired && currentAwareness >= AlarmAwareness)
+            {
+                alarmFired = true;
+                if (MainTargetedObject.type == ObservableType.Hostile)
+                    TargetFullySeen?.Invoke(this, sightData);
+                else if (MainTargetedObject.type == ObservableType.Clue)
+                    TargetAnomalySeen?.Invoke(this, sightData);
+
+                //EnemyManager.instance.AlertClosestAllies();  // optinal
             }
         }
 
-        if (inSight && !previousInSight)
-            TargetEnterSight?.Invoke(this, new SightData(direction));
-    }
-
-    private void OnTargetoutSight(object sender, EventArgs e)
-    {
-        Destroy(SightIndicator.parent);
-    }
-
-    private void OnTargetEnterSight(object sender, EventArgs e)
-    {
-        if(SightIndicator != null)
+        if (!inSight)
         {
-            Destroy(SightIndicator.parent);
+            if (suspiciousFired && currentAwareness < SuspiciousAwareness)
+                suspiciousFired = false;
+
+            if (alarmFired && currentAwareness < AlarmAwareness)
+                alarmFired = false;
+
+            if (prev > 0f && currentAwareness <= 0f)
+                TargetoutSight?.Invoke(this, new SightData());
         }
-        SightIndicator = PlayerComponents.Instance.PlayerUI.CreateIndicator();
     }
 
+    // UI stuff
     void UpdateUI()
     {
         if (SightIndicator == null) return;
 
-        Vector3 direction = (transform.position - PlayerComponents.Instance.Player.transform.position).normalized;
-        float angle = Vector3.SignedAngle(direction, PlayerComponents.Instance.Player.transform.forward, Vector3.up);
-
-        angle -= IndicatorAngleDiff;
+        Vector3 dir = (transform.position - PlayerComponents.Instance.Player.transform.position).normalized;
+        float angle = Vector3.SignedAngle(dir, PlayerComponents.Instance.Player.transform.forward, Vector3.up) - IndicatorAngleDiff;
 
         SightIndicator.UpdateIndicator(currentAwareness, AlarmAwareness, angle);
     }
 
-    private void Update()
+    // event functions
+    private void OnTargetEnterSight(object sender, EventArgs e)
     {
-        UpdateUI();
-        UpdateAwareness();
-        if (!CheckUpdate()) return;
-        CheckInSight();
-        UpdateLogic();
+        if (SightIndicator != null) Destroy(SightIndicator.parent);
+        SightIndicator = PlayerComponents.Instance.PlayerUI.CreateIndicator();
     }
+
+    private void OnTargetoutSight(object sender, EventArgs e) => Destroy(SightIndicator.parent);
 
     private void OnDestroy()
     {
-        if (SightIndicator == null) return;
-        Destroy(SightIndicator.parent);
+        if (SightIndicator != null) Destroy(SightIndicator.parent);
     }
 
 #if UNITY_EDITOR
@@ -227,9 +256,6 @@ public class VisionCone : MonoBehaviour
             if (i > 0) Gizmos.DrawLine(prev, p);
             prev = p;
         }
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, transform.position+ direction * Range);
     }
 #endif
 }

@@ -28,7 +28,6 @@ public class EnemyIdleState : EnemyState
         NextState = StateKey;
         HasCheckAroundEnded = false;
         context.events.SuspiciosEvent += OnSuspiciousEventHappen;
-        context.enemySight.TargetFullySeen += OnTargetFullySeen;
 
         context.agent.enabled = true;
         context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
@@ -44,7 +43,6 @@ public class EnemyIdleState : EnemyState
     public override IEnumerator OnStateExit()
     {
         context.events.SuspiciosEvent -= OnSuspiciousEventHappen;
-        context.enemySight.TargetFullySeen -= OnTargetFullySeen;
         context.rb.linearVelocity = Vector3.zero;
         yield return null;
     }
@@ -117,13 +115,4 @@ public class EnemyIdleState : EnemyState
     {
         NextState = EnemyStateMachine.EnemyState.Suspicious;
     }
-
-    private void OnTargetFullySeen(object sender, EventArgs e) =>
-        NextState = EnemyStateMachine.EnemyState.Alarmed;
-
-    private void OnTargetOutSite(object sender, EventArgs e) =>
-        NextState = EnemyStateMachine.EnemyState.Idle;
-
-    private void OnTargetInSight(object sender, EventArgs e) =>
-        NextState = EnemyStateMachine.EnemyState.Suspicious;
 }

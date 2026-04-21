@@ -10,4 +10,4 @@ public class Destructable : MonoBehaviour
         EnemyManager.instance.AlertCLosestEnemy(transform.position);
         Destroy(gameObject);
     }
-}   
+}    

@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 public class EnemyManager : MonoBehaviour
 {
+    
+
     public static EnemyManager instance;
     GameObject[] enemies;
     HealthManager[] EnemyHealths;
@@ -103,5 +106,10 @@ public class EnemyManager : MonoBehaviour
         ClosestSFM.context.events.FireSusEvent();
         ClosestSFM.context.enemyAIData.last.Position = pos;
         Debug.Log(ClosestSFM.name);
+    }
+
+    public void AlertClosestAllies()
+    {
+
     }
 }

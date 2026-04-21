@@ -7,6 +7,11 @@ public class EnemyEvents : MonoBehaviour
 
     public event EventHandler PlayerSeen;
 
+    public void FirePlayerSeen()
+    {
+        PlayerSeen?.Invoke(this, EventArgs.Empty);
+    }
+
     public void FireSusEvent()
     {
         SuspiciosEvent?.Invoke(this, EventArgs.Empty);
