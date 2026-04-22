@@ -7013,7 +7013,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &209374772
 Transform:
   m_ObjectHideFlags: 0
@@ -10632,6 +10632,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1c88528e548c3f4e848f79ae2aeb723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyEvents
+  sight: {fileID: 0}
 --- !u!114 &402306880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13234,6 +13235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1c88528e548c3f4e848f79ae2aeb723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyEvents
+  sight: {fileID: 0}
 --- !u!114 &548067365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14302,7 +14304,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &613455744
 Transform:
   m_ObjectHideFlags: 0
@@ -15187,6 +15189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1c88528e548c3f4e848f79ae2aeb723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyEvents
+  sight: {fileID: 0}
 --- !u!114 &682200740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22128,6 +22131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1c88528e548c3f4e848f79ae2aeb723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyEvents
+  sight: {fileID: 1646250347}
 --- !u!114 &1133964639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23302,7 +23306,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1176757511
 Transform:
   m_ObjectHideFlags: 0
@@ -25724,7 +25728,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1289908122
 Transform:
   m_ObjectHideFlags: 0
@@ -28151,7 +28155,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1427065056
 Transform:
   m_ObjectHideFlags: 0
@@ -29594,7 +29598,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1513509062
 Transform:
   m_ObjectHideFlags: 0
@@ -31791,6 +31795,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1c88528e548c3f4e848f79ae2aeb723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyEvents
+  sight: {fileID: 0}
 --- !u!114 &1620625697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32321,7 +32326,7 @@ MonoBehaviour:
   IndicatorAngleDiff: 45
   VisionMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8
   ChecksPerSecond: 30
   AlarmAwareness: 10
   SuspiciousAwareness: 2
@@ -32854,6 +32859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1c88528e548c3f4e848f79ae2aeb723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyEvents
+  sight: {fileID: 0}
 --- !u!114 &1691318392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36311,7 +36317,6 @@ GameObject:
   - component: {fileID: 1914273769}
   - component: {fileID: 1914273768}
   - component: {fileID: 1914273770}
-  - component: {fileID: 1914273771}
   - component: {fileID: 1914273773}
   - component: {fileID: 1914273772}
   m_Layer: 0
@@ -36373,18 +36378,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7ebdb5ded950be4c87b2d8ba1e28de0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySFX
---- !u!114 &1914273771
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1914273767}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 295e59dcfd617cf4bb5b7c87d3cbda16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Audiotary
 --- !u!114 &1914273772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40517,6 +40510,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1c88528e548c3f4e848f79ae2aeb723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyEvents
+  sight: {fileID: 0}
 --- !u!114 &2122958237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43314,15 +43308,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3861332371555999539}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.04219344, z: -0, w: -0.9991095}
-  m_LocalPosition: {x: -4.03, y: 2.04, z: -8.72}
+  m_LocalRotation: {x: -0, y: -0.9714237, z: -0, w: -0.23735209}
+  m_LocalPosition: {x: -7.98, y: 2.04, z: 10.09}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1198423890}
   - {fileID: 5026171653110756693}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 355.164, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 512.539, z: 0}
 --- !u!222 &2095641731755687996
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -45841,6 +45835,7 @@ GameObject:
   - component: {fileID: 2094184612894710943}
   - component: {fileID: 3335739436138864408}
   - component: {fileID: 1498982728036306249}
+  - component: {fileID: 8037359492287435420}
   - component: {fileID: 8037359492287435419}
   - component: {fileID: 5882551545164950140}
   - component: {fileID: 6443737160006822720}
@@ -50622,6 +50617,21 @@ MonoBehaviour:
   Radius: 0.3
   currMaxVelocity: 0
   Direction: {x: 0, y: 0, z: 0}
+--- !u!114 &8037359492287435420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3861332371555999539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff99f8b64132ae4a8187fe3e84d9e3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObservableObject
+  type: 0
+  priority: 0
+  observability: 0
 --- !u!1 &8049805408692336210
 GameObject:
   m_ObjectHideFlags: 0
@@ -51942,6 +51952,7 @@ GameObject:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1385575152}
   - {fileID: 430854625441350373}
   - {fileID: 2094184612894710943}
   - {fileID: 720720407}
@@ -51949,4 +51960,3 @@ SceneRoots:
   - {fileID: 1993202087}
   - {fileID: 364844713}
   - {fileID: 1119448129}
-  - {fileID: 1385575152}

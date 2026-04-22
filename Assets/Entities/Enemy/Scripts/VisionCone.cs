@@ -2,19 +2,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class SightData : EventArgs
-{
-    public Vector3 Direction;
-    public Vector3 Position;
-    public SightData(Vector3 dir, Vector3 pos)
-    {
-        Direction = dir;
-        Position = pos;
-    }
-
-    public SightData() { }
-}
-
 public class VisionCone : MonoBehaviour
 {
     #region Configuration
@@ -132,12 +119,16 @@ public class VisionCone : MonoBehaviour
             if (!inCone) continue;
             if (!CheckInSight(target.gameObject)) continue;
             if (!target.TryGetComponent<IObservable>(out IObservable observable)) continue;
+            if(observable.Observability==0) continue;
 
             if (highestPriority == null || observable.Priority < highestPriority.Priority)
                 highestPriority = observable;
         }
-
         MainTargetedObject = highestPriority;
+
+        if(MainTargetedObject!= null)
+            Debug.Log(MainTargetedObject.Observability);
+
         inSight = MainTargetedObject != null;
     }
 
@@ -159,7 +150,7 @@ public class VisionCone : MonoBehaviour
         if (inSight)
         {
             if (currentAwareness < AlarmAwareness)
-                currentAwareness += AwarenessSpeed * MainTargetedObject.observability * Time.deltaTime; // current awarness increases based on the observable params
+                currentAwareness += AwarenessSpeed * MainTargetedObject.Observability * Time.deltaTime; // current awarness increases based on the observable params
         }
         else
         {
@@ -172,8 +163,8 @@ public class VisionCone : MonoBehaviour
         // event firing
         if (inSight)
         {
-            Vector3 direction = (MainTargetedObject.transform.position - transform.position).normalized;
-            SightData sightData = new SightData(direction,MainTargetedObject.transform.position);
+            Vector3 direction = (MainTargetedObject.Transform.position - transform.position).normalized;
+            SightData sightData = new SightData(MainTargetedObject.Transform.position);
 
             if (prev == 0f)
                 TargetEnterSight?.Invoke(this, sightData);
@@ -189,9 +180,9 @@ public class VisionCone : MonoBehaviour
             if (!alarmFired && currentAwareness >= AlarmAwareness)
             {
                 alarmFired = true;
-                if (MainTargetedObject.type == ObservableType.Hostile)
+                if (MainTargetedObject.Type == ObservableType.Hostile)
                     TargetFullySeen?.Invoke(this, sightData);
-                else if (MainTargetedObject.type == ObservableType.Clue)
+                else if (MainTargetedObject.Type == ObservableType.Clue)
                     TargetAnomalySeen?.Invoke(this, sightData);
 
                 //EnemyManager.instance.AlertClosestAllies();  // optinal

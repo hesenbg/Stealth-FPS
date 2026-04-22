@@ -1,18 +1,16 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-
 public class Indicator : MonoBehaviour
 {
     RawImage image;
     public GameObject parent;
-
     private void Awake()
     {
         image = GetComponentInChildren<RawImage>();
-
         // Create a unique material instance for this indicator
         image.material = new Material(image.material);
+        image.material.SetFloat("_Width", 0f);
+        image.material.SetFloat("_Height", 0f);
     }
 
     public void UpdateIndicator(float AwarenessValue, float max, float Angle)

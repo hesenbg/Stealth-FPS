@@ -52,8 +52,7 @@ public class EnemyAlarmState : EnemyState
 
     private void OnPlayerSeen(object sender, SightData e)
     {
-        PlayerDirection = e.Direction;
-        //Debug.Log(e.Direction);
+        PlayerDirection = (context.parent.transform.position- e.Position).normalized;
     }
 
     private void OnPlayerInSight(object sender, SightData data)

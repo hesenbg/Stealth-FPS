@@ -103,8 +103,7 @@ public class EnemyManager : MonoBehaviour
         EnemyStateMachine ClosestSFM = closest.GetComponent<EnemyStateMachine>();
         if (ClosestSFM == null)
             return;
-        ClosestSFM.context.events.FireSusEvent();
-        ClosestSFM.context.enemyAIData.last.Position = pos;
+        ClosestSFM.context.events.FireSusEvent(pos);
         Debug.Log(ClosestSFM.name);
     }
 

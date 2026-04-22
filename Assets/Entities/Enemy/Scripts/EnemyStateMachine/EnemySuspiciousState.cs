@@ -22,14 +22,20 @@ public class EnemySuspiciousState : EnemyState
 
     public override IEnumerator OnStateEnter()
     {
-        context.events.SuspiciosEvent += OnSuspiciousTargetOnSight; ;
+        context.events.SuspiciosEvent += OnSuspiciousTargetOnSight;
+        context.events.ClueFound += OnClueFound;
         ResetState();
         yield break;
     }
 
+    private void OnClueFound(object sender, EventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
     public override IEnumerator OnStateExit()
     {
-        context.events.SuspiciosEvent -= OnSuspiciousTargetOnSight; ;
+        context.events.SuspiciosEvent -= OnSuspiciousTargetOnSight;
         context.agent.ResetPath();
         yield break;
     }

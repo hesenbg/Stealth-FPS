@@ -115,4 +115,6 @@ public class EnemyIdleState : EnemyState
     {
         NextState = EnemyStateMachine.EnemyState.Suspicious;
     }
+
+    
 }
