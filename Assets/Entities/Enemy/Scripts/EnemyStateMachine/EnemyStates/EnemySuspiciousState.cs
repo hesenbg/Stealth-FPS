@@ -6,6 +6,8 @@ public class EnemySuspiciousState : EnemyState
     enum InvestigationPhase { Turning, Navigating, Investigating, Done }
     InvestigationPhase phase;
 
+    EnemyStateMachine.EnemyState NextState;
+
     public EnemySuspiciousState(EnemyStateMachineContext _context, EnemyStateMachine.EnemyState statekey) : base(_context, statekey)
     {
         context = _context;
@@ -14,8 +16,8 @@ public class EnemySuspiciousState : EnemyState
     public override EnemyStateMachine.EnemyState GetNextState()
     {
         if (phase == InvestigationPhase.Done)
-            return EnemyStateMachine.EnemyState.Idle;
-        return StateKey;
+            return NextState;
+        return NextState;
     }
 
     public override void Init() { }
@@ -24,8 +26,17 @@ public class EnemySuspiciousState : EnemyState
     {
         context.events.SuspiciosEvent += OnSuspiciousTargetOnSight;
         context.events.ClueFound += OnClueFound;
+        context.events.PlayerSeen += OnPlayerSeen;
+
+        NextState = EnemyStateMachine.EnemyState.Suspicious;
+
         ResetState();
         yield break;
+    }
+
+    private void OnPlayerSeen(object sender, EventData e)
+    {
+        NextState = EnemyStateMachine.EnemyState.Fight;
     }
 
     private void OnClueFound(object sender, EventArgs e)
@@ -60,11 +71,10 @@ public class EnemySuspiciousState : EnemyState
 
             case InvestigationPhase.Investigating:
             case InvestigationPhase.Done:
+                NextState = EnemyStateMachine.EnemyState.Idle;
                 break;
         }
     }
-
-    public override void OnStateFixedUpdate() { }
 
     IEnumerator Investigate()
     {

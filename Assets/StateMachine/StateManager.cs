@@ -31,12 +31,6 @@ public abstract class StateManager<EState> : MonoBehaviour where EState : Enum
         UpdateStateMachine();
     }
 
-    private void FixedUpdate()
-    {
-        if (!OnTransitioningToState)
-            CurrentState.OnStateFixedUpdate();
-    }
-
     public abstract void UpdateStateMachine();
 
     public IEnumerator TransitionToState(EState state)

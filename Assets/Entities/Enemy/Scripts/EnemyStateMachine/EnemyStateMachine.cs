@@ -3,7 +3,7 @@ using UnityEngine.AI;
 public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 {
     [SerializeField] EnemyStateMachine.EnemyState current;
-    public enum EnemyState { Idle, Suspicious, Alarmed, Search }
+    public enum EnemyState { Idle, Suspicious, Alarmed, Search, Fight }
     public EnemyStateMachineContext context {  get; private set; }
 
     [SerializeField] VisionCone EnemySight;
@@ -50,6 +50,7 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
         States.Add(EnemyState.Suspicious, new EnemySuspiciousState(context,EnemyState.Suspicious));
         States.Add(EnemyState.Idle, new EnemyIdleState(context, EnemyState.Idle));
         States.Add(EnemyState.Search, new EnemySearchState(context, EnemyState.Search));
+        States.Add(EnemyState.Fight, new EnemyFightState(context,EnemyState.Fight));
         CurrentState = States[EnemyState.Idle];
     }
 }

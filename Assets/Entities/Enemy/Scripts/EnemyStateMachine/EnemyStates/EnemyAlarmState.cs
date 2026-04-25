@@ -23,11 +23,6 @@ public class EnemyAlarmState : EnemyState
         
     }
 
-    public override void OnStateFixedUpdate()
-    {
-        
-    }
-
     public override IEnumerator OnStateExit()
     {
         context.enemySight.TargetFullySeen -= OnPlayerSeen;
@@ -45,17 +40,17 @@ public class EnemyAlarmState : EnemyState
         context.parent.transform.localRotation = Quaternion.LookRotation(PlayerDirection);
     }
 
-    private void OnPlayerOutSite(object sender, SightData data)
+    private void OnPlayerOutSite(object sender, EventData data)
     {
         NextState = EnemyStateMachine.EnemyState.Search;
     }
 
-    private void OnPlayerSeen(object sender, SightData e)
+    private void OnPlayerSeen(object sender, EventData e)
     {
-        PlayerDirection = (context.parent.transform.position- e.Position).normalized;
+        PlayerDirection = (context.parent.transform.position- e.GetPos()).normalized;
     }
 
-    private void OnPlayerInSight(object sender, SightData data)
+    private void OnPlayerInSight(object sender, EventData data)
     {
 
     }

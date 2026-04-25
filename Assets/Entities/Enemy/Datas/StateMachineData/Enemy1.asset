@@ -25,12 +25,12 @@ MonoBehaviour:
   - Position: {x: -2.05, y: 0, z: 0.14}
     WaitTime: 0
   IdleSpeed: 1
-  CurrentPatrolPosIndex: 2
+  CurrentPatrolPosIndex: 3
   WonderTimer: 3
   last:
-    Position: {x: -10.1587, y: 0.75, z: 6.64091}
-    IsActive: 1
-  Range: 12
+    Position: {x: 0, y: 0, z: 0}
+    IsActive: 0
+  Range: 25
   InterplationSpeed: 7
   CurrentAwareness: 0
   Idle:

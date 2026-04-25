@@ -30,12 +30,12 @@ public class VisionCone : MonoBehaviour
 
     #region Events
     // enemy behaviour
-    public event EventHandler<SightData> TargetFullySeen;  // this and anomally fires when current awarenss reaches the alarm but fires based on the observable type.( anomaly and hostile)
-    public event EventHandler<SightData> TargetAnomalySeen;
-    public event EventHandler<SightData> TargetSuspiciousSight; // fires when current awarness reaches suspicious awarness
+    public event EventHandler<EventData> TargetFullySeen;  // this and anomally fires when current awarenss reaches the alarm but fires based on the observable type.( anomaly and hostile)
+    public event EventHandler<EventData> TargetAnomalySeen;
+    public event EventHandler<EventData> TargetSuspiciousSight; // fires when current awarness reaches suspicious awarness
     // for ui 
-    private event EventHandler<SightData> TargetoutSight;
-    private event EventHandler<SightData> TargetEnterSight;
+    private event EventHandler<EventData> TargetoutSight;
+    private event EventHandler<EventData> TargetEnterSight;
     #endregion
 
     #region Private State
@@ -164,7 +164,7 @@ public class VisionCone : MonoBehaviour
         if (inSight)
         {
             Vector3 direction = (MainTargetedObject.Transform.position - transform.position).normalized;
-            SightData sightData = new SightData(MainTargetedObject.Transform.position);
+            EventData sightData = new EventData(MainTargetedObject.Transform.position,direction);
 
             if (prev == 0f)
                 TargetEnterSight?.Invoke(this, sightData);
@@ -185,7 +185,7 @@ public class VisionCone : MonoBehaviour
                 else if (MainTargetedObject.Type == ObservableType.Clue)
                     TargetAnomalySeen?.Invoke(this, sightData);
 
-                //EnemyManager.instance.AlertClosestAllies();  // optinal
+                //EnemyManager.instance.AlertClosestAllies();  // optional
             }
         }
 
@@ -198,7 +198,7 @@ public class VisionCone : MonoBehaviour
                 alarmFired = false;
 
             if (prev > 0f && currentAwareness <= 0f)
-                TargetoutSight?.Invoke(this, new SightData());
+                TargetoutSight?.Invoke(this, new EventData());
         }
     }
 

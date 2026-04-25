@@ -14,6 +14,5 @@ public abstract class BaseState<EState> where EState : Enum
     public abstract IEnumerator OnStateEnter();
     public abstract IEnumerator OnStateExit();
     public abstract void OnStateUpdate();
-    public abstract void OnStateFixedUpdate();
     public abstract EState GetNextState();
 }

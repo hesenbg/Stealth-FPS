@@ -1,0 +1,45 @@
+using System.Collections;
+using UnityEngine;
+
+public class EnemyFightState : EnemyState
+{
+    public EnemyFightState(EnemyStateMachineContext _context, EnemyStateMachine.EnemyState statekey) : base(_context, statekey)
+    {
+        context = _context;
+    }
+
+    public override EnemyStateMachine.EnemyState GetNextState()
+    {
+        return EnemyStateMachine.EnemyState.Fight;
+    }
+
+    // variables
+    Vector3 PlayerDir;
+    Vector3 PlayerPos;
+
+    public override IEnumerator OnStateEnter()
+    {
+        context.events.PlayerSeen += OnPlayerSeen;
+
+        context.animationLogic.PlayIdlePistol();
+        yield return null;
+    }
+
+    private void OnPlayerSeen(object sender, EventData e)
+    {
+        PlayerDir = e.GetDir();
+        PlayerPos = e.GetPos();
+    }
+
+    public override IEnumerator OnStateExit()
+    {
+        context.events.PlayerSeen -= OnPlayerSeen;
+        yield return null;
+    }
+
+
+    public override void OnStateUpdate()
+    {
+        context.UpdateDirection(PlayerPos);
+    }
+}

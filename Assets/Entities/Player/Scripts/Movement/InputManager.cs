@@ -54,9 +54,13 @@ public class InputManager : MonoBehaviour
         lastGunState = CurrentGunState;
     }
 
+    private void FixedUpdate()
+    {
+    }
+
     private void Update()
     {
-        UpdateMovement();
+        UpdateMovement(); 
         UpdateCombat();
         FireTriggerState();
     }

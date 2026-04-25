@@ -48,9 +48,9 @@ public class EnemyStateMachineContext
     }
 
     // turns enemy to the given direction
-    public bool UpdateDirection(Vector3 DirectionPos)
+    public bool UpdateDirection(Vector3 Direction)
     {
-        Vector3 toTarget = DirectionPos - parent.transform.position;
+        Vector3 toTarget = Direction - parent.transform.position;
         toTarget.y = 0f;
         if (toTarget.sqrMagnitude > 0.2f)
         {

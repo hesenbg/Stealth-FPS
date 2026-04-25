@@ -27,7 +27,7 @@ public class EnemyIdleState : EnemyState
     {
         NextState = StateKey;
         HasCheckAroundEnded = false;
-        context.events.SuspiciosEvent += OnSuspiciousEventHappen;
+        context.events.SuspiciosEvent += OnSuspiciousEvent; ;
 
         context.agent.enabled = true;
         context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
@@ -42,7 +42,7 @@ public class EnemyIdleState : EnemyState
 
     public override IEnumerator OnStateExit()
     {
-        context.events.SuspiciosEvent -= OnSuspiciousEventHappen;
+        context.events.SuspiciosEvent -= OnSuspiciousEvent;
         context.rb.linearVelocity = Vector3.zero;
         yield return null;
     }
@@ -53,18 +53,12 @@ public class EnemyIdleState : EnemyState
         TransformLocalToWorld();
     }
 
-
     // checks if enemy reaches it and sets the next patrol position or looks around
     public override void OnStateUpdate()
     {
         if (context.enemyAIData.IsStill)
             Hold();
         Patrul();
-    }
-
-    public override void OnStateFixedUpdate()
-    {
-        
     }
 
     void Patrul()
@@ -111,10 +105,10 @@ public class EnemyIdleState : EnemyState
         HasCheckAroundEnded = true;
     }
 
-    private void OnSuspiciousEventHappen(object sender, EventArgs e)
+    private void OnSuspiciousEvent(object sender, EventData e)
     {
+        
+        Debug.Log(e.GetPos());
         NextState = EnemyStateMachine.EnemyState.Suspicious;
     }
-
-    
 }
