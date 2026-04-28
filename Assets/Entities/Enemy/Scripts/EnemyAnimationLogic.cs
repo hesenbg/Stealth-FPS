@@ -52,10 +52,19 @@ public class EnemyAnimationLogic : MonoBehaviour
         WholeBody(MovementState.Idle, UpperBodyState.LookAround);
     }
 
+    public void PlayWalkPistol()
+    {
+        WholeBody(MovementState.Walk, UpperBodyState.PistolHold);
+    }
+
     public void PlayWalk()
     {
         WholeBody(MovementState.Walk, UpperBodyState.Walk);
+    }
 
+    public void PlayIdle()
+    {
+        WholeBody(MovementState.Idle, UpperBodyState.Idle);
     }
 
     private void WholeBody(MovementState moveState,UpperBodyState upperState)

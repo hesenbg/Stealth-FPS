@@ -40,7 +40,7 @@ public class VisionCone : MonoBehaviour
 
     #region Private State
     private bool inSight;
-    private bool inCone;
+    public bool inCone;
     private bool suspiciousFired;
     private bool alarmFired;
     private float timer;
@@ -127,7 +127,7 @@ public class VisionCone : MonoBehaviour
         MainTargetedObject = highestPriority;
 
         if(MainTargetedObject!= null)
-            Debug.Log(MainTargetedObject.Observability);
+            //Debug.Log(MainTargetedObject.Observability);
 
         inSight = MainTargetedObject != null;
     }
@@ -136,8 +136,12 @@ public class VisionCone : MonoBehaviour
     {
         Vector3 direction = (InSightObject.transform.position - transform.position).normalized;
         if (inCone && Physics.Raycast(transform.position, direction, out RaycastHit hit, Range, VisionMask, QueryTriggerInteraction.Ignore))
+        {
             if (hit.collider.gameObject == InSightObject)
+            {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -177,7 +181,7 @@ public class VisionCone : MonoBehaviour
             }
 
             // player seen or anomally seen events fire
-            if (!alarmFired && currentAwareness >= AlarmAwareness)
+            if (currentAwareness >= AlarmAwareness) // continuess firing 
             {
                 alarmFired = true;
                 if (MainTargetedObject.Type == ObservableType.Hostile)
@@ -216,18 +220,23 @@ public class VisionCone : MonoBehaviour
     // event functions
     private void OnTargetEnterSight(object sender, EventArgs e)
     {
+        if (MainTargetedObject?.Type != ObservableType.Hostile) return;
         if (SightIndicator != null) Destroy(SightIndicator.parent);
         SightIndicator = PlayerComponents.Instance.PlayerUI.CreateIndicator();
     }
 
-    private void OnTargetoutSight(object sender, EventArgs e) => Destroy(SightIndicator.parent);
+    private void OnTargetoutSight(object sender, EventArgs e)
+    {
+        if (SightIndicator == null) return;
+        Destroy(SightIndicator.parent);
+    }
 
     private void OnDestroy()
     {
         if (SightIndicator != null) Destroy(SightIndicator.parent);
     }
 
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         float halfCone = 90f - ForwardMax;
@@ -248,5 +257,5 @@ public class VisionCone : MonoBehaviour
             prev = p;
         }
     }
-#endif
+    #endif
 }

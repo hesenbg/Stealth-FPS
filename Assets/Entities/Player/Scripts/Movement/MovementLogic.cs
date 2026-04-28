@@ -44,7 +44,7 @@ public class MovementLogic : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        DefoultCollider = GetComponent<CapsuleCollider>();
+
         OnStepOnGround += HandleLanding;
     }
     #endregion

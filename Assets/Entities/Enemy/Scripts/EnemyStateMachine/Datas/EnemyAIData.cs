@@ -61,4 +61,10 @@ public class EnemyAIData : ScriptableObject
     public EnemyAwarnesParams Suspicious;
     public EnemyAwarnesParams Alarmed;
     [HideInInspector] public EnemyAwarnesParams current;
+
+    public void ResetData()
+    {
+        last.IsActive = false;
+        last.Position = Vector3.zero;
+    }
 }

@@ -5,8 +5,9 @@ public class EnemyRagdoll : MonoBehaviour
     [Header("References")]
     [SerializeField] GameObject ragdollHips;
     [SerializeField] float RagdollDisableTimer = 5f;
-    private float CurrRagdollDisableTimer =0;
+    [SerializeField] CapsuleCollider DetectionCollider;
 
+    private float CurrRagdollDisableTimer =0;
     public void MatchRagdollToAnimation(GameObject originalHips)
     {
         CopyTransformRecursively(originalHips.transform, ragdollHips.transform);
@@ -38,6 +39,8 @@ public class EnemyRagdoll : MonoBehaviour
         else if (!hasCleaned)
         {
             CleanHip();
+            EnemyManager.instance.AlertCLosestEnemy(transform.position);
+            DetectionCollider.enabled = true;
             hasCleaned = true;
         }
     }

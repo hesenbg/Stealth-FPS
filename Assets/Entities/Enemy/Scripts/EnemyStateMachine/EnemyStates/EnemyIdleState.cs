@@ -51,6 +51,7 @@ public class EnemyIdleState : EnemyState
     public override void Init()
     {
         TransformLocalToWorld();
+        context.enemyAIData.ResetData();
     }
 
     // checks if enemy reaches it and sets the next patrol position or looks around
@@ -58,7 +59,8 @@ public class EnemyIdleState : EnemyState
     {
         if (context.enemyAIData.IsStill)
             Hold();
-        Patrul();
+        else
+            Patrul();
     }
 
     void Patrul()
@@ -107,8 +109,7 @@ public class EnemyIdleState : EnemyState
 
     private void OnSuspiciousEvent(object sender, EventData e)
     {
-        
-        Debug.Log(e.GetPos());
+        context.enemyAIData.last.Position = e.GetPos();
         NextState = EnemyStateMachine.EnemyState.Suspicious;
     }
 }

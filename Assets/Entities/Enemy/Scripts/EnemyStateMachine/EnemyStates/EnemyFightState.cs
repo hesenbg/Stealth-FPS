@@ -19,8 +19,7 @@ public class EnemyFightState : EnemyState
 
     public override IEnumerator OnStateEnter()
     {
-        context.events.PlayerSeen += OnPlayerSeen;
-
+        context.events.FightEvent += OnPlayerSeen;
         context.animationLogic.PlayIdlePistol();
         yield return null;
     }
@@ -33,10 +32,9 @@ public class EnemyFightState : EnemyState
 
     public override IEnumerator OnStateExit()
     {
-        context.events.PlayerSeen -= OnPlayerSeen;
+        context.events.FightEvent -= OnPlayerSeen;
         yield return null;
     }
-
 
     public override void OnStateUpdate()
     {

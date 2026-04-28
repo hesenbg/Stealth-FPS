@@ -42,46 +42,48 @@ public class EnemyEvents : MonoBehaviour
 {
     [SerializeField] VisionCone sight;
 
-    public event EventHandler <EventData> SuspiciosEvent;
+    public event EventHandler <EventData> SuspiciosEvent;  
 
-    public event EventHandler <EventData> PlayerSeen;
+    public event EventHandler <EventData> AlarmEvent;
 
-    public event EventHandler <EventData> ClueFound;
+    public event EventHandler<EventData> SearchEvent;
+
+    public event EventHandler<EventData> FightEvent;
 
     private void Start()
     {
-        sight.TargetSuspiciousSight += OnTargetSuspiciousSight;
-        sight.TargetAnomalySeen += OnTargetAnomalySeen;
-        sight.TargetFullySeen += OnTargetFullySeen;
+        sight.TargetSuspiciousSight += OnSuspiciousEvent;
+        sight.TargetAnomalySeen += OnClueFound;
+        sight.TargetFullySeen += OnTargetSpotted;
     }
 
-    private void OnTargetFullySeen(object sender, EventData e)
+    private void OnTargetSpotted(object sender, EventData e)
     {
         FirePlayerSeen(e.GetPos());
-        Debug.Log("full seen");
+        //Debug.Log("full seen");
     }
 
-    private void OnTargetAnomalySeen(object sender, EventData e)
+    private void OnClueFound(object sender, EventData e)
     {
         FireClueFound(e.GetPos());
 
         Debug.Log("clue seen");
     }
 
-    private void OnTargetSuspiciousSight(object sender, EventData e)
+    private void OnSuspiciousEvent(object sender, EventData e)
     {
         FireSusEvent(e.GetPos());
-        Debug.Log("Sus seen");
+        //Debug.Log("Sus seen");
     }
 
     public void FireClueFound(Vector3 pos)
     {
-        ClueFound?.Invoke(this, new EventData(pos,(transform.position-pos).normalized));
+        SearchEvent?.Invoke(this, new EventData(pos,(transform.position-pos).normalized));
     }
 
     public void FirePlayerSeen(Vector3 pos)
     {
-        PlayerSeen?.Invoke(this, new  EventData(pos, (transform.position - pos).normalized));
+        FightEvent?.Invoke(this, new  EventData(pos, (transform.position - pos).normalized));
     }
 
     public void FireSusEvent(Vector3 pos)

@@ -16,7 +16,7 @@ public class EnemySuspiciousState : EnemyState
     public override EnemyStateMachine.EnemyState GetNextState()
     {
         if (phase == InvestigationPhase.Done)
-            return NextState;
+            return EnemyStateMachine.EnemyState.Idle;
         return NextState;
     }
 
@@ -25,31 +25,26 @@ public class EnemySuspiciousState : EnemyState
     public override IEnumerator OnStateEnter()
     {
         context.events.SuspiciosEvent += OnSuspiciousTargetOnSight;
-        context.events.ClueFound += OnClueFound;
-        context.events.PlayerSeen += OnPlayerSeen;
+        context.events.SearchEvent += OnClueFound;
+        context.events.FightEvent += OnPlayerSeen;
 
         NextState = EnemyStateMachine.EnemyState.Suspicious;
 
         ResetState();
         yield break;
     }
-
-    private void OnPlayerSeen(object sender, EventData e)
-    {
-        NextState = EnemyStateMachine.EnemyState.Fight;
-    }
-
-    private void OnClueFound(object sender, EventArgs e)
-    {
-        throw new NotImplementedException();
-    }
-
     public override IEnumerator OnStateExit()
     {
         context.events.SuspiciosEvent -= OnSuspiciousTargetOnSight;
+        context.events.SearchEvent -= OnClueFound;
+        context.events.FightEvent -= OnPlayerSeen;
         context.agent.ResetPath();
+
+        context.enemyAIData.ResetData();
         yield break;
     }
+
+
 
     public override void OnStateUpdate()
     {
@@ -57,12 +52,16 @@ public class EnemySuspiciousState : EnemyState
         {
             case InvestigationPhase.Turning:
                 if (context.UpdateDirection(context.enemyAIData.last.Position))
+                {
                     phase = InvestigationPhase.Navigating;
+                    context.animationLogic.PlayIdle();
+                }  
                 break;
 
             case InvestigationPhase.Navigating:
                 context.agent.SetDestination(context.enemyAIData.last.Position);
-                if (context.CheckArrived(context.enemyAIData.last.Position, 1f))
+                context.animationLogic.PlayWalkPistol();
+                if (context.CheckArrived(context.enemyAIData.last.Position, 0.8f))
                 {
                     phase = InvestigationPhase.Investigating;
                     context.coreSFM.StartCoroutine(Investigate());
@@ -70,6 +69,8 @@ public class EnemySuspiciousState : EnemyState
                 break;
 
             case InvestigationPhase.Investigating:
+                context.ResetVelocity();
+                break;
             case InvestigationPhase.Done:
                 NextState = EnemyStateMachine.EnemyState.Idle;
                 break;
@@ -83,7 +84,7 @@ public class EnemySuspiciousState : EnemyState
         context.animationLogic.PlayWalk();
         phase = InvestigationPhase.Done;
     }
-
+        
     private void ResetState()
     {
         phase = InvestigationPhase.Turning;
@@ -94,5 +95,14 @@ public class EnemySuspiciousState : EnemyState
     private void OnSuspiciousTargetOnSight(object sender, EventArgs e)
     {
         ResetState();
+    }
+    private void OnPlayerSeen(object sender, EventData e)
+    {
+        NextState = EnemyStateMachine.EnemyState.Fight;
+    }
+
+    private void OnClueFound(object sender, EventArgs e)
+    {
+        NextState = EnemyStateMachine.EnemyState.Search;
     }
 }

@@ -22,11 +22,11 @@ MonoBehaviour:
     WaitTime: 0
   IdleSpeed: 0
   CurrentPatrolPosIndex: 0
-  WonderTimer: 0
+  WonderTimer: 2
   last:
     Position: {x: 0, y: 0, z: 0}
     IsActive: 0
-  Range: 6
+  Range: 12
   InterplationSpeed: 8
   CurrentAwareness: 0
   Idle:

@@ -10,7 +10,7 @@ public class EnemySearchState : EnemyState
 
     public override EnemyStateMachine.EnemyState GetNextState()
     {
-        EnemyStateMachine.EnemyState state = EnemyStateMachine.EnemyState.Idle;
+        EnemyStateMachine.EnemyState state = EnemyStateMachine.EnemyState.Search;
 
         return state;
     }
@@ -34,6 +34,6 @@ public class EnemySearchState : EnemyState
 
     public override void OnStateUpdate()
     {
-
+        context.animationLogic.PlayWalkPistol();
     }
 }

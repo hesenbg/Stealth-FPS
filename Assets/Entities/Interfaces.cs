@@ -1,10 +1,8 @@
 using UnityEngine;
-public class Interfaces :MonoBehaviour
-{
-}
 public enum ObservableType { Hostile, Clue}
 public interface IObservable
 {
+    public bool HasSeen {  get;  set; }
     public Transform Transform { get; set; }
     public ObservableType Type { get; set; }
     public int Priority { get; set; } // lower number of priority means it is more important( enum layers)

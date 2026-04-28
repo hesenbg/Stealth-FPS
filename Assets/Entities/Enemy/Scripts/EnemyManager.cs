@@ -48,7 +48,6 @@ public class EnemyManager : MonoBehaviour
                 closestDist = navDist;
             }
         }
-        Debug.Log(navDist);
         return closestObject;
     }
 
@@ -104,7 +103,6 @@ public class EnemyManager : MonoBehaviour
         if (ClosestSFM == null)
             return;
         ClosestSFM.context.events.FireSusEvent(pos);
-        Debug.Log(ClosestSFM.name);
     }
 
     public void AlertClosestAllies()

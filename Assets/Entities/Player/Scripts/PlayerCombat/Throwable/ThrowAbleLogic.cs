@@ -8,16 +8,20 @@ public class ThrowAbleLogic : MonoBehaviour
 
     [SerializeField] SmokeNade smokeNade;
 
+    [SerializeField] DistractionObject DistractionNade;
+
     BaseNade CurrentNade;
 
     private void Update()
     {
-        // current nade selection will be handled in here
-    }
+        if (Input.GetKeyDown(KeyCode.Alpha1)) CurrentNade = Shock;
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) CurrentNade = smokeNade;
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) CurrentNade = DistractionNade;
+    }   
 
     private void Start()
     {
-        CurrentNade = Shock;
+        CurrentNade = DistractionNade;
     }
 
     public void ThrowNadeLong()
