@@ -167,6 +167,8 @@ public class InputManager : MonoBehaviour
             if (!playerShootLogic.CanShoot())
                 return;
 
+            EnemyManager.instance.AlertClosestGunFire(transform.position, transform.forward);
+
             if (playerMovementLogic.CurrentMovementState == MovementLogic.MovementState.Run)
             {
                 playerAnimationLogic.Animator.SetTrigger("RunShoot");
@@ -176,7 +178,6 @@ public class InputManager : MonoBehaviour
                 playerAnimationLogic.PlayShootAnimation(playerShootLogic.CurrentMagazineAmmo);
             }
         }
-        playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
     }
 
     void Reload()
@@ -202,6 +203,7 @@ public class InputManager : MonoBehaviour
         PlayerSoundManager.instance.PlayShootSound();
         PlayerRecoil.RecoilFire();
         playerShootLogic.CalculateRecoilDaper(CurrentGunState == GunState.ADS, playerMovementLogic.CurrentVelocity.magnitude);
+        playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
     }
 
     void OnReloadMagOut(object sender, EventArgs a)

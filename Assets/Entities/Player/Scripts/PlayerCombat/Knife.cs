@@ -33,6 +33,7 @@ public class Knife : MonoBehaviour
 
         if (Physics.SphereCast(Origin.position, Radius, Origin.forward, out HitInfo, Distance,Enemy,QueryTriggerInteraction.Collide))
         {
+                Debug.Log(HitInfo.collider.gameObject.tag);
             if (HitInfo.collider.CompareTag("Head") || HitInfo.collider.CompareTag("Body"))
             {
                 PlayerSoundManager.instance.PlayKnifeStab(HitInfo.point);

@@ -67,13 +67,13 @@ public class EnemyEvents : MonoBehaviour
     {
         FireClueFound(e.GetPos());
 
-        Debug.Log("clue seen");
+        //Debug.Log("clue seen");
     }
 
     private void OnSuspiciousEvent(object sender, EventData e)
     {
         FireSusEvent(e.GetPos());
-        //Debug.Log("Sus seen");
+        Debug.Log("Sus seen");
     }
 
     public void FireClueFound(Vector3 pos)

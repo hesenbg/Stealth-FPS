@@ -2,107 +2,91 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEditor.PlayerSettings;
+
 public class EnemyManager : MonoBehaviour
 {
-    
-
     public static EnemyManager instance;
-    GameObject[] enemies;
-    HealthManager[] EnemyHealths;
-    GameObject closestObject;
-
+    EnemyStateMachine[] enemies;
     private void Awake()
     {
         instance = this;
-        EnemyHealths = GetComponentsInChildren<HealthManager>();
     }
-
 
     // helper functions
     void CheckEnemies()
     {
-        List<GameObject> enemyList = new List<GameObject>();
-        foreach (Transform child in GetComponentsInChildren<Transform>())
-        {
-            if (child.GetComponent<EnemyStateMachine>() != null)
-                enemyList.Add(child.gameObject);
-        }
-        enemies = enemyList.ToArray();
+        enemies = GetComponentsInChildren<EnemyStateMachine>();
     }
 
-    public GameObject CheckEnemyCloseDirect(Vector3 pos)
+    private EnemyStateMachine CheckEnemyCloseDirect(Vector3 pos)
     {
         CheckEnemies();
-        closestObject = null;
+        EnemyStateMachine closest = null;
         float closestDist = float.MaxValue;
-        float navDist = 0;
 
-        foreach (GameObject enemy in enemies)
+        foreach (EnemyStateMachine sm in enemies)
         {
-            EnemyStateMachine sm = enemy.GetComponent<EnemyStateMachine>();
-            navDist = GetNavMeshDistance(enemy.transform.position, pos);
+            float navDist = GetNavMeshDistance(sm.transform.position, pos);
 
             if (navDist < sm.context.enemyAIData.Range && navDist < closestDist)
             {
-                closestObject = enemy;
+                closest = sm;
                 closestDist = navDist;
             }
         }
-        return closestObject;
+        return closest;
     }
 
-    T[] GetEnemiesRange<T>(Vector3 pos, float range) where T : Component
+    private EnemyStateMachine CheckEnemyCloseAngle(Vector3 pos, Vector3 dir)
     {
         CheckEnemies();
-        List<T> result = new List<T>();
-        foreach (GameObject enemy in enemies)
-        {
-            float navDist = Vector3.Distance(enemy.transform.position, pos);
-            if (navDist > range) continue;
+        EnemyStateMachine closest = null;
+        float smallestDist = float.MaxValue;
 
-            Vector3 dir = enemy.transform.position - pos;
-            if (!Physics.Raycast(pos, dir.normalized, out RaycastHit hit, dir.magnitude)
-                || hit.collider.gameObject == enemy)
+        foreach (EnemyStateMachine sm in enemies)
+        {
+            Vector3 toEnemy = sm.transform.position - pos;
+            float perpDist = Vector3.Cross(dir, toEnemy).magnitude;
+
+            if (perpDist < smallestDist && perpDist < sm.context.enemyAIData.BulletHearMaxAngle)
             {
-                T component = enemy.GetComponent<T>();
-                if (component != null)
-                {
-                    Debug.Log(enemy.name);
-                    result.Add(component);
-                }
+                smallestDist = perpDist;
+                closest = sm;
             }
         }
-        return result.ToArray();
+
+        return closest;
     }
 
-    public static float GetNavMeshDistance(Vector3 from, Vector3 to)
+    private static float GetNavMeshDistance(Vector3 from, Vector3 to)
     {
         NavMeshPath path = new NavMeshPath();
-
         if (!NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path))
             return float.MaxValue;
-
         if (path.status == NavMeshPathStatus.PathInvalid)
             return float.MaxValue;
 
         float distance = 0f;
         Vector3[] corners = path.corners;
-
         for (int i = 1; i < corners.Length; i++)
             distance += Vector3.Distance(corners[i - 1], corners[i]);
-
         return distance;
     }
+
     // action functions
-    public void AlertCLosestEnemy(Vector3 pos)
+    public void AlertClosestSuspicious(Vector3 pos)
     {
-        GameObject closest = CheckEnemyCloseDirect(transform.position);
-        if (closest == null)
-            return;
-        EnemyStateMachine ClosestSFM = closest.GetComponent<EnemyStateMachine>();
-        if (ClosestSFM == null)
-            return;
-        ClosestSFM.context.events.FireSusEvent(pos);
+        EnemyStateMachine closest = CheckEnemyCloseDirect(pos);
+        if (closest == null) return;
+        closest.context.events.FireSusEvent(pos);
+    }
+
+    public void AlertClosestGunFire(Vector3 pos, Vector3 dir) //
+    {
+        EnemyStateMachine closest = CheckEnemyCloseAngle(pos, dir);
+        if (closest == null) return;
+        closest.context.events.FireClueFound(pos);
     }
 
     public void AlertClosestAllies()

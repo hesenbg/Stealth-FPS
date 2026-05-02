@@ -28,6 +28,7 @@ public class EnemyRagdoll : MonoBehaviour
     }
 
     private bool hasCleaned = false; // Guard to run logic only once
+    public bool hasKnifed = false;
 
     private void Update()
     {
@@ -39,9 +40,17 @@ public class EnemyRagdoll : MonoBehaviour
         else if (!hasCleaned)
         {
             CleanHip();
-            EnemyManager.instance.AlertCLosestEnemy(transform.position);
+            Alert();
             DetectionCollider.enabled = true;
             hasCleaned = true;
+        }
+    }
+
+    void Alert()
+    {
+        if (!hasKnifed)
+        {
+            EnemyManager.instance.AlertClosestSuspicious(transform.position);
         }
     }
 

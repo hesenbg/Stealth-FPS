@@ -1,11 +1,7 @@
-using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-
 public class PlayerUI : MonoBehaviour
 {
-
     [SerializeField] TextMeshProUGUI PlayerGunText;
     [SerializeField] GameObject indicatorObject;
     [SerializeField] Canvas PlayerUIcanvas;

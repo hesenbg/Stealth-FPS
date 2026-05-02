@@ -34,6 +34,6 @@ public class EnemySearchState : EnemyState
 
     public override void OnStateUpdate()
     {
-        context.animationLogic.PlayWalkPistol();
+        context.animationLogic.PlayCrouchPistol();
     }
 }

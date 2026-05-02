@@ -875,10 +875,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Radius: 0.24
-  m_Height: 1.86
+  m_Radius: 0.22
+  m_Height: 1.07
   m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0, z: -0.16}
 --- !u!114 &8483977344144419144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -893,7 +893,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObservableObject
   type: 1
   priority: 1
-  observability: 1
+  observability: 0.65
 --- !u!1 &1611840718050926882
 GameObject:
   m_ObjectHideFlags: 0
@@ -3473,6 +3473,7 @@ MonoBehaviour:
   ragdollHips: {fileID: 1025843386265261531}
   RagdollDisableTimer: 1.5
   DetectionCollider: {fileID: 1141762936253408519}
+  hasKnifed: 0
 --- !u!1 &7375837807355825084
 GameObject:
   m_ObjectHideFlags: 0

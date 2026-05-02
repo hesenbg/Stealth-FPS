@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2354783043206882074}
   - component: {fileID: 5316569465527844542}
   - component: {fileID: 9110700977827264480}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SmokeNade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,8 +110,8 @@ MonoBehaviour:
   EffectRadius: 0
   NadeEffectDuration: 0
   ShortThrowForce: 3
-  Damping: 1
-  LongThrowForce: 20
+  Damping: 2
+  LongThrowForce: 15
   NadeEffect: {fileID: 2894886092556123163, guid: f8030db448a5dfd4ab1bd98c778e15b4, type: 3}
   rb: {fileID: 9110700977827264480}
   GroundLayer:

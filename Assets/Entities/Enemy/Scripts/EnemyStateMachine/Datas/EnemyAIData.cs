@@ -54,6 +54,7 @@ public class EnemyAIData : ScriptableObject
     [Header("data")]
     public float Range;
     public float InterplationSpeed;
+    public float BulletHearMaxAngle = 30f;
 
     [Header("Awareness effects")]
     public float CurrentAwareness;

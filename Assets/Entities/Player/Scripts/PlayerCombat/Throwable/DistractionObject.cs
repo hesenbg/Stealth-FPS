@@ -18,7 +18,7 @@ public class DistractionObject : BaseNade
 
     public override void OnTouchGround(object sender, EventArgs e)
     {
-        EnemyManager.instance.AlertCLosestEnemy(transform.position);
+        EnemyManager.instance.AlertClosestSuspicious(transform.position);
         Destroy(gameObject);
     }
 }

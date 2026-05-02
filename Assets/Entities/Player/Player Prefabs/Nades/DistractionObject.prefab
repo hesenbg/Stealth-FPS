@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -5405203560924413477}
   - component: {fileID: 5316569465527844542}
   - component: {fileID: 9110700977827264480}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: DistractionObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}

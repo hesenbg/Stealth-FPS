@@ -29,11 +29,9 @@ public class VisionCone : MonoBehaviour
     #endregion
 
     #region Events
-    // enemy behaviour
-    public event EventHandler<EventData> TargetFullySeen;  // this and anomally fires when current awarenss reaches the alarm but fires based on the observable type.( anomaly and hostile)
+    public event EventHandler<EventData> TargetFullySeen;
     public event EventHandler<EventData> TargetAnomalySeen;
-    public event EventHandler<EventData> TargetSuspiciousSight; // fires when current awarness reaches suspicious awarness
-    // for ui 
+    public event EventHandler<EventData> TargetSuspiciousSight;
     private event EventHandler<EventData> TargetoutSight;
     private event EventHandler<EventData> TargetEnterSight;
     #endregion
@@ -45,8 +43,9 @@ public class VisionCone : MonoBehaviour
     private bool alarmFired;
     private float timer;
     private Indicator SightIndicator;
-    private IObservable MainTargetedObject;
-
+    private ObservableObject MainTargetedObject;
+    private ObservableObject previousTarget;
+    private float smoothedAngle;
     private enum TargetType { Player, DeadBody }
     #endregion
 
@@ -92,7 +91,6 @@ public class VisionCone : MonoBehaviour
         }
     }
 
-    // logic and update stuff
     bool CheckUpdate()
     {
         timer += Time.deltaTime;
@@ -108,7 +106,7 @@ public class VisionCone : MonoBehaviour
     {
         Targets = Physics.OverlapSphere(transform.position, Range, VisionMask);
 
-        IObservable highestPriority = null;
+        ObservableObject highestPriority = null;
 
         foreach (Collider target in Targets)
         {
@@ -118,16 +116,14 @@ public class VisionCone : MonoBehaviour
 
             if (!inCone) continue;
             if (!CheckInSight(target.gameObject)) continue;
-            if (!target.TryGetComponent<IObservable>(out IObservable observable)) continue;
-            if(observable.Observability==0) continue;
+            if (!target.TryGetComponent<ObservableObject>(out ObservableObject observable)) continue;
+            if (observable.Observability == 0) continue;
+            if(observable.HasSeen) continue;
 
             if (highestPriority == null || observable.Priority < highestPriority.Priority)
                 highestPriority = observable;
         }
         MainTargetedObject = highestPriority;
-
-        if(MainTargetedObject!= null)
-            //Debug.Log(MainTargetedObject.Observability);
 
         inSight = MainTargetedObject != null;
     }
@@ -138,23 +134,19 @@ public class VisionCone : MonoBehaviour
         if (inCone && Physics.Raycast(transform.position, direction, out RaycastHit hit, Range, VisionMask, QueryTriggerInteraction.Ignore))
         {
             if (hit.collider.gameObject == InSightObject)
-            {
                 return true;
-            }
         }
         return false;
     }
 
-    // events firing
     void UpdateAwareness()
     {
-        // awarness update
         float prev = currentAwareness;
 
         if (inSight)
         {
             if (currentAwareness < AlarmAwareness)
-                currentAwareness += AwarenessSpeed * MainTargetedObject.Observability * Time.deltaTime; // current awarness increases based on the observable params
+                currentAwareness += AwarenessSpeed * MainTargetedObject.Observability * Time.deltaTime;
         }
         else
         {
@@ -164,32 +156,31 @@ public class VisionCone : MonoBehaviour
 
         currentAwareness = Mathf.Clamp(currentAwareness, 0f, AlarmAwareness);
 
-        // event firing
         if (inSight)
         {
             Vector3 direction = (MainTargetedObject.Transform.position - transform.position).normalized;
-            EventData sightData = new EventData(MainTargetedObject.Transform.position,direction);
+            EventData sightData = new EventData(MainTargetedObject.Transform.position, direction);
 
             if (prev == 0f)
                 TargetEnterSight?.Invoke(this, sightData);
 
-            // suspicious event firing
             if (!suspiciousFired && currentAwareness >= SuspiciousAwareness)
             {
                 suspiciousFired = true;
                 TargetSuspiciousSight?.Invoke(this, sightData);
             }
 
-            // player seen or anomally seen events fire
-            if (currentAwareness >= AlarmAwareness) // continuess firing 
+            if (currentAwareness >= AlarmAwareness)
             {
-                alarmFired = true;
+                currentAwareness = 0f;
+                MainTargetedObject.SetHasSeen();
                 if (MainTargetedObject.Type == ObservableType.Hostile)
                     TargetFullySeen?.Invoke(this, sightData);
                 else if (MainTargetedObject.Type == ObservableType.Clue)
                     TargetAnomalySeen?.Invoke(this, sightData);
 
-                //EnemyManager.instance.AlertClosestAllies();  // optional
+                MainTargetedObject = null;
+                inSight = false;
             }
         }
 
@@ -204,20 +195,38 @@ public class VisionCone : MonoBehaviour
             if (prev > 0f && currentAwareness <= 0f)
                 TargetoutSight?.Invoke(this, new EventData());
         }
+
+        if (MainTargetedObject != previousTarget)
+        {
+            bool wasHostile = previousTarget?.Type == ObservableType.Hostile;
+            bool isHostile = MainTargetedObject?.Type == ObservableType.Hostile;
+
+            if (wasHostile && !isHostile)
+            {
+                if (SightIndicator != null) { Destroy(SightIndicator.parent); SightIndicator = null; }
+            }
+            else if (!wasHostile && isHostile)
+            {
+                if (SightIndicator != null) Destroy(SightIndicator.parent);
+                SightIndicator = PlayerComponents.Instance.PlayerUI.CreateIndicator();
+            }
+
+            previousTarget = MainTargetedObject;
+        }
     }
 
-    // UI stuff
     void UpdateUI()
     {
         if (SightIndicator == null) return;
 
         Vector3 dir = (transform.position - PlayerComponents.Instance.Player.transform.position).normalized;
-        float angle = Vector3.SignedAngle(dir, PlayerComponents.Instance.Player.transform.forward, Vector3.up) - IndicatorAngleDiff;
+        float targetAngle = Vector3.SignedAngle(dir, PlayerComponents.Instance.Player.transform.forward, Vector3.up) - IndicatorAngleDiff;
 
-        SightIndicator.UpdateIndicator(currentAwareness, AlarmAwareness, angle);
+        smoothedAngle = Mathf.LerpAngle(smoothedAngle, targetAngle, Time.deltaTime * 20f);
+
+        SightIndicator.UpdateIndicator(currentAwareness, AlarmAwareness, smoothedAngle);
     }
 
-    // event functions
     private void OnTargetEnterSight(object sender, EventArgs e)
     {
         if (MainTargetedObject?.Type != ObservableType.Hostile) return;
@@ -236,7 +245,7 @@ public class VisionCone : MonoBehaviour
         if (SightIndicator != null) Destroy(SightIndicator.parent);
     }
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         float halfCone = 90f - ForwardMax;
@@ -257,5 +266,5 @@ public class VisionCone : MonoBehaviour
             prev = p;
         }
     }
-    #endif
+#endif
 }

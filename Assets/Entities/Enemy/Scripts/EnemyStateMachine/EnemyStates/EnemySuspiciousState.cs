@@ -60,7 +60,7 @@ public class EnemySuspiciousState : EnemyState
 
             case InvestigationPhase.Navigating:
                 context.agent.SetDestination(context.enemyAIData.last.Position);
-                context.animationLogic.PlayWalkPistol();
+                context.animationLogic.PlayWalk();
                 if (context.CheckArrived(context.enemyAIData.last.Position, 0.8f))
                 {
                     phase = InvestigationPhase.Investigating;

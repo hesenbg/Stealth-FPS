@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -27,7 +26,9 @@ public class EnemyIdleState : EnemyState
     {
         NextState = StateKey;
         HasCheckAroundEnded = false;
-        context.events.SuspiciosEvent += OnSuspiciousEvent; ;
+        context.events.SuspiciosEvent += OnSuspiciousEvent;
+        context.events.SearchEvent += OnSearchEvent; ;
+
 
         context.agent.enabled = true;
         context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
@@ -43,6 +44,8 @@ public class EnemyIdleState : EnemyState
     public override IEnumerator OnStateExit()
     {
         context.events.SuspiciosEvent -= OnSuspiciousEvent;
+        context.events.SearchEvent -= OnSearchEvent;
+
         context.rb.linearVelocity = Vector3.zero;
         yield return null;
     }
@@ -111,5 +114,10 @@ public class EnemyIdleState : EnemyState
     {
         context.enemyAIData.last.Position = e.GetPos();
         NextState = EnemyStateMachine.EnemyState.Suspicious;
+    }
+
+    private void OnSearchEvent(object sender, EventData e)
+    {
+        NextState = EnemyStateMachine.EnemyState.Search;
     }
 }

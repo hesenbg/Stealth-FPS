@@ -9,11 +9,18 @@ public class HealthManager : MonoBehaviour
 
     [SerializeField] GameObject OriginalHips;
     [SerializeField] GameObject CoreObjectToBeDestroyed;
-    [SerializeField] GameObject Ragdoll;
+    [SerializeField] GameObject RagdollObject;
+    EnemyRagdoll ragdoll;
+
+    bool HasKnifed = false;
+
+    [SerializeField] Rigidbody rb;
 
     private void Start()
     {
+        ragdoll = RagdollObject.GetComponent<EnemyRagdoll>();
         CurrentHealth = MaxHealth;
+        rb = GetComponentInParent<Rigidbody>();
     }
 
     public void GetDamage(float damage)
@@ -40,6 +47,8 @@ public class HealthManager : MonoBehaviour
     public void GetKnifeDamage()
     {
         CurrentHealth-= MaxHealth;
+        HasKnifed = true;
+        ragdoll.hasKnifed = HasKnifed;
         CheckDie();
     }
 
@@ -54,7 +63,8 @@ public class HealthManager : MonoBehaviour
 
     private void SpawnRagdoll()
     {
-        GameObject spawnedRagdoll = Instantiate(Ragdoll, transform.position, transform.rotation);
+        rb.isKinematic = false;
+        GameObject spawnedRagdoll = Instantiate(RagdollObject, transform.position, transform.rotation);
 
         EnemyRagdoll ragdollScript = spawnedRagdoll.GetComponent<EnemyRagdoll>();
         ragdollScript.MatchRagdollToAnimation(OriginalHips);

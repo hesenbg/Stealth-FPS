@@ -37,6 +37,10 @@ public class EnemyAnimationLogic : MonoBehaviour
         animator.SetFloat("UpperBodyBlend", upperBodyBlendValues[state], 0f, Time.deltaTime);
     }
 
+    public void PlayCrouchPistol()
+    {
+        WholeBody(MovementState.Crouch, UpperBodyState.PistolHold);
+    }
     public void PlayIdlePistol()
     {
         WholeBody(MovementState.Idle,UpperBodyState.PistolHold);

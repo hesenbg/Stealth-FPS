@@ -28,6 +28,7 @@ MonoBehaviour:
     IsActive: 0
   Range: 12
   InterplationSpeed: 8
+  BulletHearMaxAngle: 1
   CurrentAwareness: 0
   Idle:
     Range: 5
