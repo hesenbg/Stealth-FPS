@@ -1,5 +1,7 @@
 using UnityEngine;
 public enum ObservableType { Hostile, Clue}
+
+public enum HearableType {Weak, Moderate, Strong }
 public interface IObservable
 {
     public bool HasSeen {  get;  set; }
@@ -7,4 +9,13 @@ public interface IObservable
     public ObservableType Type { get; set; }
     public int Priority { get; set; } // lower number of priority means it is more important( enum layers)
     public float Observability { get; set; } // value between 1 and 0. vision cones awarness speed* observability
+}
+
+public interface IHearable
+{
+    public Transform Transform { get; set; }
+
+    public HearableType Type { get; set; }
+
+    public float Range { get; set; }
 }

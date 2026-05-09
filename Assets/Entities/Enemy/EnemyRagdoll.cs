@@ -6,6 +6,7 @@ public class EnemyRagdoll : MonoBehaviour
     [SerializeField] GameObject ragdollHips;
     [SerializeField] float RagdollDisableTimer = 5f;
     [SerializeField] CapsuleCollider DetectionCollider;
+    [SerializeField] HearableObject HearableObject;
 
     private float CurrRagdollDisableTimer =0;
     public void MatchRagdollToAnimation(GameObject originalHips)
@@ -50,7 +51,7 @@ public class EnemyRagdoll : MonoBehaviour
     {
         if (!hasKnifed)
         {
-            EnemyManager.instance.AlertClosestSuspicious(transform.position);
+            EnemyManager.instance.AlertClosestOnSuspiciousEvent(transform.position,HearableObject);
         }
     }
 

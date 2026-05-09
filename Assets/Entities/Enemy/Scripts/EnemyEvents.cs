@@ -5,39 +5,38 @@ public class EventData : EventArgs
 {
     Vector3 position;
     Vector3 direction;
-
     public EventData(Vector3 dir)
     {
         direction = dir;
         position = Vector3.zero;
     }
-
     public EventData(Vector3 pos,Vector3 dir)
     {
         position = pos;
         direction = dir;
     }
-
     public EventData()
     {
-
     }
-
     public bool IsPosAvalible()
     {
         return position== Vector3.zero;
     }
-
     public Vector3 GetPos()
     {
         return position;
     }
-
     public Vector3 GetDir()
     {
         return direction;
     }
 }
+
+public class SuspiciousData : EventData
+{
+
+}
+
 public class EnemyEvents : MonoBehaviour
 {
     [SerializeField] VisionCone sight;
@@ -60,14 +59,13 @@ public class EnemyEvents : MonoBehaviour
     private void OnTargetSpotted(object sender, EventData e)
     {
         FirePlayerSeen(e.GetPos());
-        //Debug.Log("full seen");
+        Debug.Log("full seen");
     }
 
     private void OnClueFound(object sender, EventData e)
     {
         FireClueFound(e.GetPos());
-
-        //Debug.Log("clue seen");
+        Debug.Log("clue seen");
     }
 
     private void OnSuspiciousEvent(object sender, EventData e)

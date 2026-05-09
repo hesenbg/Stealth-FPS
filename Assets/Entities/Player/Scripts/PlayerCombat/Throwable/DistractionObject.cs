@@ -1,6 +1,9 @@
 using System;
+using UnityEngine;
 public class DistractionObject : BaseNade
 {
+    [SerializeField] HearableObject hearable;
+
     public override void Init()
     {
         
@@ -18,7 +21,7 @@ public class DistractionObject : BaseNade
 
     public override void OnTouchGround(object sender, EventArgs e)
     {
-        EnemyManager.instance.AlertClosestSuspicious(transform.position);
+        EnemyManager.instance.AlertClosestOnSuspiciousEvent(transform.position, hearable);
         Destroy(gameObject);
     }
 }

@@ -1,16 +1,53 @@
-using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEditor.PlayerSettings;
 
+
+[CustomEditor(typeof(EnemyManager))]
+public class YourClassNameEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        EnemyManager t = (EnemyManager)target;
+        if (GUILayout.Button("Generate Cover Positions"))
+        {
+            EnemyManager.instance.CoverPositions = t.GenerateCoverPos(EnemyManager.instance.numberofcovers
+                , EnemyManager.instance.range, EnemyManager.instance.nem.position);
+        }
+    }
+}
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager instance;
     EnemyStateMachine[] enemies;
+
+    [SerializeField] public List<Vector3> CoverPositions;
+    [SerializeField] LayerMask CoverLayers;
+
+    GameObject[] CoverObjects;
+
+    [SerializeField] GameObject coverParent;
+
+    [SerializeField] float CoverDistance; // cover pos's distance from its object (value between 1 and 0 is good)
+
+    public Transform nem;
+
+    public int numberofcovers;
+    public float range;
+
     private void Awake()
     {
         instance = this;
+    }
+
+    private void Start()
+    {
+        CoverObjects = new GameObject[coverParent.transform.childCount];
+        for (int i = 0; i < coverParent.transform.childCount; i++)
+            CoverObjects[i] = coverParent.transform.GetChild(i).gameObject;
     }
 
     // helper functions
@@ -19,7 +56,40 @@ public class EnemyManager : MonoBehaviour
         enemies = GetComponentsInChildren<EnemyStateMachine>();
     }
 
-    private EnemyStateMachine CheckEnemyCloseDirect(Vector3 pos)
+    public List<Vector3> GenerateCoverPos(int NumberOfPositions, float Range, Vector3 Origin)
+    {
+        List<Vector3> coverposs = new List<Vector3>();
+
+        foreach(GameObject cover  in CoverObjects)
+        {
+            NavMeshHit hit;
+
+            if (coverposs.Count >= NumberOfPositions) break;
+
+            if (Vector3.Distance(cover.transform.position, Origin) > Range) continue;
+
+            Vector3 DirectionToPos = (cover.transform.position - Origin).normalized;
+
+            Vector3 CoverSize = GetMeshSize(cover);
+            
+            Vector3 CoverSurface = new Vector3(CoverSize.x*DirectionToPos.x,0,CoverSize.z*DirectionToPos.z);
+
+            if(!NavMesh.SamplePosition(cover.transform.position + CoverSurface,out hit,1.5f, NavMesh.AllAreas)) continue;
+
+            if(!NavMesh.FindClosestEdge(hit.position, out hit, NavMesh.AllAreas)) continue;
+
+            coverposs.Add(hit.position*CoverDistance);
+        }
+        return coverposs;
+    }
+
+    Vector3 GetMeshSize(GameObject meshObject)
+    {
+        Renderer renderer = meshObject.GetComponent<Renderer>();
+        return renderer.bounds.size;
+    }
+
+    private EnemyStateMachine CheckEnemyCloseDirect(Vector3 pos, float Range)
     {
         CheckEnemies();
         EnemyStateMachine closest = null;
@@ -29,7 +99,7 @@ public class EnemyManager : MonoBehaviour
         {
             float navDist = GetNavMeshDistance(sm.transform.position, pos);
 
-            if (navDist < sm.context.enemyAIData.Range && navDist < closestDist)
+            if (navDist < sm.context.enemyAIData.Range+ Range && navDist < closestDist)
             {
                 closest = sm;
                 closestDist = navDist;
@@ -55,7 +125,6 @@ public class EnemyManager : MonoBehaviour
                 closest = sm;
             }
         }
-
         return closest;
     }
 
@@ -75,22 +144,41 @@ public class EnemyManager : MonoBehaviour
     }
 
     // action functions
-    public void AlertClosestSuspicious(Vector3 pos)
+    public void AlertClosestOnSuspiciousEvent(Vector3 pos, HearableObject hearable)
     {
-        EnemyStateMachine closest = CheckEnemyCloseDirect(pos);
+        EnemyStateMachine closest = CheckEnemyCloseDirect(pos, hearable.Range);
         if (closest == null) return;
         closest.context.events.FireSusEvent(pos);
     }
 
-    public void AlertClosestGunFire(Vector3 pos, Vector3 dir) //
+    public void AlertClosestOnDamage(Vector3 pos)
     {
-        EnemyStateMachine closest = CheckEnemyCloseAngle(pos, dir);
+        EnemyStateMachine closest = CheckEnemyCloseDirect(pos, 0f);
         if (closest == null) return;
         closest.context.events.FireClueFound(pos);
     }
 
-    public void AlertClosestAllies()
+    public void AlertClosestOnGunFire(Vector3 pos, Vector3 dir) 
+    {
+        EnemyStateMachine closest = CheckEnemyCloseAngle(pos, dir);
+        if (closest == null) return;
+        closest.context.events.FireSusEvent(pos);
+
+        
+    }
+
+    public void AlertClosestAllies(Vector3 pos, int NumberOfAllies)
     {
 
+    }
+
+
+    private void OnDrawGizmos()
+    {
+        // draw the generated cover POSs
+        for(int i =0;i< CoverPositions.Count; i++)
+        {
+            Gizmos.DrawWireSphere(CoverPositions[i], 0.5f);
+        }
     }
 }

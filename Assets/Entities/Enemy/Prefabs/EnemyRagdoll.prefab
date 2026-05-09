@@ -3435,6 +3435,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2407120842938853659}
   - component: {fileID: 2361174890817792997}
+  - component: {fileID: 2767061057034663323}
   m_Layer: 0
   m_Name: EnemyRagdoll
   m_TagString: Untagged
@@ -3473,7 +3474,22 @@ MonoBehaviour:
   ragdollHips: {fileID: 1025843386265261531}
   RagdollDisableTimer: 1.5
   DetectionCollider: {fileID: 1141762936253408519}
+  HearableObject: {fileID: 2767061057034663323}
   hasKnifed: 0
+--- !u!114 &2767061057034663323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7020811005462348016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f6f74c5e42a2ef459c56227b4fb3274, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HearableObject
+  type: 1
+  range: 2
 --- !u!1 &7375837807355825084
 GameObject:
   m_ObjectHideFlags: 0

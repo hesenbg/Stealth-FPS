@@ -4,7 +4,10 @@ using System;
 public class EnemySuspiciousState : EnemyState
 {
     enum InvestigationPhase { Turning, Navigating, Investigating, Done }
+    public enum SuspiciousDegree { Glance, Investigate, Search } // based on how important is the suspicous event.
+                                                                 // if event is serious or enenmy saw multiple of them it goes to search state
     InvestigationPhase phase;
+    SuspiciousDegree degree;
 
     EnemyStateMachine.EnemyState NextState;
 
@@ -20,7 +23,9 @@ public class EnemySuspiciousState : EnemyState
         return NextState;
     }
 
-    public override void Init() { }
+    public override void Init() {
+        degree = SuspiciousDegree.Glance;
+    }
 
     public override IEnumerator OnStateEnter()
     {
@@ -43,8 +48,6 @@ public class EnemySuspiciousState : EnemyState
         context.enemyAIData.ResetData();
         yield break;
     }
-
-
 
     public override void OnStateUpdate()
     {

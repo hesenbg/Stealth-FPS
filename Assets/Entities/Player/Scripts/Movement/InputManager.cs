@@ -40,6 +40,7 @@ public class InputManager : MonoBehaviour
     public enum GunState { Idle, Blocked, Reload, ADS }
 
     private bool isReverting = false;
+    private bool IsCrouching = false;
     private MovementLogic.MovementState lastMovementState;
     private GunState lastGunState;
 
@@ -166,8 +167,6 @@ public class InputManager : MonoBehaviour
         {
             if (!playerShootLogic.CanShoot())
                 return;
-
-            EnemyManager.instance.AlertClosestGunFire(transform.position, transform.forward);
 
             if (playerMovementLogic.CurrentMovementState == MovementLogic.MovementState.Run)
             {
@@ -320,7 +319,7 @@ public class InputManager : MonoBehaviour
         if (CurrentDirection.sqrMagnitude > 0.1f && !Input.GetKey(sprintKey))
         {
             playerMovementLogic.Walk();
-            if (playerMovementLogic.IsGround)
+            if (playerMovementLogic.IsGround && !IsCrouching)
             {
                 PlayerSoundManager.instance.PlayWalk();
             }
@@ -329,7 +328,7 @@ public class InputManager : MonoBehaviour
 
     void Run()
     {
-        if (Input.GetKey(sprintKey) && CurrentDirection.magnitude > 0.01f)
+        if (Input.GetKey(sprintKey) && CurrentDirection.magnitude > 0.01f && !IsCrouching)
         {
             playerMovementLogic.Run();  
             if (playerMovementLogic.IsGround)
@@ -341,7 +340,7 @@ public class InputManager : MonoBehaviour
 
     void Crouch()
     {
-        bool IsCrouching = Input.GetKey(crouchKey);
+        IsCrouching = Input.GetKey(crouchKey);
         playerMovementLogic.Crouch(IsCrouching);
         playerAnimationLogic.CrouchAnimation(IsCrouching);
     }

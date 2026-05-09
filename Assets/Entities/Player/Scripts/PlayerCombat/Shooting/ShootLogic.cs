@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using System;
-
 public class ShootLogic : MonoBehaviour
 {
     [SerializeField] CombatData data;
@@ -101,10 +100,13 @@ public class ShootLogic : MonoBehaviour
             if (hit.collider.CompareTag("Body"))
             {
                 HealthManager hm = hit.collider.GetComponentInParent<HealthManager>();
-                if (hm == null) Debug.LogWarning($"HealthManager missing on parent of {hit.collider.name}", hit.collider.gameObject);
-                else hm.GetDamage(data.BaseDamage);
+                hm.GetDamage(data.BaseDamage);
+
             }
         }
+        
+        EnemyManager.instance.AlertClosestOnGunFire(transform.position, transform.forward);
+
         if (CurrentHotValue < MaxHotValue - 1)
         {
             CurrentHotValue++;

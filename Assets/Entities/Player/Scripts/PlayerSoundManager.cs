@@ -3,6 +3,9 @@ using UnityEngine;
 public class PlayerSoundManager : MonoBehaviour
 {
     public static PlayerSoundManager instance { get; private set; }
+    [Header("Hearable data")]
+    [SerializeField] HearableObject WalkHearable;
+    [SerializeField] HearableObject RunHearable;
 
     [Header("Sound Sources")]
     [SerializeField] private AudioSource playerAudioSource;
@@ -30,7 +33,6 @@ public class PlayerSoundManager : MonoBehaviour
     [SerializeField] private float WalkSpeed;
     [SerializeField] private float RunSpeed;
 
-
     [Header("Volmues")]
     [SerializeField] float JumpVolume;
     [SerializeField] float LandVolume;
@@ -42,7 +44,7 @@ public class PlayerSoundManager : MonoBehaviour
 
     [SerializeField] float ReloadVolume;
 
-    float stepTimer;
+    float stepTimer =0;
     int stepIndex; 
 
     void Awake()
@@ -75,7 +77,6 @@ public class PlayerSoundManager : MonoBehaviour
         AudioSource.PlayClipAtPoint(MagIn,transform.position, ReloadVolume);
     }
 
-
     public void PlayShootSound()
     {
         if (ShootSounds == null || ShootSounds.Count == 0) return;
@@ -102,12 +103,12 @@ public class PlayerSoundManager : MonoBehaviour
 
     public void PlayWalk()
     {
-        HandleFootsteps(WalkSpeed, walkStepInterval);
+        HandleFootsteps(WalkSpeed, walkStepInterval,WalkHearable);
     }
 
     public void PlayRun()
     {
-        HandleFootsteps(RunSpeed, runStepInterval);
+        HandleFootsteps(RunSpeed, runStepInterval,RunHearable);
     }
 
     public void PlayJump()
@@ -120,7 +121,7 @@ public class PlayerSoundManager : MonoBehaviour
         playerAudioSource.PlayOneShot(Land,LandVolume);
     }
 
-    void HandleFootsteps(float speed, float baseInterval)
+    void HandleFootsteps(float speed, float baseInterval, HearableObject hearable)
     {
         if (speed <= 0.1f)
         {
@@ -134,6 +135,7 @@ public class PlayerSoundManager : MonoBehaviour
 
         if (stepTimer >= interval)
         {
+            EnemyManager.instance.AlertClosestOnSuspiciousEvent(transform.position, hearable);
             PlayNextStep();
             stepTimer = 0f;
         }

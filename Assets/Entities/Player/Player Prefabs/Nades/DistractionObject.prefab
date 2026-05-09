@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9109377498574766343}
   - component: {fileID: 9019710587847842976}
   - component: {fileID: 2006888066404907029}
+  - component: {fileID: 8088487180417121860}
   - component: {fileID: -5405203560924413477}
   - component: {fileID: 5316569465527844542}
   - component: {fileID: 9110700977827264480}
@@ -93,6 +94,20 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8088487180417121860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4170457795528992245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f6f74c5e42a2ef459c56227b4fb3274, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HearableObject
+  type: 1
+  range: 3
 --- !u!114 &-5405203560924413477
 MonoBehaviour:
   m_ObjectHideFlags: 0

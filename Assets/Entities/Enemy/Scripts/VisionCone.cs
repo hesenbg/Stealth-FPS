@@ -118,7 +118,7 @@ public class VisionCone : MonoBehaviour
             if (!CheckInSight(target.gameObject)) continue;
             if (!target.TryGetComponent<ObservableObject>(out ObservableObject observable)) continue;
             if (observable.Observability == 0) continue;
-            if(observable.HasSeen) continue;
+            //if(observable.HasSeen) continue;
 
             if (highestPriority == null || observable.Priority < highestPriority.Priority)
                 highestPriority = observable;
@@ -172,15 +172,16 @@ public class VisionCone : MonoBehaviour
 
             if (currentAwareness >= AlarmAwareness)
             {
-                currentAwareness = 0f;
-                MainTargetedObject.SetHasSeen();
                 if (MainTargetedObject.Type == ObservableType.Hostile)
                     TargetFullySeen?.Invoke(this, sightData);
-                else if (MainTargetedObject.Type == ObservableType.Clue)
+                else if (MainTargetedObject.Type == ObservableType.Clue && !alarmFired)
+                {
+                    alarmFired = true;
+                    MainTargetedObject.SetHasSeen();
                     TargetAnomalySeen?.Invoke(this, sightData);
-
-                MainTargetedObject = null;
-                inSight = false;
+                    MainTargetedObject = null;
+                    inSight = false;
+                }
             }
         }
 
