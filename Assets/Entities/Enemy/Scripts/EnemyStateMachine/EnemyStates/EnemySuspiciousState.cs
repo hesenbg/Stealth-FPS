@@ -38,6 +38,7 @@ public class EnemySuspiciousState : EnemyState
         ResetState();
         yield break;
     }
+
     public override IEnumerator OnStateExit()
     {
         context.events.SuspiciosEvent -= OnSuspiciousTargetOnSight;
@@ -59,8 +60,7 @@ public class EnemySuspiciousState : EnemyState
                     phase = InvestigationPhase.Navigating;
                     context.animationLogic.PlayIdle();
                 }  
-                break;
-
+                break;                           
             case InvestigationPhase.Navigating:
                 context.agent.SetDestination(context.enemyAIData.last.Position);
                 context.animationLogic.PlayWalk();
@@ -87,7 +87,7 @@ public class EnemySuspiciousState : EnemyState
         context.animationLogic.PlayWalk();
         phase = InvestigationPhase.Done;
     }
-        
+    
     private void ResetState()
     {
         phase = InvestigationPhase.Turning;
@@ -99,6 +99,7 @@ public class EnemySuspiciousState : EnemyState
     {
         ResetState();
     }
+
     private void OnPlayerSeen(object sender, EventData e)
     {
         NextState = EnemyStateMachine.EnemyState.Fight;

@@ -76,6 +76,9 @@ public class ShootLogic : MonoBehaviour
 
     public void Shoot()
     {
+        if (CurrentHotValue < MaxHotValue - 1)
+            CurrentHotValue++;
+
         lastShotTime = Time.time;
         Ray ray = new Ray(Origin.position, Origin.forward + TotalCurrentRecoil);
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, mask, QueryTriggerInteraction.Collide))
@@ -85,32 +88,34 @@ public class ShootLogic : MonoBehaviour
                 Destructable destructable = hit.collider.GetComponent<Destructable>();
                 if (destructable == null) Debug.LogWarning($"Destructable component missing on {hit.collider.name}", hit.collider.gameObject);
                 else destructable.DestroyObject();
+
+                return;
             }
             if (hit.collider.CompareTag("Untagged"))
             {
                 data.Trace.ApplyRandomTexture();
-                Instantiate(data.Trace, hit.point + (hit.normal * 0.01f), Quaternion.FromToRotation(Vector3.up, hit.normal));
+                Instantiate(data.Trace, hit.point + (hit.normal * 0.001f), Quaternion.FromToRotation(Vector3.up, hit.normal));
+                return;
             }
             if (hit.collider.CompareTag("Head"))
             {
                 HealthManager hm = hit.collider.GetComponentInParent<HealthManager>();
                 if (hm == null) Debug.LogWarning($"HealthManager missing on parent of {hit.collider.name}", hit.collider.gameObject);
                 else hm.GetHeadShotDamage(data.BaseDamage, data.HsMultipiler);
+                return;
             }
             if (hit.collider.CompareTag("Body"))
             {
                 HealthManager hm = hit.collider.GetComponentInParent<HealthManager>();
-                hm.GetDamage(data.BaseDamage);
-
+                hm.GetDamage(data.BaseDamage, transform.position);
+                hit.collider.GetComponentInParent<EnemyStateMachine>().context.events.FireClueFound(new EventData(EnemyManager.instance.GetDirection(transform.position)));
+                return;
             }
         }
-        
+
         EnemyManager.instance.AlertClosestOnGunFire(transform.position, transform.forward);
 
-        if (CurrentHotValue < MaxHotValue - 1)
-        {
-            CurrentHotValue++;
-        }
+
     }
 
     float RecoilDamper = 1;
@@ -159,6 +164,11 @@ public class ShootLogic : MonoBehaviour
         OnReload?.Invoke(this, EventArgs.Empty);
         yield return new WaitForSeconds(data.ReloadTime);
         OnReloadEnd?.Invoke(this, EventArgs.Empty);
+    }
+
+    public bool CanReload()
+    {
+        return CurrentMagazineAmmo < data.Magazine && CurrentTotalAmmo > 0;
     }
 
     public void MagOut()

@@ -1,16 +1,8 @@
-using UnityEngine;
 using System;
+using UnityEngine;
+using static AwarenessFSM;
 [Serializable]
-public struct EnemyAwarnesParams
-{
-    public float Range;
-    public float AwarenessSpeed;
-    public float Speed;
-    public float AroundCheckAngle;
-    public float AroundCheckSpeed;
-    public float AroundCheckDelay;
-}
-[Serializable]
+
 public struct SuspiciousPoint
 {
     public void SetValue( Vector3 pos)
@@ -37,6 +29,9 @@ public struct PatrolPoint
 [CreateAssetMenu(menuName = "EnemyStateMachine/Datas")]
 public class EnemyAIData : ScriptableObject
 {
+    [Header("Awareness")]
+    public EnemyAwarnesParams CurrentAwarenessState;
+
     [Header("General")]
     public bool IsStill = false;
 
@@ -51,21 +46,19 @@ public class EnemyAIData : ScriptableObject
 
     [Header("Alarm State")]
 
-    [Header("data")]
-    public float Range;
-    public float InterplationSpeed;
-    public float BulletHearMaxAngle = 30f;
+    [Header("Search State")]
+    public Vector3 CluePosition;
 
-    [Header("Awareness effects")]
-    public float CurrentAwareness;
-    public EnemyAwarnesParams Idle;
-    public EnemyAwarnesParams Suspicious;
-    public EnemyAwarnesParams Alarmed;
-    [HideInInspector] public EnemyAwarnesParams current;
+    public float InterplationSpeed;
+
+    [Header("Communication")]
+    public float AllyCallDelay;
+    public int CalledAllyNumber;
 
     public void ResetData()
     {
         last.IsActive = false;
         last.Position = Vector3.zero;
+        CluePosition = Vector3.zero;
     }
 }

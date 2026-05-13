@@ -14,16 +14,16 @@ public class HealthManager : MonoBehaviour
 
     bool HasKnifed = false;
 
-    [SerializeField] Rigidbody rb;
+    EnemyStateMachine fsm;
 
     private void Start()
     {
         ragdoll = RagdollObject.GetComponent<EnemyRagdoll>();
         CurrentHealth = MaxHealth;
-        rb = GetComponentInParent<Rigidbody>();
+        fsm = GetComponentInParent<EnemyStateMachine>();
     }
 
-    public void GetDamage(float damage)
+    public void GetDamage(float damage, Vector3 direction)
     {
         CurrentHealth -= damage;
         EnemyEffects.instance.PlayBodyHit(transform.position);
@@ -35,12 +35,6 @@ public class HealthManager : MonoBehaviour
         CurrentHealth -= damage*HeadShotMultipiler;
         EnemyEffects.instance.PlayHeadHit(transform.position);
         EnemyEffects.instance.PlayBloodVFX(Head.position);
-        CheckDie();
-    }
-
-    public void GetGrenadeDamage(float Damage) // how far away nade exploded from our enemy
-    {
-        CurrentHealth -= Damage;
         CheckDie();
     }
 
@@ -63,7 +57,6 @@ public class HealthManager : MonoBehaviour
 
     private void SpawnRagdoll()
     {
-        rb.isKinematic = false;
         GameObject spawnedRagdoll = Instantiate(RagdollObject, transform.position, transform.rotation);
 
         EnemyRagdoll ragdollScript = spawnedRagdoll.GetComponent<EnemyRagdoll>();

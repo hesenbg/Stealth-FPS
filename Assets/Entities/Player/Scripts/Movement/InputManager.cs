@@ -181,8 +181,9 @@ public class InputManager : MonoBehaviour
 
     void Reload()
     {
-        if (Input.GetKeyDown(ReloadKey) && CurrentGunState == GunState.Idle)
+        if (Input.GetKeyDown(ReloadKey) && CurrentGunState == GunState.Idle && playerShootLogic.CanReload())
         {
+            playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
             CurrentGunState = GunState.Reload;
             StartCoroutine(playerShootLogic.Reload());
             playerAnimationLogic.PlayReloadAnimation(playerShootLogic.CurrentMagazineAmmo == 0);

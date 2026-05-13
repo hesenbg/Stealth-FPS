@@ -7,14 +7,13 @@ public class EnemyStateMachineContext
     private ShootLogic EnemyCombat;
     private NavMeshAgent Agent;
     private EnemyAIData Data;
-    private Rigidbody Rb;
     private GameObject Parent;
     private EnemyEvents Events;
     private EnemyStateMachine CoreSFM;
     private EnemyAnimationLogic AnimationLogic;
 
     public EnemyStateMachineContext(VisionCone enemySight, HealthManager enemyHealthManager,
-        ShootLogic enemyCombat, NavMeshAgent agent, EnemyAIData data, Rigidbody rb,
+        ShootLogic enemyCombat, NavMeshAgent agent, EnemyAIData data,
         GameObject parent, EnemyEvents events, EnemyStateMachine coreSFM, EnemyAnimationLogic animationLogic   )
     {
         Agent = agent;
@@ -22,7 +21,6 @@ public class EnemyStateMachineContext
         EnemyHealthManager = enemyHealthManager;
         EnemyCombat = enemyCombat;
         Data = data;
-        Rb = rb;
         Parent = parent;
         Events = events;
         CoreSFM = coreSFM;
@@ -32,7 +30,6 @@ public class EnemyStateMachineContext
     public EnemyStateMachine coreSFM => CoreSFM;
     public EnemyEvents events => Events;
     public GameObject parent => Parent;
-    public Rigidbody rb => Rb;
     public EnemyAIData enemyAIData => Data;
     public VisionCone enemySight => EnemySight;
     public HealthManager healthManager => EnemyHealthManager;
@@ -53,7 +50,6 @@ public class EnemyStateMachineContext
     public void ResetVelocity()
     {
         agent.velocity = Vector3.zero;
-        rb.linearVelocity = Vector3.zero;
     }
 
 

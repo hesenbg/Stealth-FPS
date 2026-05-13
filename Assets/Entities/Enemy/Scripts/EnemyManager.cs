@@ -99,7 +99,7 @@ public class EnemyManager : MonoBehaviour
         {
             float navDist = GetNavMeshDistance(sm.transform.position, pos);
 
-            if (navDist < sm.context.enemyAIData.Range+ Range && navDist < closestDist)
+            if (navDist < sm.context.enemyAIData.CurrentAwarenessState.AudioDetetctionRange+ Range && navDist < closestDist)
             {
                 closest = sm;
                 closestDist = navDist;
@@ -119,12 +119,14 @@ public class EnemyManager : MonoBehaviour
             Vector3 toEnemy = sm.transform.position - pos;
             float perpDist = Vector3.Cross(dir, toEnemy).magnitude;
 
-            if (perpDist < smallestDist && perpDist < sm.context.enemyAIData.BulletHearMaxAngle)
+            if (perpDist < smallestDist && perpDist < sm.context.enemyAIData.CurrentAwarenessState.AudioDetetctionRange)
             {
                 smallestDist = perpDist;
                 closest = sm;
             }
         }
+
+        Debug.Log(smallestDist);
         return closest;
     }
 
@@ -148,23 +150,14 @@ public class EnemyManager : MonoBehaviour
     {
         EnemyStateMachine closest = CheckEnemyCloseDirect(pos, hearable.Range);
         if (closest == null) return;
-        closest.context.events.FireSusEvent(pos);
-    }
-
-    public void AlertClosestOnDamage(Vector3 pos)
-    {
-        EnemyStateMachine closest = CheckEnemyCloseDirect(pos, 0f);
-        if (closest == null) return;
-        closest.context.events.FireClueFound(pos);
+        closest.context.events.FireSusEvent(new EventData(pos,GetDirection(pos)));
     }
 
     public void AlertClosestOnGunFire(Vector3 pos, Vector3 dir) 
     {
         EnemyStateMachine closest = CheckEnemyCloseAngle(pos, dir);
         if (closest == null) return;
-        closest.context.events.FireSusEvent(pos);
-
-        
+        closest.context.events.FireSusEvent(new EventData(GetDirection(pos)));
     }
 
     public void AlertClosestAllies(Vector3 pos, int NumberOfAllies)
@@ -172,6 +165,10 @@ public class EnemyManager : MonoBehaviour
 
     }
 
+    public Vector3 GetDirection(Vector3 pos)
+    {
+        return (pos- transform.position).normalized;
+    }
 
     private void OnDrawGizmos()
     {

@@ -28,6 +28,11 @@ public class EnemyRagdoll : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        hasKnifed = false;
+    }
+
     private bool hasCleaned = false; // Guard to run logic only once
     public bool hasKnifed = false;
 

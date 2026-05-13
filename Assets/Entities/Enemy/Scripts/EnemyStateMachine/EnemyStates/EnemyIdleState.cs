@@ -27,17 +27,15 @@ public class EnemyIdleState : EnemyState
         NextState = StateKey;
         HasCheckAroundEnded = false;
         context.events.SuspiciosEvent += OnSuspiciousEvent;
-        context.events.SearchEvent += OnSearchEvent; ;
-
-
-        context.agent.enabled = true;
+        context.events.SearchEvent += OnSearchEvent;
+        if(context.enemyAIData.IsStill)
+            yield return null;
         context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
         context.animationLogic.PlayWalk();
 
-        while (!context.CheckArrived(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex],0.2f))
+        while (!context.CheckArrived(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex], 0.2f))
             yield return null;
 
-        context.agent.enabled = false;
         HasCheckAroundEnded = true;
     }
 
@@ -46,18 +44,15 @@ public class EnemyIdleState : EnemyState
         context.events.SuspiciosEvent -= OnSuspiciousEvent;
         context.events.SearchEvent -= OnSearchEvent;
 
-        context.rb.linearVelocity = Vector3.zero;
         yield return null;
     }
 
-    // called once the game start in every state
     public override void Init()
     {
         TransformLocalToWorld();
         context.enemyAIData.ResetData();
     }
 
-    // checks if enemy reaches it and sets the next patrol position or looks around
     public override void OnStateUpdate()
     {
         if (context.enemyAIData.IsStill)
@@ -69,12 +64,11 @@ public class EnemyIdleState : EnemyState
     void Patrul()
     {
         if (!HasCheckAroundEnded) return;
-        MoveRigidbody();
-        context.UpdateDirection(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
+
         context.animationLogic.PlayWalk();
+
         if (context.CheckArrived(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex], 0.2f))
         {
-            // if there is a no waittime, then dont start coroutine
             HasCheckAroundEnded = false;
             float waitTime = context.enemyAIData.PatrolPositions[context.enemyAIData.CurrentPatrolPosIndex].WaitTime;
             if (waitTime > 0)
@@ -82,6 +76,7 @@ public class EnemyIdleState : EnemyState
             else
             {
                 context.enemyAIData.CurrentPatrolPosIndex = (context.enemyAIData.CurrentPatrolPosIndex + 1) % worldPatrolPositions.Length;
+                context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
                 HasCheckAroundEnded = true;
             }
         }
@@ -92,32 +87,25 @@ public class EnemyIdleState : EnemyState
         context.animationLogic.PlayIdlePistol();
     }
 
-    void MoveRigidbody()
-    {
-        Vector3 toTarget = worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex] - context.parent.transform.position;
-        toTarget.y = 0f;
-        context.rb.linearVelocity = toTarget.normalized * context.enemyAIData.IdleSpeed;
-    }
-
-    // checking around when reaching one of the patrul points
     IEnumerator CheckAround(float waitTime)
     {
-        context.rb.linearVelocity = Vector3.zero;
-        if (waitTime > 0)
-            context.animationLogic.PlayIdleLookAround();
+        context.agent.ResetPath();
+        context.animationLogic.PlayIdleLookAround();
         yield return new WaitForSeconds(waitTime);
         context.enemyAIData.CurrentPatrolPosIndex = (context.enemyAIData.CurrentPatrolPosIndex + 1) % worldPatrolPositions.Length;
+        context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
         HasCheckAroundEnded = true;
     }
 
     private void OnSuspiciousEvent(object sender, EventData e)
     {
-        context.enemyAIData.last.Position = e.GetPos();
         NextState = EnemyStateMachine.EnemyState.Suspicious;
+        context.enemyAIData.last.Position = e.GetPos();
     }
 
     private void OnSearchEvent(object sender, EventData e)
     {
         NextState = EnemyStateMachine.EnemyState.Search;
+        context.enemyAIData.CluePosition = e.GetPos();
     }
 }

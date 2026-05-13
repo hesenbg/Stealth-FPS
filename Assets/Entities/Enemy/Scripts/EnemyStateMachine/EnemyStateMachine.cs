@@ -2,7 +2,8 @@ using UnityEngine;
 using UnityEngine.AI;
 public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 {
-    [SerializeField] EnemyStateMachine.EnemyState current;
+    [SerializeField] EnemyState current;
+    public EnemyState Current => current;
     public enum EnemyState { Idle, Suspicious, Alarmed, Search, Fight }
     public EnemyStateMachineContext context {  get; private set; }
 
@@ -16,8 +17,6 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 
     [SerializeField] EnemyAIData data;
         
-    [SerializeField] Rigidbody rb;
-
     [SerializeField] GameObject Parent;
 
     [SerializeField] EnemyEvents events;
@@ -26,22 +25,13 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 
     private void Awake()
     {
-        context = new EnemyStateMachineContext(EnemySight, EnemyHealthManager,EnemyCombat,agent,data,rb, Parent, events, this, anim);
+        context = new EnemyStateMachineContext(EnemySight, EnemyHealthManager,EnemyCombat,agent,data, Parent, events, this, anim);
         InitlizeStates();
     }
 
     public override void UpdateStateMachine()
     {
-        UpdateAwarness();
         current = CurrentState.StateKey;
-    }
-
-    void UpdateAwarness()
-    {
-        if(current == EnemyState.Idle)
-        {
-            context.enemyAIData.current = context.enemyAIData.Idle;
-        }
     }
 
     private void InitlizeStates()

@@ -68,29 +68,6 @@ public class VisionCone : MonoBehaviour
         UpdateLogic();
     }
 
-    public void RotateSight() => StartCoroutine(RotateSightRoutine());
-
-    public void StopRotateSight()
-    {
-        StopCoroutine(RotateSightRoutine());
-        transform.localRotation = Quaternion.Euler(Vector3.zero);
-    }
-
-    IEnumerator RotateSightRoutine()
-    {
-        float[] stops = { data.current.AroundCheckAngle, -data.current.AroundCheckAngle, 0f };
-        foreach (float target in stops)
-        {
-            while (Mathf.Abs(Mathf.DeltaAngle(transform.localEulerAngles.y, target)) > 0.1f)
-            {
-                float current = Mathf.MoveTowardsAngle(transform.localEulerAngles.y, target, data.current.AroundCheckSpeed * Time.deltaTime);
-                transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, current, transform.localEulerAngles.z);
-                yield return null;
-            }
-            yield return new WaitForSeconds(data.current.AroundCheckDelay);
-        }
-    }
-
     bool CheckUpdate()
     {
         timer += Time.deltaTime;
@@ -118,7 +95,7 @@ public class VisionCone : MonoBehaviour
             if (!CheckInSight(target.gameObject)) continue;
             if (!target.TryGetComponent<ObservableObject>(out ObservableObject observable)) continue;
             if (observable.Observability == 0) continue;
-            //if(observable.HasSeen) continue;
+            if(observable.HasSeen) continue;
 
             if (highestPriority == null || observable.Priority < highestPriority.Priority)
                 highestPriority = observable;
