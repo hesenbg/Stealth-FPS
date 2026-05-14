@@ -29,7 +29,7 @@ public class EnemyIdleState : EnemyState
         context.events.SuspiciosEvent += OnSuspiciousEvent;
         context.events.SearchEvent += OnSearchEvent;
         if(context.enemyAIData.IsStill)
-            yield return null;
+            yield break;
         context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
         context.animationLogic.PlayWalk();
 

@@ -5,9 +5,7 @@ using UnityEngine;
 public class VisionCone : MonoBehaviour
 {
     #region Configuration
-    [SerializeField] float Range;
     [SerializeField] float ForwardMin;
-    [SerializeField] float ForwardMax;
     [SerializeField] float IndicatorAngleDiff;
     [SerializeField] LayerMask VisionMask;
     [SerializeField] int ChecksPerSecond = 10;
@@ -17,7 +15,6 @@ public class VisionCone : MonoBehaviour
     [Header("Awareness")]
     public float AlarmAwareness;
     public float SuspiciousAwareness;
-    public float AwarenessSpeed;
     public float currentAwareness;
     #endregion
 
@@ -81,7 +78,7 @@ public class VisionCone : MonoBehaviour
 
     void UpdateLogic()
     {
-        Targets = Physics.OverlapSphere(transform.position, Range, VisionMask);
+        Targets = Physics.OverlapSphere(transform.position, data.CurrentAwarenessState.SightRange, VisionMask);
 
         ObservableObject highestPriority = null;
 
@@ -89,7 +86,7 @@ public class VisionCone : MonoBehaviour
         {
             Vector3 direction = (target.transform.position - transform.position).normalized;
             forwardCos = MathFunc.ForwardSight(direction, transform.forward);
-            inCone = forwardCos > ForwardMin && forwardCos < ForwardMax;
+            inCone = forwardCos > ForwardMin && forwardCos < data.CurrentAwarenessState.Angle;
 
             if (!inCone) continue;
             if (!CheckInSight(target.gameObject)) continue;
@@ -108,7 +105,8 @@ public class VisionCone : MonoBehaviour
     bool CheckInSight(GameObject InSightObject)
     {
         Vector3 direction = (InSightObject.transform.position - transform.position).normalized;
-        if (inCone && Physics.Raycast(transform.position, direction, out RaycastHit hit, Range, VisionMask, QueryTriggerInteraction.Ignore))
+        if (inCone && Physics.Raycast(transform.position, direction, out RaycastHit hit,
+            data.CurrentAwarenessState.SightRange, VisionMask, QueryTriggerInteraction.Ignore))
         {
             if (hit.collider.gameObject == InSightObject)
                 return true;
@@ -123,12 +121,12 @@ public class VisionCone : MonoBehaviour
         if (inSight)
         {
             if (currentAwareness < AlarmAwareness)
-                currentAwareness += AwarenessSpeed * MainTargetedObject.Observability * Time.deltaTime;
+                currentAwareness += data.CurrentAwarenessState.AwarenessSpeed * MainTargetedObject.Observability * Time.deltaTime;
         }
         else
         {
             if (currentAwareness > 0f)
-                currentAwareness -= AwarenessSpeed * Time.deltaTime;
+                currentAwareness -= data.CurrentAwarenessState.AwarenessSpeed * Time.deltaTime;
         }
 
         currentAwareness = Mathf.Clamp(currentAwareness, 0f, AlarmAwareness);
@@ -226,20 +224,22 @@ public class VisionCone : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        float halfCone = 90f - ForwardMax;
+        if (!Application.isPlaying)
+            return;
+        float halfCone = data.CurrentAwarenessState.Angle;
         Gizmos.color = inSight ? Color.green : Color.red;
 
         Vector3 leftDir = Quaternion.AngleAxis(-halfCone, transform.up) * transform.forward;
         Vector3 rightDir = Quaternion.AngleAxis(halfCone, transform.up) * transform.forward;
-        Gizmos.DrawLine(transform.position, transform.position + leftDir * Range);
-        Gizmos.DrawLine(transform.position, transform.position + rightDir * Range);
+        Gizmos.DrawLine(transform.position, transform.position + leftDir * data.CurrentAwarenessState.SightRange);
+        Gizmos.DrawLine(transform.position, transform.position + rightDir * data.CurrentAwarenessState.SightRange);
 
         int steps = 8;
         Vector3 prev = Vector3.zero;
         for (int i = 0; i <= steps; i++)
         {
             float a = Mathf.Lerp(-halfCone, halfCone, (float)i / steps);
-            Vector3 p = transform.position + (Quaternion.AngleAxis(a, transform.up) * transform.forward) * Range;
+            Vector3 p = transform.position + (Quaternion.AngleAxis(a, transform.up) * transform.forward) * data.CurrentAwarenessState.SightRange;
             if (i > 0) Gizmos.DrawLine(prev, p);
             prev = p;
         }
