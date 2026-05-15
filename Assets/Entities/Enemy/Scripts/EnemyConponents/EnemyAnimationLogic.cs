@@ -4,6 +4,10 @@ using UnityEngine;
 public class EnemyAnimationLogic : MonoBehaviour
 {
     Animator animator;
+
+    [SerializeField] CapsuleCollider BaseHitBox;
+    [SerializeField] CapsuleCollider CrouchHitBox;
+
     public event EventHandler InvestigationEnd;
     public enum MovementState {Idle, Walk, Crouch }
     public enum UpperBodyState { Idle, PistolHold, LookAround,Walk}
@@ -73,6 +77,17 @@ public class EnemyAnimationLogic : MonoBehaviour
 
     private void WholeBody(MovementState moveState,UpperBodyState upperState)
     {
+        if(moveState == MovementState.Crouch)
+        {
+            BaseHitBox.enabled = false;
+            CrouchHitBox.enabled = true;
+        }
+        else
+        {
+            BaseHitBox.enabled = true;
+            CrouchHitBox.enabled = false;
+        }
+
         PlayUpperBodyAnimation(upperState);
         PlayMovementAnimation(moveState);
     }

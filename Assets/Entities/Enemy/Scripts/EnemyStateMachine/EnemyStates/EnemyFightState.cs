@@ -39,5 +39,7 @@ public class EnemyFightState : EnemyState
     public override void OnStateUpdate()
     {
         context.UpdateDirection(PlayerPos);
+
+        context.animationLogic.PlayCrouchPistol();
     }
 }
