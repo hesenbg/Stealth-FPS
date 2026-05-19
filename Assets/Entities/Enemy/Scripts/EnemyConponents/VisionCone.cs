@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using UnityEngine;
-
 public class VisionCone : MonoBehaviour
 {
     #region Configuration
@@ -54,7 +52,8 @@ public class VisionCone : MonoBehaviour
 
     private void Start()
     {
-        data = GetComponentInParent<EnemyStateMachine>().context.enemyAIData;
+        if(data== null)
+            data = GetComponentInParent<EnemyStateMachine>().context.enemyAIData;
     }
 
     private void Update()

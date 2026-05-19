@@ -35,9 +35,7 @@ public class EventData : EventArgs
 
 public class EnemyEvents : MonoBehaviour
 {
-    [SerializeField] VisionCone sight;
-
-    EnemyStateMachineContext context;
+    VisionCone sight;
 
     public event EventHandler<EventData> SuspiciosEvent;
 
@@ -49,9 +47,8 @@ public class EnemyEvents : MonoBehaviour
 
     private void Start()
     {
-        context = GetComponentInParent<EnemyStateMachine>().context;
-        sight = context.enemySight;
-
+        sight = GetComponent<VisionCone>();
+        
         sight.TargetSuspiciousSight += OnSuspiciousEvent;
         sight.TargetAnomalySeen += OnClueFound;
         sight.TargetFullySeen += OnTargetSpotted;
@@ -103,6 +100,5 @@ public class EnemyEvents : MonoBehaviour
     {
         Debug.Log("Firing Suspicious Event at: ");
         SuspiciosEvent?.Invoke(this, data);
-        context.enemyAIData.last.Position = data.GetPos();
     }
 }

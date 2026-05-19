@@ -13,10 +13,11 @@ public class SniperProceduralController : MonoBehaviour
         _initialRotation = GunRigController.localRotation;
     }
 
-    public void UpdateRigRotation(Vector3 Direction, float Speed)
+    public bool UpdateRigRotation(Vector3 Direction, float Speed)
     {
         Quaternion targetRotation = Quaternion.LookRotation(Direction);
         GunRigController.rotation = Quaternion.Slerp(GunRigController.rotation, targetRotation, Speed * Time.deltaTime);
+        return Quaternion.Angle(GunRigController.rotation, targetRotation) < 1f;
     }
 
 

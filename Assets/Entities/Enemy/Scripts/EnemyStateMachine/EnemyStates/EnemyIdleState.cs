@@ -13,7 +13,7 @@ public class EnemyIdleState : EnemyState
         context = _context;
     }
 
-    public void TransformLocalToWorld()
+    void TransformLocalToWorld()
     {
         worldPatrolPositions = new Vector3[context.enemyAIData.PatrolPositions.Length];
         for (int i = 0; i < worldPatrolPositions.Length; i++)
