@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcf008a89dced854b9990143085f95c8, type: 3}
   m_Name: PlayerCombatData
   m_EditorClassIdentifier: Assembly-CSharp::CombatData
-  shootDelay: 0.6
+  shootDelay: 0.4
   trace: {fileID: -5813446771995636474, guid: e7e54b6d5fbdb594f9f314d9b51ff159, type: 3}
   adsShootSpeed: 0.8
-  magazine: 100
-  totalAmmo: 1000000
+  magazine: 240
+  totalAmmo: 240
   reloadTime: 1.4
   baseDamage: 40
   hsMultipiler: 3
@@ -25,7 +25,7 @@ MonoBehaviour:
   heatDecayDelay: 0.5
   heatDecayRate: 1
   recoilPattern:
-  - {x: 0.01, y: 0.02}
+  - {x: 0.01, y: 0.005}
   - {x: 0.05, y: 0.05}
   - {x: 0.1, y: 0.08}
   - {x: 0.15, y: 0.1}

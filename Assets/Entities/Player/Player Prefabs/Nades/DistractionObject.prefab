@@ -132,6 +132,7 @@ MonoBehaviour:
   GroundLayer:
     serializedVersion: 2
     m_Bits: 8192
+  hearable: {fileID: 8088487180417121860}
 --- !u!135 &5316569465527844542
 SphereCollider:
   m_ObjectHideFlags: 0

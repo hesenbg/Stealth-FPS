@@ -12,13 +12,13 @@ public class ShockNade : BaseNade
         Collider[] colliders = Physics.OverlapSphere(transform.position, EffectRadius);
         foreach (Collider col in colliders)
         {
-            HealthManager health = col.GetComponentInChildren<HealthManager>();
+            EnemyHealthManager health = col.GetComponentInChildren<EnemyHealthManager>();
             if (health == null) continue;
 
             dir = col.transform.position - transform.position;
             if (Physics.Raycast(transform.position, dir, out RaycastHit hit, EffectRadius))
             {
-                HealthManager hitHealth = hit.collider.GetComponentInChildren<HealthManager>();
+                EnemyHealthManager hitHealth = hit.collider.GetComponentInChildren<EnemyHealthManager>();
                 if (hitHealth == health)
                 {
                     // call function

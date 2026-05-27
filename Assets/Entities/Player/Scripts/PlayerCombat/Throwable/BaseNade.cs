@@ -14,18 +14,17 @@ public abstract class BaseNade : MonoBehaviour
     [SerializeField] private float Damping;
     [SerializeField] private float LongThrowForce;
     [SerializeField] private ParticleSystem NadeEffect;
-    [SerializeField] private Rigidbody rb;
+    [SerializeField] protected Rigidbody rb;
     [SerializeField] private LayerMask GroundLayer;
 
     protected float CurrFuseTimer;
 
     private bool hasActivated = false;
-    private SphereCollider NadeCollider;
+    [SerializeField] SphereCollider NadeCollider;
 
     private event EventHandler NadeActivated;
     private event EventHandler NadeDisabled;
     private event EventHandler TouchGround;
-    private event EventHandler TimerEnd;
 
     private void Awake()
     {
@@ -62,6 +61,8 @@ public abstract class BaseNade : MonoBehaviour
             NadeActivated?.Invoke(this, EventArgs.Empty);
             hasActivated = true;
         }
+
+        OnNadeUpdate();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -71,6 +72,13 @@ public abstract class BaseNade : MonoBehaviour
             TouchGround?.Invoke(this, EventArgs.Empty);
         }
     }
+
+
+    public virtual void OnNadeUpdate()
+    {
+
+    }
+
 
     protected void ExecuteNadeEffects()
     {

@@ -46,6 +46,8 @@ public class InputManager : MonoBehaviour
 
     private void Start()
     {
+        playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
+
         InitilizeMovementVariables();
         InitilizeCombatVariables();
 
@@ -168,6 +170,8 @@ public class InputManager : MonoBehaviour
             if (!playerShootLogic.CanShoot())
                 return;
 
+            playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
+
             if (playerMovementLogic.CurrentMovementState == MovementLogic.MovementState.Run)
             {
                 playerAnimationLogic.Animator.SetTrigger("RunShoot");
@@ -203,7 +207,6 @@ public class InputManager : MonoBehaviour
         PlayerSoundManager.instance.PlayShootSound();
         PlayerRecoil.RecoilFire();
         playerShootLogic.CalculateRecoilDaper(CurrentGunState == GunState.ADS, playerMovementLogic.CurrentVelocity.magnitude);
-        playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
     }
 
     void OnReloadMagOut(object sender, EventArgs a)
@@ -229,8 +232,9 @@ public class InputManager : MonoBehaviour
 
     void ThrowObject()
     {
-        if (Input.GetKeyDown(ThrowObjectKey) && CurrentGunState == GunState.Idle)
-        {
+        if (Input.GetKeyDown(ThrowObjectKey) && CurrentGunState == GunState.Idle
+            && playerThrowAbleLogic.CanThrow())
+        {   
             float controlValue = Input.GetKey(KeyCode.LeftControl) ? 0f : 1f;
             playerAnimationLogic.PlayGrenedeAnimation(controlValue);
         }
@@ -248,6 +252,7 @@ public class InputManager : MonoBehaviour
 
     void OnReloadEnd(object sender, EventArgs a)
     {
+        playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
         CurrentGunState = GunState.Idle;
     }
 

@@ -2,15 +2,34 @@ using UnityEngine;
 
 public class EnemyCombatLogic : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] float FireRate = 1f; // time between shots in seconds
+    float fireTimer = 0f;
+    [SerializeField] LayerMask TargetLayer;
+
+    [SerializeField] int damage;
+
+    public void Shoot(Vector3 Direction)
     {
-        
+        if(Physics.Raycast(transform.position, Direction,out RaycastHit hit, 100f, TargetLayer,QueryTriggerInteraction.Ignore))
+        {
+            if(hit.collider.TryGetComponent<HealthManager>(out HealthManager healthmanager))
+            {
+                healthmanager.ApplyDamage(damage,1f,hit.point);
+            }
+        }
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        
+        if (fireTimer > 0f)
+            fireTimer -= Time.deltaTime;
+    }
+
+    public bool CanShoot()
+    {
+        if (fireTimer > 0f) return false;
+        fireTimer = FireRate;
+        return true;
     }
 }

@@ -1,31 +1,54 @@
-using System;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-
 public class ThrowAbleLogic : MonoBehaviour
 {
-    [SerializeField] ShockNade Shock;
+    [SerializeField] SmokeNade Smoke;
+    [SerializeField] public int SmokeCount;
+    [SerializeField] DistractionObject Distraction;
+    [SerializeField] public int DistractionCount;
+    [SerializeField] FlashNade Flash;
+    [SerializeField] public int FlashCount;
 
-    [SerializeField] SmokeNade smokeNade;
+    Dictionary<int, BaseNade> NadeMap;
+    Dictionary<int, int> NadeCount;
 
-    [SerializeField] DistractionObject DistractionNade;
-
-    BaseNade CurrentNade;
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1)) CurrentNade = Shock;
-        else if (Input.GetKeyDown(KeyCode.Alpha2)) CurrentNade = smokeNade;
-        else if (Input.GetKeyDown(KeyCode.Alpha3)) CurrentNade = DistractionNade;
-    }   
+    public int MaxNadeCount = 2;
+    int CurrentIndex = 1;
 
     private void Start()
     {
-        CurrentNade = DistractionNade;
+        NadeMap = new Dictionary<int, BaseNade>
+        {
+            { 1, Flash },
+            { 2, Smoke },
+            { 3, Distraction }
+        };
+
+        NadeCount = new Dictionary<int, int>
+        {
+            { 1, FlashCount },
+            { 2, SmokeCount },
+            { 3, DistractionCount }
+        };
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) CurrentIndex = 1;
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) CurrentIndex = 2;
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) CurrentIndex = 3;
+    }
+
+    public int GetIndex() => CurrentIndex;
+
+    public int GetCount(int index) => NadeCount[index];
+
+    public bool CanThrow() => NadeCount[CurrentIndex] > 0;
 
     public void ThrowNadeLong()
     {
-        BaseNade ThrownNade = Instantiate(CurrentNade, transform.position,transform.rotation);
+        if (!CanThrow()) return;
+        Instantiate(NadeMap[CurrentIndex], transform.position, transform.rotation);
+        NadeCount[CurrentIndex]--;
     }
 }

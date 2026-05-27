@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: 2006888066404907029}
   - component: {fileID: 2354783043206882074}
   - component: {fileID: 5316569465527844542}
+  - component: {fileID: -2842948728960270281}
   - component: {fileID: 9110700977827264480}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: SmokeNade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SmokeNade
   ThrowType: 0
-  FuseTimer: 1
+  FuseTimer: 2
   EffectRadius: 0
   NadeEffectDuration: 0
   ShortThrowForce: 3
@@ -117,7 +118,12 @@ MonoBehaviour:
   GroundLayer:
     serializedVersion: 2
     m_Bits: 8192
-  SmokeDuration: 0
+  NadeCollider: {fileID: 0}
+  SmokeDuration: 22
+  ObservabilityMultiplier: 0.1
+  PlayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!135 &5316569465527844542
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -138,6 +144,27 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.05
+  m_Center: {x: 0, y: 0.06, z: 0}
+--- !u!135 &-2842948728960270281
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4170457795528992245}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.2
   m_Center: {x: 0, y: 0.06, z: 0}
 --- !u!54 &9110700977827264480
 Rigidbody:

@@ -45,6 +45,7 @@ public class EnemyEvents : MonoBehaviour
 
     public event EventHandler<EventData> FightEvent;
 
+
     private void Start()
     {
         sight = GetComponent<VisionCone>();
@@ -52,6 +53,15 @@ public class EnemyEvents : MonoBehaviour
         sight.TargetSuspiciousSight += OnSuspiciousEvent;
         sight.TargetAnomalySeen += OnClueFound;
         sight.TargetFullySeen += OnTargetSpotted;
+    }
+
+    public EnemyAIData Getdata()
+    {
+        EnemyAIData data = GetComponentInParent<EnemyStateMachine>().context.enemyAIData;
+        if (data == null)
+            data = GetComponentInParent<SniperStateMachine>().context.GetData;
+
+        return data;
     }
 
     private void OnTargetSpotted(object sender, EventData e)
@@ -80,25 +90,25 @@ public class EnemyEvents : MonoBehaviour
 
     public void FireClueFound(EventData data)
     {
-        Debug.Log("Firing Clue Found Event at: " );
+        //Debug.Log("Firing Clue Found Event at: " );
         SearchEvent?.Invoke(this, data);
     }
 
     public void FirePlayerSeen(EventData data)
     {
-        Debug.Log("Firing Player Seen Event at: " );
+        //Debug.Log("Firing Player Seen Event at: " );
         FightEvent?.Invoke(this, data);
     }
 
     public void FireAlarm(EventData data)
     {
-        Debug.Log("Firing Alarm Event at: " );
+        //Debug.Log("Firing Alarm Event at: " );
         AlarmEvent?.Invoke(this, data);
     }
 
     public void FireSusEvent(EventData data)
     {
-        Debug.Log("Firing Suspicious Event at: ");
+        //Debug.Log("Firing Suspicious Event at: ");
         SuspiciosEvent?.Invoke(this, data);
     }
 }

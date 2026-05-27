@@ -8,23 +8,59 @@ public class SniperSuspiciousState : SniperState
         context = _context;
     }
 
+    SniperStateMachine.SniperState NextState = SniperStateMachine.SniperState.Suspicious;
+
     public override SniperStateMachine.SniperState GetNextState()
     {
-        throw new System.NotImplementedException();
+        return NextState;
     }
 
     public override IEnumerator OnStateEnter()
     {
-        throw new System.NotImplementedException();
+        context.GetEvents.FightEvent += OnPlayerSeen;
+        context.GetEvents.SearchEvent += OnClueFound;
+
+        NextState = SniperStateMachine.SniperState.Suspicious;
+        CurrentTimer = 0f;
+        HasReached = false;
+        yield return null;
+    }
+
+    private void OnClueFound(object sender, EventData e)
+    {
+        context.GetData.CluePosition = e.GetPos();
+        NextState = SniperStateMachine.SniperState.Search;
     }
 
     public override IEnumerator OnStateExit()
     {
-        throw new System.NotImplementedException();
+        context.GetEvents.FightEvent -= OnPlayerSeen;
+        context.GetEvents.SearchEvent -= OnClueFound;
+
+        CurrentTimer = 0f;
+        yield return null;  
     }
+
+    float CurrentTimer = 0f;
+
+    bool HasReached = false;
 
     public override void OnStateUpdate()
     {
-        throw new System.NotImplementedException();
+        if (CurrentTimer < context.GetData.WonderTimer)
+        {
+            CurrentTimer += Time.deltaTime;
+            if(!HasReached)
+                HasReached = context.UpdateRotation((context.GetData.last.Position - context.GetParent.transform.position).normalized, 3f);
+        }
+        else
+        {
+            CurrentTimer = 0f;
+            NextState = SniperStateMachine.SniperState.idle;
+        }
+    }
+    private void OnPlayerSeen(object sender, EventData e)
+    {
+        NextState = SniperStateMachine.SniperState.Fight;
     }
 }

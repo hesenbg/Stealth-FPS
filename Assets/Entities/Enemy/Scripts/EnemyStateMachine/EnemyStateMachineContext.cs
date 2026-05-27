@@ -3,8 +3,8 @@ using UnityEngine.AI;
 public class EnemyStateMachineContext 
 {
     private VisionCone EnemySight;
-    private HealthManager EnemyHealthManager;
-    private ShootLogic EnemyCombat;
+    private EnemyHealthManager EnemyHealthManager;
+    private EnemyCombatLogic EnemyCombat;
     private NavMeshAgent Agent;
     private EnemyAIData Data;
     private GameObject Parent;
@@ -12,8 +12,8 @@ public class EnemyStateMachineContext
     private EnemyStateMachine CoreSFM;
     private EnemyAnimationLogic AnimationLogic;
 
-    public EnemyStateMachineContext(VisionCone enemySight, HealthManager enemyHealthManager,
-        ShootLogic enemyCombat, NavMeshAgent agent, EnemyAIData data,
+    public EnemyStateMachineContext(VisionCone enemySight, EnemyHealthManager enemyHealthManager,
+        EnemyCombatLogic enemyCombat, NavMeshAgent agent, EnemyAIData data,
         GameObject parent, EnemyEvents events, EnemyStateMachine coreSFM, EnemyAnimationLogic animationLogic   )
     {
         Agent = agent;
@@ -32,8 +32,8 @@ public class EnemyStateMachineContext
     public GameObject parent => Parent;
     public EnemyAIData enemyAIData => Data;
     public VisionCone enemySight => EnemySight;
-    public HealthManager healthManager => EnemyHealthManager;
-    public ShootLogic enemyCombat => EnemyCombat; 
+    public EnemyHealthManager healthManager => EnemyHealthManager;
+    public EnemyCombatLogic enemyCombat => EnemyCombat; 
     public NavMeshAgent agent => Agent;
 
     // helper functions for all the enemy states

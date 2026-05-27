@@ -34,6 +34,7 @@ public class EnemyAIData : ScriptableObject
 
     [Header("General")]
     public bool IsStill = false;
+    public bool IsProtector = false;
 
     [Header("Idle State")]
     public PatrolPoint[] PatrolPositions;

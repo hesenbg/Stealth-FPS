@@ -1,56 +1,70 @@
+using System;
 using UnityEngine;
-public class HealthManager : MonoBehaviour
+public abstract class HealthManager : MonoBehaviour
 {
-    [SerializeField] float MaxHealth;
-    [SerializeField] float CurrentHealth;
-    [SerializeField] Transform Head;
-    [SerializeField] Transform Body;
-    [SerializeField] GameObject OriginalHips;
-    [SerializeField] GameObject CoreObjectToBeDestroyed;
-    [SerializeField] GameObject RagdollObject;
-    EnemyRagdoll ragdoll;
-    bool HasKnifed = false;
-    private void Start()
+    public float MaxHealth ;
+
+    public float CurrentHealth {  get; private set; }
+
+    protected float BaseDamageMultipiler = 1f;
+
+    protected Action OnHealthZero;
+
+    protected Action<float,Vector3> OnDamageDone;
+
+    public event EventHandler OnEffectEnds;
+
+    public virtual void ApplyDamage(float damage, float Multipiler,Vector3 pos)
     {
-        if (RagdollObject != null)
-            ragdoll = RagdollObject.GetComponent<EnemyRagdoll>();
-        CurrentHealth = MaxHealth;
-    }
-    public void GetDamage(float damage, Vector3 direction)
-    {
-        CurrentHealth -= damage;
-        EnemyEffects.instance.PlayBodyHit(transform.position);
+        var totalDamage = damage * Multipiler* BaseDamageMultipiler;
+
+        CurrentHealth -= totalDamage;
+        OnDamageDone?.Invoke(totalDamage,pos);
+
         CheckDie();
     }
-    public void GetHeadShotDamage(float damage, float HeadShotMultipiler)
+
+    public void InvokeOnEffectEnds()
     {
-        CurrentHealth -= damage * HeadShotMultipiler;
-        EnemyEffects.instance.PlayHeadHit(transform.position);
-        EnemyEffects.instance.PlayBloodVFX(Head.position);
+        OnEffectEnds?.Invoke(this, EventArgs.Empty);
+    }
+
+    public abstract void ApplyFlashEffect(float EffectDuration, Vector3 Direction);
+
+    public abstract void ApplyDamageEffect(float EffectDuration);
+
+    public abstract void ApplyShockEffect(float EffectDuration);
+
+    public void ApplyLethalDamage()
+    {
+        CurrentHealth = 0;
         CheckDie();
     }
-    public void GetKnifeDamage()
+
+    bool CheckDie()
     {
-        CurrentHealth -= MaxHealth;
-        HasKnifed = true;
-        if (ragdoll != null)
-            ragdoll.hasKnifed = HasKnifed;
-        CheckDie();
-    }
-    private void CheckDie()
-    {
-        if (CurrentHealth <= 0)
+        if (CurrentHealth <= 0f)
         {
-            SpawnRagdoll();
-            Destroy(CoreObjectToBeDestroyed);
+            OnHealthZero?.Invoke();
+            OnHealthZero = null;
+            return true;
         }
+        return false;
     }
-    private void SpawnRagdoll()
+
+    abstract public void OnDeath();
+
+    abstract public void OnDamage(float Damage,Vector3 pos);
+
+    protected virtual void Start()
     {
-        if (RagdollObject == null || OriginalHips == null) return;
-        GameObject spawnedRagdoll = Instantiate(RagdollObject, transform.position, transform.rotation);
-        EnemyRagdoll ragdollScript = spawnedRagdoll.GetComponent<EnemyRagdoll>();
-        if (ragdollScript != null)
-            ragdollScript.MatchRagdollToAnimation(OriginalHips);
+        CurrentHealth = MaxHealth;
+        OnHealthZero += OnDeath;
+        OnDamageDone += OnDamage;
+    }
+
+    protected virtual void Update()
+    {
+
     }
 }

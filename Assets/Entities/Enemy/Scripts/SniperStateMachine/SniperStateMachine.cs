@@ -3,17 +3,17 @@ public class SniperStateMachine : StateManager<SniperStateMachine.SniperState>
 {
     public enum SniperState {idle, Suspicious, Search, Fight }
 
-    SniperState current;
+    public SniperState current;
 
     public SniperContext context { get; private set; }
 
-    [SerializeField] private SniperProceduralController controller;
+    [SerializeField] private GameObject controller;
 
     [SerializeField] private EnemyEvents events;
 
     [SerializeField] private VisionCone sight;
 
-    [SerializeField] private HealthManager healthManager;
+    [SerializeField] private EnemyHealthManager healthManager;
 
     [SerializeField] private GameObject parent;
 
@@ -40,7 +40,5 @@ public class SniperStateMachine : StateManager<SniperStateMachine.SniperState>
         States.Add(SniperState.Fight, new SniperFightState(context, SniperState.Fight));
 
         CurrentState = States[SniperState.idle];
-
     }
-
 }

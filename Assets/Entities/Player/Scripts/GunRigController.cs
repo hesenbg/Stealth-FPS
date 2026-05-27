@@ -4,67 +4,62 @@ using UnityEngine.Animations.Rigging;
 public class GunRigController : MonoBehaviour
 {
     public static GunRigController Instance { get; private set; }
-
     [SerializeField] Rig GunRig;
     [SerializeField] public Transform RigParent;
 
-    private Vector3 OriginalPos;
+    [Header("SOD Position")]
+    [SerializeField] float posF = 2f, posZ = 0.8f, posR = 0f;
+    [Header("SOD Rotation")]
+    [SerializeField] float rotF = 2f, rotZ = 0.8f, rotR = 0f;
 
-    private Quaternion OriginalRot;
+    private MathFunc.SODState posState;
+    private MathFunc.SODState rotState;
+
+    private Vector3 targetPos;
+    private Vector3 targetRot;
+    private float targetWeight;
 
     private void Awake()
     {
         Instance = this;
     }
 
+    private void OnValidate()
+    {
+        posState = MathFunc.SODCreate(posF, posZ, posR, RigParent != null ? RigParent.localPosition : Vector3.zero);
+        rotState = MathFunc.SODCreate(rotF, rotZ, rotR, RigParent != null ? RigParent.localEulerAngles : Vector3.zero);
+    }
+
     private void Start()
     {
-        OriginalPos = RigParent.localPosition;
-        OriginalRot = RigParent.localRotation;
+        posState = MathFunc.SODCreate(posF, posZ, posR, RigParent.localPosition);
+        rotState = MathFunc.SODCreate(rotF, rotZ, rotR, RigParent.localEulerAngles);
+        targetPos = RigParent.localPosition;
+        targetRot = RigParent.localEulerAngles;
+    }
+
+    private void Update()
+    {
+        float dt = Time.deltaTime;
+        RigParent.localPosition = MathFunc.SODUpdate(ref posState, dt, targetPos);
+        RigParent.localRotation = Quaternion.Euler(MathFunc.SODUpdate(ref rotState, dt, targetRot));
+        GunRig.weight = targetWeight;
     }
 
     public void ApplyPosWeigth(Vector3 pos, float weight)
     {
-        GunRig.weight = weight;
-        RigParent.localPosition = pos;
-    }
-
-    public void ApplyPos(Vector3 pos)
-    {
-        RigParent.localPosition = pos;
+        targetPos = pos;
+        targetWeight = weight;
     }
 
     public void ApplyRot(Vector3 rot)
     {
-        RigParent.localRotation = Quaternion.Euler(rot);
+        targetRot = rot;
     }
 
     public void ApplyRotationWeight(Vector3 rot, float weight)
     {
-        RigParent.localRotation = Quaternion.Euler(rot);
-        GunRig.weight = weight;
-    }
-
-    public void ResetRigPos()
-    {
-        GunRig.weight = 0f;
-        RigParent.localPosition = OriginalPos;
-    }
-
-    public void ResetRigRot()
-    {
-        GunRig.weight = 0f;
-        RigParent.localRotation = OriginalRot;
-    }
-
-    public void ResetRig()
-    {
-        ResetRigPos();
-        ResetRigRot();
-    }
-
-    public void SetTargetLocalPos(Vector3 localPos)
-    {
-        GunRig.weight = 1f;
+        targetRot = rot;
+        targetWeight = weight;
     }
 }

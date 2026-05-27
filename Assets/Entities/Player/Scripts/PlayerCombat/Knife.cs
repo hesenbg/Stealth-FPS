@@ -9,6 +9,8 @@ public class Knife : MonoBehaviour
     [SerializeField] float Radius = 0.3f;
     [SerializeField] float Distance = 1.0f;
 
+    
+
     [SerializeField] bool ShowGizmos;
     [SerializeField] LayerMask Enemy;
     [SerializeField] TextMeshProUGUI AttackIndicator;
@@ -37,8 +39,8 @@ public class Knife : MonoBehaviour
             if (HitInfo.collider.CompareTag("Head") || HitInfo.collider.CompareTag("Body"))
             {
                 PlayerSoundManager.instance.PlayKnifeStab(HitInfo.point);
-                HitInfo.collider.gameObject.GetComponentInParent<HealthManager>().GetKnifeDamage();
-                EnemyEffects.instance.PlayBloodVFX(HitInfo.point);
+                HitInfo.collider.gameObject.GetComponentInParent<EnemyHealthManager>().ApplyLethalDamage();
+                EnemyVisualAudios.instance.PlayBloodVFX(HitInfo.point);
             }
         }
     }

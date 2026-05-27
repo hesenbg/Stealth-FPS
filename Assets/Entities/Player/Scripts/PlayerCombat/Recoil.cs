@@ -7,6 +7,9 @@ public class Recoil : MonoBehaviour
     private Vector3 TargetRotation;
     private Vector3 TargetPos;
 
+    private Vector3 TargetCameraRotation;
+    private Vector3 CurrCameraRotation;
+
     bool IsADS = false;
 
     private float CurrMeshEffectWeight;
@@ -31,7 +34,8 @@ public class Recoil : MonoBehaviour
 
     [SerializeField] float ADSmultipiler;
 
-    [SerializeField] Vector3 RecoilRotValue;
+    [SerializeField] Vector3 RecoilRigRotValue;
+    [SerializeField] Vector3 RecoilCameraRotValue;
     [SerializeField] Vector3 RecoilPosValue;
     [SerializeField] float RecoilWeightSpeed;
 
@@ -45,6 +49,8 @@ public class Recoil : MonoBehaviour
         rigParentOriginalRot = rigParent.localRotation.eulerAngles;
         TargetRotation = rigParentOriginalRot;
         CurrRotation = rigParentOriginalRot;
+        TargetCameraRotation = Vector3.zero;
+        CurrCameraRotation = Vector3.zero;
     }
 
     private void Update()
@@ -70,9 +76,14 @@ public class Recoil : MonoBehaviour
 
     void UpdateCameraRecoil()
     {
-        Vector3 recoilOffset = CurrRotation - rigParentOriginalRot;
+        TargetCameraRotation = Vector3.Slerp(TargetCameraRotation, Vector3.zero, returnSpeed * Time.deltaTime);
+        CurrCameraRotation = Vector3.Slerp(CurrCameraRotation, TargetCameraRotation, Snappines * Time.deltaTime);
 
-        Quaternion targetCameraRot = Quaternion.Euler(recoilOffset.x * CurrCameraEffectWeight, recoilOffset.y * CurrCameraEffectWeight, recoilOffset.z * CurrCameraEffectWeight);
+        Quaternion targetCameraRot = Quaternion.Euler(
+            CurrCameraRotation.x * CurrCameraEffectWeight,
+            CurrCameraRotation.y * CurrCameraEffectWeight,
+            CurrCameraRotation.z * CurrCameraEffectWeight
+        );
 
         Camera.transform.localRotation = Quaternion.Slerp(
             Camera.transform.localRotation,
@@ -114,7 +125,7 @@ public class Recoil : MonoBehaviour
             {
                 GunRigController.Instance.ApplyRotationWeight(CurrRotation * rotMultipiler, currentWeight);
             }
-            else if (currentWeight !=0 )
+            else if (currentWeight != 0)
             {
                 currentWeight = 0f;
                 GunRigController.Instance.ApplyRotationWeight(CurrRotation * rotMultipiler, 0f);
@@ -122,14 +133,23 @@ public class Recoil : MonoBehaviour
         }
     }
 
+    public void ShakeCamera(float Amount)
+    {
+        TargetCameraRotation -= new Vector3(Amount, 0f, 0f);
+    }
+
     public void RecoilFire()
     {
         isRecoiling = true;
         currentReturnTimer = returnDelay;
 
-        TargetRotation -= new Vector3(RecoilRotValue.y,
-            Random.Range(-RecoilRotValue.x, RecoilRotValue.x),
-            RecoilRotValue.z);
+        TargetRotation -= new Vector3(RecoilRigRotValue.y,
+            Random.Range(-RecoilRigRotValue.x, RecoilRigRotValue.x),
+            RecoilRigRotValue.z);
+
+        TargetCameraRotation -= new Vector3(RecoilCameraRotValue.y,
+            Random.Range(-RecoilCameraRotValue.x, RecoilCameraRotValue.x),
+            RecoilCameraRotValue.z);
 
         TargetPos -= RecoilPosValue;
 
@@ -151,6 +171,8 @@ public class Recoil : MonoBehaviour
         CurrRotation = rigParentOriginalRot;
         TargetPos = Vector3.zero;
         CurrPos = Vector3.zero;
+        TargetCameraRotation = Vector3.zero;
+        CurrCameraRotation = Vector3.zero;
         currentReturnTimer = 0;
         currentWeight = 0f;
 

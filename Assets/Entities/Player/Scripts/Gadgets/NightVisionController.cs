@@ -7,13 +7,11 @@ public class NightVisionController : MonoBehaviour
     [SerializeField] private Color boostedLightColour;
 
     private bool isNightVisionEnabled;
-    private Volume volume;
+    [SerializeField] Volume volume;
 
     private void Start()
     {
         RenderSettings.ambientLight = defaultLightColour;
-
-        volume = gameObject.GetComponent<Volume>();
         volume.weight = 0;
     }
 

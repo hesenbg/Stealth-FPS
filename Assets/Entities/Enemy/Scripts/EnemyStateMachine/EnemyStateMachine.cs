@@ -9,9 +9,9 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 
     [SerializeField] VisionCone EnemySight;
 
-    [SerializeField] HealthManager EnemyHealthManager;
+    [SerializeField] EnemyHealthManager EnemyHealthManager;
 
-    [SerializeField] ShootLogic EnemyCombat;
+    [SerializeField] EnemyCombatLogic EnemyCombat;
 
     [SerializeField] NavMeshAgent agent;
 
@@ -31,6 +31,8 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 
     public override void UpdateStateMachine()
     {
+        agent.speed = data.CurrentAwarenessState.MovementSpeed;
+
         current = CurrentState.StateKey;
     }
 

@@ -6,6 +6,7 @@ public class VisionCone : MonoBehaviour
     [SerializeField] float ForwardMin;
     [SerializeField] float IndicatorAngleDiff;
     [SerializeField] LayerMask VisionMask;
+    [SerializeField] LayerMask CheckMask; // maks used to check the target item
     [SerializeField] int ChecksPerSecond = 10;
     #endregion
 
@@ -59,9 +60,13 @@ public class VisionCone : MonoBehaviour
     private void Update()
     {
         UpdateUI();
-        UpdateAwareness();
         if (!CheckUpdate()) return;
         UpdateLogic();
+    }
+
+    private void FixedUpdate()
+    {
+        UpdateAwareness();     
     }
 
     bool CheckUpdate()
@@ -105,7 +110,7 @@ public class VisionCone : MonoBehaviour
     {
         Vector3 direction = (InSightObject.transform.position - transform.position).normalized;
         if (inCone && Physics.Raycast(transform.position, direction, out RaycastHit hit,
-            data.CurrentAwarenessState.SightRange, VisionMask, QueryTriggerInteraction.Ignore))
+            data.CurrentAwarenessState.SightRange, CheckMask, QueryTriggerInteraction.Collide))
         {
             if (hit.collider.gameObject == InSightObject)
                 return true;

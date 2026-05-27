@@ -16,6 +16,20 @@ public class AwarenessFSM : MonoBehaviour
         public float AudioDetetctionRange;
         public float MovementSpeed;
 
+        public static EnemyAwarnesParams Zero()
+        {
+            return new EnemyAwarnesParams
+            {
+                SightRange = 0f,
+                AwarenessSpeed = 0f,
+                Angle = 0f,
+                AllyCallSpeed = 0f,
+                AllyCallNumber = 0f,
+                AudioDetetctionRange = 0f,
+                MovementSpeed = 0f,
+            };
+        }
+
         public static EnemyAwarnesParams Lerp(EnemyAwarnesParams a, EnemyAwarnesParams b, float t)
         {
             return new EnemyAwarnesParams
@@ -50,11 +64,14 @@ public class AwarenessFSM : MonoBehaviour
     [SerializeField] float TransitionSpeed = 2f;
     [SerializeField] float SnapAccuracy = 0.01f;
 
+    [SerializeField] EnemyUI UI;
+
     EnemyAwarnesParams Current;
     EnemyStateMachine.EnemyState currentEnemyState;
 
     private void Start()
     {
+        UI = GetComponentInChildren<EnemyUI>(); 
         fsm = GetComponent<EnemyStateMachine>();
         data = fsm.context.enemyAIData;
         data.CurrentAwarenessState = Idle;
@@ -70,6 +87,9 @@ public class AwarenessFSM : MonoBehaviour
 
     private void ApplyStates()
     {
+        if (UI.IsEffected)
+            return;
+
         if (EnemyAwarnesParams.Difference(data.CurrentAwarenessState, Current) <= SnapAccuracy)
             data.CurrentAwarenessState = Current;
         else
@@ -79,17 +99,21 @@ public class AwarenessFSM : MonoBehaviour
 
     private void UpdateStates()
     {
+
         switch (currentEnemyState)
         {
             case EnemyStateMachine.EnemyState.Idle:
                 Current = Idle;
+                UI.IdleUI();
                 break;
             case EnemyStateMachine.EnemyState.Suspicious:
                 Current = Suspicious;
+                UI.SuspiciousUI();
                 break;
             case EnemyStateMachine.EnemyState.Alarmed:
             case EnemyStateMachine.EnemyState.Fight:
             case EnemyStateMachine.EnemyState.Search:
+                UI.AlarmedUI();
                 Current = Alarmed;
                 break;
         }

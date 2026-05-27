@@ -99,15 +99,15 @@ public class ShootLogic : MonoBehaviour
             }
             if (hit.collider.CompareTag("Head"))
             {
-                HealthManager hm = hit.collider.GetComponentInParent<HealthManager>();
+                EnemyHealthManager hm = hit.collider.GetComponentInParent<EnemyHealthManager>();
                 if (hm == null) Debug.LogWarning($"HealthManager missing on parent of {hit.collider.name}", hit.collider.gameObject);
-                else hm.GetHeadShotDamage(data.BaseDamage, data.HsMultipiler);
+                else hm.ApplyDamage(data.BaseDamage,data.HsMultipiler,hit.point);
                 return;
             }
             if (hit.collider.CompareTag("Body"))
             {
-                HealthManager hm = hit.collider.GetComponentInParent<HealthManager>();
-                hm.GetDamage(data.BaseDamage, transform.position);
+                EnemyHealthManager hm = hit.collider.GetComponentInParent<EnemyHealthManager>();
+                hm.ApplyDamage(data.BaseDamage,1f,hit.point);
                 hit.collider.GetComponentInParent<EnemyStateMachine>().context.events.FireClueFound(new EventData(EnemyManager.instance.GetDirection(transform.position)));
                 return;
             }

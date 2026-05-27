@@ -16,6 +16,17 @@ public class ObservableObject : MonoBehaviour,IObservable
         UpdateParams();
     }
 
+    public void SetObservabilityToZero()
+    {
+        Observability = 0;
+    }
+
+    public void SetObservabilityToOriginal()
+    {
+        Observability = observability;
+    }
+
+
     private void OnValidate()
     {
         UpdateParams();

@@ -28,16 +28,21 @@ public class EnemyFightState : EnemyState
     {
         PlayerDir = e.GetDir();
         PlayerPos = e.GetPos();
+        EnemyManager.instance.LKP = e.GetPos();
     }
 
     public override IEnumerator OnStateExit()
     {
         context.events.FightEvent -= OnPlayerSeen;
+        EnemyManager.instance.IsPlayerInSight = false;
+
         yield return null;
     }
 
     public override void OnStateUpdate()
     {
+        EnemyManager.instance.IsPlayerInSight = true;
+
         context.UpdateDirection(PlayerPos);
 
         context.animationLogic.PlayCrouchPistol();

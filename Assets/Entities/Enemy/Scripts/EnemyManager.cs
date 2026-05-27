@@ -44,7 +44,7 @@ public class YourClassNameEditor : Editor
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager instance;
-    EnemyStateMachine[] enemies;
+    EnemyEvents[] enemies;
 
     [SerializeField] public List<Vector3> CoverPositions;
     [SerializeField] LayerMask CoverLayers;
@@ -53,12 +53,20 @@ public class EnemyManager : MonoBehaviour
 
     [SerializeField] public GameObject coverParent;
 
-    [SerializeField] float CoverDistance; // cover pos's distance from its object (value between 1 and 0 is good)
+    [SerializeField] float CoverDistance;
+
+    public Vector3 LKP;
+    public bool IsPlayerInSight = false;
+    
 
     public Transform nem;
 
     public int numberofcovers;
     public float range;
+
+    [SerializeField] float CloseDistance;
+    [SerializeField] float ModerateDistance;
+    [SerializeField] float FarDistance;
 
     [Header("Peek Gizmo Preview")]
     public Transform PeekThreatSource;
@@ -84,10 +92,9 @@ public class EnemyManager : MonoBehaviour
             CoverObjects[i] = coverParent.transform.GetChild(i).gameObject;
     }
 
-    // helper functions
     void CheckEnemies()
     {
-        enemies = GetComponentsInChildren<EnemyStateMachine>();
+        enemies = GetComponentsInChildren<EnemyEvents>();
     }
 
     public bool FindPeekSpot(Vector3 ThreatPos, Vector3 OriginPos, float Range, out Vector3 PeekPos, out Vector3 PeekDirection)
@@ -99,7 +106,6 @@ public class EnemyManager : MonoBehaviour
         GameObject Cover = null;
         float ClosestDistance = float.MaxValue;
 
-        // get closest cover
         for (int i = 0; i < CoverObjects.Length; i++)
         {
             float dist = Vector3.Distance(CoverObjects[i].transform.position, OriginPos);
@@ -110,23 +116,17 @@ public class EnemyManager : MonoBehaviour
             }
         }
 
-        // check if cover is closer than our range
         if (Cover == null || ClosestDistance > Range) return Avalibe;
 
         Collider CoverCollider = Cover.GetComponent<Collider>();
         if (CoverCollider == null) return Avalibe;
 
-        // check if cover is in front of the enemy // hasnt done
-        Vector3 DirectionToThreat = (ThreatPos- OriginPos).normalized;
-
+        Vector3 DirectionToThreat = (ThreatPos - OriginPos).normalized;
         Vector3 DirectionToCover  = (CoverCollider.transform.position - OriginPos).normalized;
-
         float Dot = Vector3.Dot(DirectionToThreat, DirectionToCover);
 
-        if (!(Dot > 0.5f))
-            return Avalibe;
+        if (!(Dot > 0.5f)) return Avalibe;
 
-        // snap to closest local axis of cover object
         Vector3 BackwardsFromPlayer = (Cover.transform.position - ThreatPos).normalized;
         Vector3[] localAxes = {
             Cover.transform.forward,
@@ -138,59 +138,41 @@ public class EnemyManager : MonoBehaviour
         Vector3 snapped = localAxes[0];
         float bestDot = float.MinValue;
         for (int i = 0; i < localAxes.Length; i++)
-        {                                                                                
-            float dot = Vector3.Dot(BackwardsFromPlayer, localAxes[i]);                  
-            if (dot > bestDot)                                                           
-            {                                                                            
-                bestDot = dot;                                                           
-                snapped = localAxes[i];                                                  
-            }                                                                            
-        }                                                                                
-        BackwardsFromPlayer = snapped;                                                   
-        GizmoBackwardsFromPlayer = BackwardsFromPlayer;                                  
-                                                                                         
-        // check if enemy is the right or left side of the cover                         
-        Vector3 CoverCenter = CoverCollider.bounds.center;                               
-                                                                                         
-        Vector3 CoverToOrigin = (OriginPos - CoverCenter);                               
-                                                                                         
-        float sideDot = Vector3.Dot(CoverToOrigin, Cover.transform.right);               
-                                                                                         
-        Vector3 PeekSide = sideDot > 0 ? Cover.transform.right : -Cover.transform.right; 
+        {
+            float dot = Vector3.Dot(BackwardsFromPlayer, localAxes[i]);
+            if (dot > bestDot)
+            {
+                bestDot = dot;
+                snapped = localAxes[i];
+            }
+        }
+        BackwardsFromPlayer = snapped;
+        GizmoBackwardsFromPlayer = BackwardsFromPlayer;
 
-        GizmoPeekSide = PeekSide;                                                        
-
-        //
+        Vector3 CoverCenter = CoverCollider.bounds.center;
+        Vector3 CoverToOrigin = (OriginPos - CoverCenter);
+        float sideDot = Vector3.Dot(CoverToOrigin, Cover.transform.right);
+        Vector3 PeekSide = sideDot > 0 ? Cover.transform.right : -Cover.transform.right;
+        GizmoPeekSide = PeekSide;
 
         Vector3 extents = CoverCollider.bounds.extents;
-
         Vector3 absPeekSide = new Vector3(Mathf.Abs(PeekSide.x), Mathf.Abs(PeekSide.y), Mathf.Abs(PeekSide.z));
-
-        // find the offset
-        float PeekPosOffsetFromCenter = Vector3.Dot(extents, absPeekSide)*0.8f;   // float multipiler
-
-        Vector3 PeekPositionSearchPosition = CoverCenter + BackwardsFromPlayer*2 +  PeekSide * PeekPosOffsetFromCenter - BackwardsFromPlayer/2 ;
-
+        float PeekPosOffsetFromCenter = Vector3.Dot(extents, absPeekSide) * 0.8f;
+        Vector3 PeekPositionSearchPosition = CoverCenter + BackwardsFromPlayer * 2 + PeekSide * PeekPosOffsetFromCenter - BackwardsFromPlayer / 2;
         GizmoPeekPositionSearchPosition = PeekPositionSearchPosition;
 
-        if (!NavMesh.SamplePosition(PeekPositionSearchPosition, out NavMeshHit hit, 1f, NavMesh.AllAreas)) return Avalibe; 
-
+        if (!NavMesh.SamplePosition(PeekPositionSearchPosition, out NavMeshHit hit, 1f, NavMesh.AllAreas)) return Avalibe;
         if (!NavMesh.FindClosestEdge(hit.position, out hit, NavMesh.AllAreas)) return Avalibe;
 
-        PeekPos = hit.position+ BackwardsFromPlayer*0.5f;
-
-        // peek direction is depend of the enemy's local transform axix. just need to retunr either right or left and maybe magnitute
+        PeekPos = hit.position + BackwardsFromPlayer * 0.5f;
 
         Vector3 forward = (ThreatPos - PeekPos).normalized;
-
         Vector3 right = Vector3.Cross(Vector3.up, forward);
-
-        PeekDirection = (Vector3.Dot(PeekSide, right) > 0 ? right : -right) * 0.85f;  // float multipiler 
+        PeekDirection = (Vector3.Dot(PeekSide, right) > 0 ? right : -right) * 0.85f;
         Avalibe = true;
 
         return Avalibe;
     }
-
 
     public List<Vector3> GenerateCoverPos(int NumberOfPositions, float Range, Vector3 Origin)
     {
@@ -199,17 +181,13 @@ public class EnemyManager : MonoBehaviour
         {
             NavMeshHit hit;
             if (coverposs.Count >= NumberOfPositions) break;
-
             if (Vector3.Distance(cover.transform.position, Origin) > Range) continue;
 
             Vector3 DirectionToPos = (cover.transform.position - Origin).normalized;
-
             Vector3 CoverSize = GetMeshSize(cover);
-
             Vector3 CoverSurface = new Vector3(CoverSize.x * DirectionToPos.x, 0, CoverSize.z * DirectionToPos.z);
 
             if (!NavMesh.SamplePosition(cover.transform.position + CoverSurface.normalized, out hit, 1.5f, NavMesh.AllAreas)) continue;
-
             if (!NavMesh.FindClosestEdge(hit.position, out hit, NavMesh.AllAreas)) continue;
 
             coverposs.Add(hit.position * CoverDistance);
@@ -223,40 +201,44 @@ public class EnemyManager : MonoBehaviour
         return renderer.bounds.size;
     }
 
-    private EnemyStateMachine CheckEnemyCloseDirect(Vector3 pos, float Range)
+    private EnemyEvents CheckEnemyCloseDirect(Vector3 pos, float Range)
     {
         CheckEnemies();
-        EnemyStateMachine closest = null;
+        EnemyEvents closest = null;
         float closestDist = float.MaxValue;
 
-        foreach (EnemyStateMachine sm in enemies)
+        foreach (EnemyEvents e in enemies)
         {
-            float navDist = GetNavMeshDistance(sm.transform.position, pos);
+            float navDist = GetNavMeshDistance(e.transform.position, pos);
 
-            if (navDist < sm.context.enemyAIData.CurrentAwarenessState.AudioDetetctionRange + Range && navDist < closestDist)
+            if (e.Getdata().CurrentAwarenessState.AudioDetetctionRange == 0) continue;
+
+            if (navDist < e.Getdata().CurrentAwarenessState.AudioDetetctionRange + Range && navDist < closestDist)
             {
-                closest = sm;
+                closest = e;
                 closestDist = navDist;
             }
         }
         return closest;
     }
 
-    private EnemyStateMachine CheckEnemyCloseAngle(Vector3 pos, Vector3 dir)
+    private EnemyEvents CheckEnemyCloseAngle(Vector3 pos, Vector3 dir)
     {
         CheckEnemies();
-        EnemyStateMachine closest = null;
+        EnemyEvents closest = null;
         float smallestDist = float.MaxValue;
 
-        foreach (EnemyStateMachine sm in enemies)
+        foreach (EnemyEvents e in enemies)
         {
-            Vector3 toEnemy = sm.transform.position - pos;
+            if (e.Getdata().CurrentAwarenessState.AudioDetetctionRange == 0) continue;
+
+            Vector3 toEnemy = e.transform.position - pos;
             float perpDist = Vector3.Cross(dir, toEnemy).magnitude;
 
-            if (perpDist < smallestDist && perpDist < sm.context.enemyAIData.CurrentAwarenessState.AudioDetetctionRange)
+            if (perpDist < smallestDist && perpDist < e.Getdata().CurrentAwarenessState.AudioDetetctionRange)
             {
                 smallestDist = perpDist;
-                closest = sm;
+                closest = e;
             }
         }
 
@@ -279,19 +261,18 @@ public class EnemyManager : MonoBehaviour
         return distance;
     }
 
-    // action functions
     public void AlertClosestOnSuspiciousEvent(Vector3 pos, HearableObject hearable)
     {
-        EnemyStateMachine closest = CheckEnemyCloseDirect(pos, hearable.Range);
+        EnemyEvents closest = CheckEnemyCloseDirect(pos, hearable.Range);
         if (closest == null) return;
-        closest.context.events.FireSusEvent(new EventData(pos, GetDirection(pos)));
+        closest.FireSusEvent(new EventData(pos, GetDirection(pos)));
     }
 
     public void AlertClosestOnGunFire(Vector3 pos, Vector3 dir)
     {
-        EnemyStateMachine closest = CheckEnemyCloseAngle(pos, dir);
+        EnemyEvents closest = CheckEnemyCloseAngle(pos, dir);
         if (closest == null) return;
-        closest.context.events.FireSusEvent(new EventData(GetDirection(pos)));
+        closest.FireSusEvent(new EventData(GetDirection(pos)));
     }
 
     public void AlertClosestAllies(Vector3 pos, int NumberOfAllies)
@@ -299,27 +280,28 @@ public class EnemyManager : MonoBehaviour
 
     }
 
+    public EnemyAlarmState.AlarmedEnemy DefineAlarmedEnemy(Vector3 pos)
+    {
+        return EnemyAlarmState.AlarmedEnemy.Direct;
+    }
+
+
+
     public Vector3 GetDirection(Vector3 pos)
     {
         return (pos - transform.position).normalized;
     }
 
-
-
     private void OnDrawGizmos()
     {
-        // draw the generated cover POSs
         for (int i = 0; i < CoverPositions.Count; i++)
-        {
             Gizmos.DrawWireSphere(CoverPositions[i], 0.5f);
-        }
 
-        // draw peek spot result
         if (GizmoPeekAvalibe)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(GizmoPeekPos, 0.3f);
-            Gizmos.DrawRay(GizmoPeekPos, GizmoPeekDirection.normalized );
+            Gizmos.DrawRay(GizmoPeekPos, GizmoPeekDirection.normalized);
         }
         else
         {
@@ -327,17 +309,5 @@ public class EnemyManager : MonoBehaviour
             if (GizmoPeekPos != Vector3.zero)
                 Gizmos.DrawWireSphere(GizmoPeekPos, 0.3f);
         }
-
-        //// BackwardsFromPlayer — direction away from threat snapped to cover axis
-        //Gizmos.color = Color.blue;
-        //Gizmos.DrawRay(GizmoPeekPositionSearchPosition, GizmoBackwardsFromPlayer * 2f);
-        //
-        //// PeekSide — which side of the cover the enemy peeks from
-        //Gizmos.color = Color.yellow;
-        //Gizmos.DrawRay(GizmoPeekPositionSearchPosition, GizmoPeekSide * 2f);
-        //
-        //// PeekPositionSearchPosition — raw world point before NavMesh snap
-        //Gizmos.color = Color.cyan;
-        //Gizmos.DrawWireSphere(GizmoPeekPositionSearchPosition, 0.2f);
     }
 }

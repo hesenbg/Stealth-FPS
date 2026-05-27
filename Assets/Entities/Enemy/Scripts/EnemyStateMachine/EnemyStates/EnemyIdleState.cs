@@ -24,12 +24,12 @@ public class EnemyIdleState : EnemyState
 
     public override IEnumerator OnStateEnter()
     {
+
         NextState = StateKey;
         HasCheckAroundEnded = false;
         context.events.SuspiciosEvent += OnSuspiciousEvent;
         context.events.SearchEvent += OnSearchEvent;
-        if(context.enemyAIData.IsStill)
-            yield break;
+
         context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
         context.animationLogic.PlayWalk();
 
@@ -49,6 +49,8 @@ public class EnemyIdleState : EnemyState
 
     public override void Init()
     {
+        context.healthManager.data = context.enemyAIData;
+
         TransformLocalToWorld();
         context.enemyAIData.ResetData();
     }

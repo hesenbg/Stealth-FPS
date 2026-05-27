@@ -8,6 +8,8 @@ public class SniperFightState : SniperState
         context = _context;
     }
 
+    Vector3 PlayerPos = Vector3.zero;
+
     public override SniperStateMachine.SniperState GetNextState()
     {
         return StateKey;
@@ -15,16 +17,31 @@ public class SniperFightState : SniperState
 
     public override IEnumerator OnStateEnter()
     {
+        context.GetEvents.FightEvent += OnPlayerSeen;
+
         yield return null;
+    }
+
+    private void OnPlayerSeen(object sender, EventData e)
+    {
+        PlayerPos = e.GetPos();
     }
 
     public override IEnumerator OnStateExit()
     {
+        context.GetEvents.FightEvent -= OnPlayerSeen;
+
         yield return null;
     }
 
     public override void OnStateUpdate()
     {
-        
+        Vector3 DirectionToPlayer = (PlayerPos - context.GetParent.transform.position).normalized;
+
+        context.UpdateRotation( DirectionToPlayer , 6f);
+        if (context.GetEnemyCombatLogic.CanShoot())
+        {
+            context.GetEnemyCombatLogic.Shoot(DirectionToPlayer);
+        }
     }
 }

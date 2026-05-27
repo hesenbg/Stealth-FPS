@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SniperSearchState : SniperState
@@ -8,23 +9,54 @@ public class SniperSearchState : SniperState
         context = _context;
     }
 
-    public override SniperStateMachine.SniperState GetNextState()
-    {
-        throw new System.NotImplementedException();
-    }
+    List<Vector3> CoverPos;
+    int currentCoverIndex;
+    float Timer;
+    SniperStateMachine.SniperState NextState = SniperStateMachine.SniperState.Search;
+
+    public override SniperStateMachine.SniperState GetNextState() => NextState;
 
     public override IEnumerator OnStateEnter()
     {
-        throw new System.NotImplementedException();
+        context.GetEvents.FightEvent += OnPlayerSeen;
+
+        currentCoverIndex = 0;
+        Timer = 0f;
+        CoverPos = EnemyManager.instance.GenerateCoverPos(4, 10, context.GetParent.transform.position);
+        yield return null;
+    }
+
+    private void OnPlayerSeen(object sender, EventData e)
+    {
+        NextState = SniperStateMachine.SniperState.Fight;
     }
 
     public override IEnumerator OnStateExit()
     {
-        throw new System.NotImplementedException();
+        context.GetEvents.FightEvent -= OnPlayerSeen;
+
+        yield return null;
     }
 
     public override void OnStateUpdate()
     {
-        throw new System.NotImplementedException();
+        if (currentCoverIndex >= CoverPos.Count)
+        {
+            NextState = SniperStateMachine.SniperState.idle;
+            return;
+        }
+
+        Vector3 toTarget = CoverPos[currentCoverIndex] - context.GetParent.transform.position;
+        context.UpdateRotation(toTarget, 2f);
+
+        if (Vector3.Angle(context.GetSight.transform.forward, toTarget) < 5f)
+        {
+            Timer += Time.deltaTime;
+            if (Timer >= context.GetData.WonderTimer)
+            {
+                Timer = 0f;
+                currentCoverIndex++;
+            }
+        }
     }
 }
