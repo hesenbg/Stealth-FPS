@@ -28,7 +28,7 @@ public class VisionCone : MonoBehaviour
     public event EventHandler<EventData> TargetFullySeen;
     public event EventHandler<EventData> TargetAnomalySeen;
     public event EventHandler<EventData> TargetSuspiciousSight;
-    private event EventHandler<EventData> TargetoutSight;
+    public event EventHandler<EventData> TargetoutSight;
     private event EventHandler<EventData> TargetEnterSight;
     #endregion
 

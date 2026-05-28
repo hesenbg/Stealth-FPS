@@ -7,6 +7,7 @@ public class EnemyAnimationLogic : MonoBehaviour
 
     [SerializeField] CapsuleCollider BaseHitBox;
     [SerializeField] CapsuleCollider CrouchHitBox;
+    [SerializeField] float blendDampTime = 0.1f;
 
     public event EventHandler InvestigationEnd;
     public enum MovementState {Idle, Walk, Crouch }
@@ -33,26 +34,20 @@ public class EnemyAnimationLogic : MonoBehaviour
 
     private void PlayMovementAnimation(MovementState state)
     {
-        animator.SetFloat("MoveBlend", moveBlendValues[state], 0f, Time.deltaTime);
+        animator.SetFloat("MoveBlend", moveBlendValues[state], blendDampTime, Time.deltaTime);
     }
-
     private void PlayUpperBodyAnimation(UpperBodyState state)
     {
-        animator.SetFloat("UpperBodyBlend", upperBodyBlendValues[state], 0f, Time.deltaTime);
+        animator.SetFloat("UpperBodyBlend", upperBodyBlendValues[state], blendDampTime, Time.deltaTime);
     }
 
-    public void PlayCrouchPistol()
-    {
-        WholeBody(MovementState.Crouch, UpperBodyState.PistolHold);
-    }
     public void PlayIdlePistol()
     {
         WholeBody(MovementState.Idle,UpperBodyState.PistolHold);
     }
-
-    public void PlayWalkIdle()
+    public void PlayWalkPistol()
     {
-        WholeBody(MovementState.Walk,UpperBodyState.Idle);
+        WholeBody(MovementState.Walk, UpperBodyState.PistolHold);
     }
 
     public void PlayIdleLookAround()
@@ -60,10 +55,6 @@ public class EnemyAnimationLogic : MonoBehaviour
         WholeBody(MovementState.Idle, UpperBodyState.LookAround);
     }
 
-    public void PlayWalkPistol()
-    {
-        WholeBody(MovementState.Walk, UpperBodyState.PistolHold);
-    }
 
     public void PlayWalk()
     {

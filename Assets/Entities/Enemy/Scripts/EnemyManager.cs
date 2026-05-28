@@ -15,7 +15,25 @@ public class YourClassNameEditor : Editor
         if (GUILayout.Button("Generate Cover Positions"))
         {
             EnemyManager.instance.CoverPositions = t.GenerateCoverPos(EnemyManager.instance.numberofcovers
-                , EnemyManager.instance.range, EnemyManager.instance.nem.position);
+                , EnemyManager.instance.range, EnemyManager.instance.FlankOriginSource.position);
+        }
+
+        if (GUILayout.Button("Preview Flank Pos"))
+        {
+            if (t.FlankOriginSource != null && t.FlankThreatSource != null)
+            {
+                t.GizmoFlankViable = t.FindFlankPos(
+                    t.FlankOriginSource.position,
+                    t.FlankThreatSource.position,
+                    t.FlankRange,
+                    out t.GizmoFlankPos,
+                    t.BehindDistance
+                );
+            }
+            else
+            {
+                Debug.LogWarning("Assign FlankOriginSource and FlankThreatSource to preview.");
+            }
         }
 
         if (GUILayout.Button("Preview Peek Spot"))
@@ -59,7 +77,6 @@ public class EnemyManager : MonoBehaviour
     public bool IsPlayerInSight = false;
     
 
-    public Transform nem;
 
     public int numberofcovers;
     public float range;
@@ -79,6 +96,15 @@ public class EnemyManager : MonoBehaviour
     [HideInInspector] public Vector3 GizmoBackwardsFromPlayer;
     [HideInInspector] public Vector3 GizmoPeekSide;
     [HideInInspector] public Vector3 GizmoPeekPositionSearchPosition;
+
+    [Header("Flank Gizmo Preview")]
+    public Transform FlankOriginSource;
+    public Transform FlankThreatSource;
+    public float FlankRange = 10f;
+    public float BehindDistance = 5f;
+
+    [HideInInspector] public Vector3 GizmoFlankPos;
+    [HideInInspector] public bool GizmoFlankViable;
 
     private void Awake()
     {
@@ -147,18 +173,27 @@ public class EnemyManager : MonoBehaviour
             }
         }
         BackwardsFromPlayer = snapped;
+
         GizmoBackwardsFromPlayer = BackwardsFromPlayer;
 
         Vector3 CoverCenter = CoverCollider.bounds.center;
+
         Vector3 CoverToOrigin = (OriginPos - CoverCenter);
+
         float sideDot = Vector3.Dot(CoverToOrigin, Cover.transform.right);
+
         Vector3 PeekSide = sideDot > 0 ? Cover.transform.right : -Cover.transform.right;
+
         GizmoPeekSide = PeekSide;
 
         Vector3 extents = CoverCollider.bounds.extents;
+
         Vector3 absPeekSide = new Vector3(Mathf.Abs(PeekSide.x), Mathf.Abs(PeekSide.y), Mathf.Abs(PeekSide.z));
+
         float PeekPosOffsetFromCenter = Vector3.Dot(extents, absPeekSide) * 0.8f;
+
         Vector3 PeekPositionSearchPosition = CoverCenter + BackwardsFromPlayer * 2 + PeekSide * PeekPosOffsetFromCenter - BackwardsFromPlayer / 2;
+
         GizmoPeekPositionSearchPosition = PeekPositionSearchPosition;
 
         if (!NavMesh.SamplePosition(PeekPositionSearchPosition, out NavMeshHit hit, 1f, NavMesh.AllAreas)) return Avalibe;
@@ -167,8 +202,11 @@ public class EnemyManager : MonoBehaviour
         PeekPos = hit.position + BackwardsFromPlayer * 0.5f;
 
         Vector3 forward = (ThreatPos - PeekPos).normalized;
+
         Vector3 right = Vector3.Cross(Vector3.up, forward);
+
         PeekDirection = (Vector3.Dot(PeekSide, right) > 0 ? right : -right) * 0.85f;
+
         Avalibe = true;
 
         return Avalibe;
@@ -241,8 +279,6 @@ public class EnemyManager : MonoBehaviour
                 closest = e;
             }
         }
-
-        Debug.Log(smallestDist);
         return closest;
     }
 
@@ -272,7 +308,37 @@ public class EnemyManager : MonoBehaviour
     {
         EnemyEvents closest = CheckEnemyCloseAngle(pos, dir);
         if (closest == null) return;
-        closest.FireSusEvent(new EventData(GetDirection(pos)));
+        closest.FireSusEvent(new EventData(pos,GetDirection(pos)));
+    }
+
+    public bool FindFlankPos(Vector3 Origin, Vector3 ThreatPos, float Range, out Vector3 FlankPos, float BehindDistance)
+    {
+        FlankPos = Vector3.zero;
+        NavMeshHit hit;
+        Vector3 BackWards = (ThreatPos - Origin).normalized * BehindDistance;
+        Vector3 Left = -Vector3.Cross(BackWards, Vector3.up) * BehindDistance;
+        Vector3 Right = -Left;
+
+        if (NavMesh.SamplePosition(ThreatPos + BackWards, out hit, BehindDistance, NavMesh.AllAreas))
+            if (Vector3.Distance(hit.position, ThreatPos) >= Range && IsPathViable(hit.position, ThreatPos))
+            { FlankPos = hit.position; return true; }
+
+        if (NavMesh.SamplePosition(ThreatPos + Left, out hit, BehindDistance, NavMesh.AllAreas))
+            if (Vector3.Distance(hit.position, ThreatPos) >= Range && IsPathViable(hit.position, ThreatPos))
+            { FlankPos = hit.position; return true; }
+
+        if (NavMesh.SamplePosition(ThreatPos + Right, out hit, BehindDistance, NavMesh.AllAreas))
+            if (Vector3.Distance(hit.position, ThreatPos) >= Range && IsPathViable(hit.position, ThreatPos))
+            { FlankPos = hit.position; return true; }
+
+        return false;
+    }
+
+    private bool IsPathViable(Vector3 from, Vector3 to)
+    {
+        NavMeshPath path = new NavMeshPath();
+        NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path);
+        return path.status == NavMeshPathStatus.PathComplete;
     }
 
     public void AlertClosestAllies(Vector3 pos, int NumberOfAllies)
@@ -282,10 +348,12 @@ public class EnemyManager : MonoBehaviour
 
     public EnemyAlarmState.AlarmedEnemy DefineAlarmedEnemy(Vector3 pos)
     {
-        return EnemyAlarmState.AlarmedEnemy.Direct;
+        float dist = Vector3.Distance(LKP, pos);
+
+        if (dist <= CloseDistance) return EnemyAlarmState.AlarmedEnemy.Direct;
+        if (dist <= ModerateDistance) return EnemyAlarmState.AlarmedEnemy.Peek;
+        return EnemyAlarmState.AlarmedEnemy.Flank;
     }
-
-
 
     public Vector3 GetDirection(Vector3 pos)
     {
@@ -294,6 +362,10 @@ public class EnemyManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        Gizmos.color = GizmoFlankViable ? Color.cyan : Color.red;
+        if (GizmoFlankPos != Vector3.zero)
+            Gizmos.DrawWireSphere(GizmoFlankPos, 0.3f);
+
         for (int i = 0; i < CoverPositions.Count; i++)
             Gizmos.DrawWireSphere(CoverPositions[i], 0.5f);
 

@@ -103,6 +103,7 @@ public class EnemySuspiciousState : EnemyState
     private void OnPlayerSeen(object sender, EventData e)
     {
         NextState = EnemyStateMachine.EnemyState.Fight;
+        EnemyManager.instance.LKP = e.GetPos();
     }
 
     private void OnClueFound(object sender, EventArgs e)

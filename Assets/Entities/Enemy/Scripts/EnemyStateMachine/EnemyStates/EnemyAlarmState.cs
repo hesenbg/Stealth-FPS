@@ -1,27 +1,27 @@
 using UnityEngine;
 using System.Collections;
+
 public class EnemyAlarmState : EnemyState
 {
-    EnemyStateMachine.EnemyState NextState;
-
+    EnemyStateMachine.EnemyState NextState = EnemyStateMachine.EnemyState.Alarmed;
     Vector3 PlayerDirection;
+    bool HasRolesDefined;
 
-    public enum AlarmedEnemy {Direct, Peek, Flank } // enemy type based on distance.
-                                            // if enemy is close, they directly rush to the player.
-                                            // if distance is modarete, they take cover and peek.
-                                            // if they far away, they go flank
+    public enum AlarmedEnemy { Direct, Peek, Flank }
+
+    enum PeekEnemy { Procces, Cover, Peek }
+
     public AlarmedEnemy Alarmed;
 
-
-    // direct rusher enemy
     Vector3 LastKnownPlayerPosition;
 
-    // peeker enemy
     Vector3 CoverPos;
     Vector3 PeekDirection;
 
-    // flanker enemy
     Vector3 FlankPos;
+
+    PeekEnemy peekPhase;
+    Coroutine peekCoroutine;
 
     public EnemyAlarmState(EnemyStateMachineContext _context, EnemyStateMachine.EnemyState statekey) : base(_context, statekey)
     {
@@ -30,30 +30,45 @@ public class EnemyAlarmState : EnemyState
 
     public override EnemyStateMachine.EnemyState GetNextState()
     {
-        EnemyStateMachine.EnemyState state = EnemyStateMachine.EnemyState.Alarmed;
-
-        return state;
+        return NextState;
     }
 
     public override IEnumerator OnStateExit()
     {
         context.enemySight.TargetFullySeen -= OnPlayerSeen;
+
+        context.agent.updateRotation = true;
+
+        context.agent.ResetPath();
+
+        if (peekCoroutine != null)
+        {
+            context.coreSFM.StopCoroutine(peekCoroutine);
+            peekCoroutine = null;
+        }
         yield return null;
     }
 
     public override IEnumerator OnStateEnter()
     {
+        NextState = EnemyStateMachine.EnemyState.Alarmed;
+
+        context.agent.updateRotation = false;
         context.enemySight.TargetFullySeen += OnPlayerSeen;
         EnemyManager.instance.DefineAlarmedEnemy(context.parent.transform.position);
-
         EnemyManager.instance.FindPeekSpot(EnemyManager.instance.LKP,
-            context.parent.transform.position, context.enemyAIData.CurrentAwarenessState.SightRange
-            , out Vector3 peekPos, out Vector3 peekDirection);
+            context.parent.transform.position, context.enemyAIData.CurrentAwarenessState.SightRange,
+            out Vector3 peekPos, out Vector3 peekDirection);
+
+        if (EnemyManager.instance.FindFlankPos(context.parent.transform.position, EnemyManager.instance.LKP,
+            context.enemyAIData.CurrentAwarenessState.SightRange,
+            out Vector3 Pos, 3f))
+        {
+            FlankPos = Pos;
+        }
 
         CoverPos = peekPos;
-
         PeekDirection = peekDirection;
-
         yield return null;
     }
 
@@ -63,8 +78,19 @@ public class EnemyAlarmState : EnemyState
         ProccesAlarmedType();
     }
 
+    void UpdateRole()
+    {
+        Alarmed = EnemyManager.instance.DefineAlarmedEnemy(context.parent.transform.position);
+    }
+
     private void ProccesAlarmedType()
     {
+        PlayerDirection = (context.parent.transform.position - EnemyManager.instance.LKP).normalized;
+
+        UpdateAnimation();
+
+        Debug.Log(Alarmed);
+
         switch (Alarmed)
         {
             case AlarmedEnemy.Direct:
@@ -74,20 +100,63 @@ public class EnemyAlarmState : EnemyState
                 UpdatePeeker();
                 break;
             case AlarmedEnemy.Flank:
-                UpdateFlanker(); 
+                UpdateFlanker();
                 break;
         }
     }
 
     private void UpdateDirectRusher()
     {
+        LookAround(PlayerDirection);
         context.agent.SetDestination(EnemyManager.instance.LKP);
+        if (context.CheckArrived(EnemyManager.instance.LKP, 0.1f))
+        {
+            NextState = EnemyStateMachine.EnemyState.Search;
+        }
+    }
+
+    private void UpdateAnimation()
+    {
+        float speed = context.agent.speed;
+
+        if (speed < 0.1)
+        {
+            context.animationLogic.PlayIdlePistol();
+        }
+        else
+        {
+            context.animationLogic.PlayWalkPistol();
+        }
+    }
+
+    private IEnumerator LookAround(Vector3 baseDirection)
+    {
+        float angle = context.enemyAIData.LookAroundAngle;
+        float speed = context.enemyAIData.InterplationSpeed;
+
+        Quaternion center = Quaternion.LookRotation(baseDirection);
+        Quaternion right = Quaternion.LookRotation(Quaternion.Euler(0, angle, 0) * baseDirection);
+        Quaternion left = Quaternion.LookRotation(Quaternion.Euler(0, -angle, 0) * baseDirection);
+
+        Quaternion[] targets = { right, left, center };
+
+        foreach (Quaternion target in targets)
+        {
+            while (Quaternion.Angle(context.parent.transform.rotation, target) > 0.5f)
+            {
+                context.parent.transform.rotation = Quaternion.RotateTowards(context.parent.transform.rotation, target, speed * Time.deltaTime);
+                context.UpdateDirection (context.parent.transform.forward);
+                yield return null;
+            }
+        }
     }
 
     private void UpdatePeeker()
     {
-         context.agent.SetDestination(CoverPos);    
+
     }
+
+
 
     private void UpdateFlanker()
     {
@@ -96,12 +165,13 @@ public class EnemyAlarmState : EnemyState
 
     private void LookLKP()
     {
-        context.parent.transform.localRotation = Quaternion.LookRotation(PlayerDirection);
-
+        context.UpdateDirection(EnemyManager.instance.LKP);
     }
 
     private void OnPlayerSeen(object sender, EventData e)
     {
-        PlayerDirection = (context.parent.transform.position- e.GetPos()).normalized;
+        NextState = EnemyStateMachine.EnemyState.Fight;
+
+        EnemyManager.instance.LKP = e.GetPos();
     }
 }

@@ -46,6 +46,10 @@ public class EnemyAIData : ScriptableObject
     public SuspiciousPoint last;
 
     [Header("Alarm State")]
+    public float LKPchangeTolerance = 3f;
+    public float PeekDuration = 1.5f;
+    public float TimeBetweenPeeks = 1.25f;
+    public float LookAroundAngle = 50f;
 
     [Header("Search State")]
     public Vector3 CluePosition;
