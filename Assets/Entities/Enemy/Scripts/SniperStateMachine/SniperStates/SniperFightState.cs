@@ -25,6 +25,7 @@ public class SniperFightState : SniperState
     private void OnPlayerSeen(object sender, EventData e)
     {
         PlayerPos = e.GetPos();
+        EnemyManager.instance.LKP = e.GetPos();
     }
 
     public override IEnumerator OnStateExit()
@@ -36,7 +37,7 @@ public class SniperFightState : SniperState
 
     public override void OnStateUpdate()
     {
-        Vector3 DirectionToPlayer = (PlayerPos - context.GetParent.transform.position).normalized;
+        Vector3 DirectionToPlayer = (EnemyManager.instance.LKP - context.GetParent.transform.position).normalized;
 
         context.UpdateRotation( DirectionToPlayer , 6f);
         if (context.GetEnemyCombatLogic.CanShoot())

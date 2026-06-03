@@ -32,6 +32,7 @@ public class EnemySuspiciousState : EnemyState
         context.events.SuspiciosEvent += OnSuspiciousTargetOnSight;
         context.events.SearchEvent += OnClueFound;
         context.events.FightEvent += OnPlayerSeen;
+        context.events.AlarmEvent += Events_AlarmEvent;
 
         NextState = EnemyStateMachine.EnemyState.Suspicious;
 
@@ -39,11 +40,18 @@ public class EnemySuspiciousState : EnemyState
         yield break;
     }
 
+    private void Events_AlarmEvent(object sender, EventData e)
+    {
+        NextState = EnemyStateMachine.EnemyState.Alarmed;
+    }
+
     public override IEnumerator OnStateExit()
     {
         context.events.SuspiciosEvent -= OnSuspiciousTargetOnSight;
         context.events.SearchEvent -= OnClueFound;
         context.events.FightEvent -= OnPlayerSeen;
+        context.events.AlarmEvent -= Events_AlarmEvent;
+
         context.agent.ResetPath();
 
         context.enemyAIData.ResetData();
@@ -104,6 +112,8 @@ public class EnemySuspiciousState : EnemyState
     {
         NextState = EnemyStateMachine.EnemyState.Fight;
         EnemyManager.instance.LKP = e.GetPos();
+        context.events.FireAlarm(e);
+        EnemyManager.instance.AlertAllies();
     }
 
     private void OnClueFound(object sender, EventArgs e)

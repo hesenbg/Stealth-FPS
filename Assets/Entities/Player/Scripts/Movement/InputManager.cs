@@ -16,6 +16,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] private ThrowAbleLogic playerThrowAbleLogic;
     [SerializeField] private Knife playerKnife;
     [SerializeField] Recoil PlayerRecoil;
+    [SerializeField] ObservableObject playerObservable;
 
     [Header("Movement Keys")]
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
@@ -24,6 +25,7 @@ public class InputManager : MonoBehaviour
 
     [Header("Movement Variables")]
     Vector3 CurrentDirection;
+    [SerializeField] float CrouchObservability = 0.6f;
 
     [Header("Combat Keys")]
     [SerializeField] private MouseButton ShootKey;
@@ -48,6 +50,8 @@ public class InputManager : MonoBehaviour
     {
         playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
 
+        playerObservable = GetComponent<ObservableObject>();
+
         InitilizeMovementVariables();
         InitilizeCombatVariables();
 
@@ -59,6 +63,14 @@ public class InputManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (IsCrouching)
+        {
+            playerObservable.AddModifier(gameObject.name,CrouchObservability);
+        }
+        else
+        {
+            playerObservable.RemoveModifier(gameObject.name);
+        }
     }
 
     private void Update()

@@ -783,7 +783,8 @@ GameObject:
   - component: {fileID: 3387475247573806620}
   - component: {fileID: 1141762936253408519}
   - component: {fileID: 8483977344144419144}
-  m_Layer: 8
+  - component: {fileID: 7688285924396309652}
+  m_Layer: 10
   m_Name: hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -891,9 +892,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ff99f8b64132ae4a8187fe3e84d9e3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObservableObject
+  Observability: 0
   type: 1
   priority: 1
-  observability: 0.65
+  BaseObservability: 0.4
+--- !u!114 &7688285924396309652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025843386265261531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 188e3537827871b46bfb593508e34d73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DestructableHealthManager
+  MaxHealth: 100
 --- !u!1 &1611840718050926882
 GameObject:
   m_ObjectHideFlags: 0

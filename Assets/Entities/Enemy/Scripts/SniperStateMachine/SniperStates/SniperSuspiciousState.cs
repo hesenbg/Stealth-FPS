@@ -19,6 +19,7 @@ public class SniperSuspiciousState : SniperState
     {
         context.GetEvents.FightEvent += OnPlayerSeen;
         context.GetEvents.SearchEvent += OnClueFound;
+        context.GetEvents.AlarmEvent += OnPlayerSeen;
 
         NextState = SniperStateMachine.SniperState.Suspicious;
         CurrentTimer = 0f;
@@ -36,6 +37,7 @@ public class SniperSuspiciousState : SniperState
     {
         context.GetEvents.FightEvent -= OnPlayerSeen;
         context.GetEvents.SearchEvent -= OnClueFound;
+        context.GetEvents.AlarmEvent -= OnPlayerSeen;
 
         CurrentTimer = 0f;
         yield return null;  
@@ -61,6 +63,8 @@ public class SniperSuspiciousState : SniperState
     }
     private void OnPlayerSeen(object sender, EventData e)
     {
+        EnemyManager.instance.LKP = e.GetPos() ;
         NextState = SniperStateMachine.SniperState.Fight;
+        EnemyManager.instance.AlertAllies();
     }
 }

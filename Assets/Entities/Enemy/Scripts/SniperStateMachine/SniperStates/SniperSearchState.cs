@@ -19,6 +19,7 @@ public class SniperSearchState : SniperState
     public override IEnumerator OnStateEnter()
     {
         context.GetEvents.FightEvent += OnPlayerSeen;
+        context.GetEvents.AlarmEvent += OnPlayerSeen;
 
         currentCoverIndex = 0;
         Timer = 0f;
@@ -28,12 +29,15 @@ public class SniperSearchState : SniperState
 
     private void OnPlayerSeen(object sender, EventData e)
     {
+        EnemyManager.instance.LKP = e.GetPos();
         NextState = SniperStateMachine.SniperState.Fight;
+        EnemyManager.instance.AlertAllies();
     }
 
     public override IEnumerator OnStateExit()
     {
         context.GetEvents.FightEvent -= OnPlayerSeen;
+        context.GetEvents.AlarmEvent -= OnPlayerSeen;
 
         yield return null;
     }

@@ -29,6 +29,8 @@ public class EnemyIdleState : EnemyState
         HasCheckAroundEnded = false;
         context.events.SuspiciosEvent += OnSuspiciousEvent;
         context.events.SearchEvent += OnSearchEvent;
+        context.events.AlarmEvent += OnAlarmState;
+
 
         context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
         context.animationLogic.PlayWalk();
@@ -39,10 +41,16 @@ public class EnemyIdleState : EnemyState
         HasCheckAroundEnded = true;
     }
 
+    private void OnAlarmState(object sender, EventData e)
+    {
+        NextState = EnemyStateMachine.EnemyState.Alarmed;
+    }
+
     public override IEnumerator OnStateExit()
     {
         context.events.SuspiciosEvent -= OnSuspiciousEvent;
         context.events.SearchEvent -= OnSearchEvent;
+        context.events.AlarmEvent -= OnAlarmState;
 
         yield return null;
     }

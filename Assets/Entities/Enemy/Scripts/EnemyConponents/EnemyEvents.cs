@@ -45,6 +45,9 @@ public class EnemyEvents : MonoBehaviour
 
     public event EventHandler<EventData> FightEvent;
 
+    public enum EnemyType { Guard, Protector, Sniper}
+
+    public EnemyType Type;
 
     private void Start()
     {
@@ -53,15 +56,20 @@ public class EnemyEvents : MonoBehaviour
         sight.TargetSuspiciousSight += OnSuspiciousEvent;
         sight.TargetAnomalySeen += OnClueFound;
         sight.TargetFullySeen += OnTargetSpotted;
+
+        Getdata();
     }
 
     public EnemyAIData Getdata()
     {
-        EnemyAIData data = GetComponentInParent<EnemyStateMachine>().context.enemyAIData;
-        if (data == null)
-            data = GetComponentInParent<SniperStateMachine>().context.GetData;
+        EnemyStateMachine esm = GetComponentInParent<EnemyStateMachine>();
+        if (esm != null) return esm.context.enemyAIData;
 
-        return data;
+        SniperStateMachine ssm = GetComponentInParent<SniperStateMachine>();
+        if (ssm != null) return ssm.context.GetData;
+
+        Debug.LogError($"No state machine found on {transform.root.name}");
+        return null;
     }
 
     private void OnTargetSpotted(object sender, EventData e)

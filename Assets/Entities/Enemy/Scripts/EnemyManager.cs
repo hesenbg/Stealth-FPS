@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using static EnemyEvents;
 
 
 [CustomEditor(typeof(EnemyManager))]
@@ -244,17 +245,21 @@ public class EnemyManager : MonoBehaviour
         CheckEnemies();
         EnemyEvents closest = null;
         float closestDist = float.MaxValue;
-
         foreach (EnemyEvents e in enemies)
         {
-            float navDist = GetNavMeshDistance(e.transform.position, pos);
+            if (e.Getdata() == null ) continue;
+            EnemyType type = e.Type;
+            if (type == EnemyType.Protector) continue;
+
+            float dist = type == EnemyType.Sniper
+                ? Vector3.Distance(e.transform.position, pos)
+                : GetNavMeshDistance(e.transform.position, pos);
 
             if (e.Getdata().CurrentAwarenessState.AudioDetetctionRange == 0) continue;
-
-            if (navDist < e.Getdata().CurrentAwarenessState.AudioDetetctionRange + Range && navDist < closestDist)
+            if (dist < e.Getdata().CurrentAwarenessState.AudioDetetctionRange + Range && dist < closestDist)
             {
                 closest = e;
-                closestDist = navDist;
+                closestDist = dist;
             }
         }
         return closest;
@@ -268,6 +273,8 @@ public class EnemyManager : MonoBehaviour
 
         foreach (EnemyEvents e in enemies)
         {
+            if (e.Getdata() == null) continue;
+
             if (e.Getdata().CurrentAwarenessState.AudioDetetctionRange == 0) continue;
 
             Vector3 toEnemy = e.transform.position - pos;
@@ -341,6 +348,16 @@ public class EnemyManager : MonoBehaviour
         return path.status == NavMeshPathStatus.PathComplete;
     }
 
+    public void AlertAllies()
+    {
+        CheckEnemies();
+        foreach (EnemyEvents e in enemies)
+        {
+            if (e.Type == EnemyType.Protector) continue;
+            e.FireAlarm(new EventData(LKP, GetDirection(LKP)));
+        }
+    }
+
     public void AlertClosestAllies(Vector3 pos, int NumberOfAllies)
     {
 
@@ -351,8 +368,7 @@ public class EnemyManager : MonoBehaviour
         float dist = Vector3.Distance(LKP, pos);
 
         if (dist <= CloseDistance) return EnemyAlarmState.AlarmedEnemy.Direct;
-        if (dist <= ModerateDistance) return EnemyAlarmState.AlarmedEnemy.Peek;
-        return EnemyAlarmState.AlarmedEnemy.Flank;
+        else  return EnemyAlarmState.AlarmedEnemy.Peek;
     }
 
     public Vector3 GetDirection(Vector3 pos)

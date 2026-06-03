@@ -12,10 +12,9 @@ GameObject:
   - component: {fileID: 9019710587847842976}
   - component: {fileID: 2006888066404907029}
   - component: {fileID: 2354783043206882074}
-  - component: {fileID: 5316569465527844542}
-  - component: {fileID: -2842948728960270281}
-  - component: {fileID: 9110700977827264480}
-  m_Layer: 10
+  - component: {fileID: 8968090017121104069}
+  - component: {fileID: 7292128637980527804}
+  m_Layer: 0
   m_Name: SmokeNade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 4170457795528992245}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -3.922, y: 1.7166, z: -6.9525}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -108,65 +107,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SmokeNade
   ThrowType: 0
   FuseTimer: 2
-  EffectRadius: 0
+  EffectRadius: 3
   NadeEffectDuration: 0
   ShortThrowForce: 3
   Damping: 2
   LongThrowForce: 15
   NadeEffect: {fileID: 2894886092556123163, guid: f8030db448a5dfd4ab1bd98c778e15b4, type: 3}
-  rb: {fileID: 9110700977827264480}
+  rb: {fileID: 8968090017121104069}
   GroundLayer:
     serializedVersion: 2
     m_Bits: 8192
-  NadeCollider: {fileID: 0}
+  NadeCollider: {fileID: 7292128637980527804}
   SmokeDuration: 22
-  ObservabilityMultiplier: 0.1
-  PlayerMask:
+  SmokeObservability: 0
+  TargetMask:
     serializedVersion: 2
-    m_Bits: 0
---- !u!135 &5316569465527844542
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4170457795528992245}
-  m_Material: {fileID: 13400000, guid: 2157fc99803de08469bfe20cadb68afd, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.05
-  m_Center: {x: 0, y: 0.06, z: 0}
---- !u!135 &-2842948728960270281
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4170457795528992245}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 2.2
-  m_Center: {x: 0, y: 0.06, z: 0}
---- !u!54 &9110700977827264480
+    m_Bits: 1032
+--- !u!54 &8968090017121104069
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -193,3 +150,24 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!135 &7292128637980527804
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4170457795528992245}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.066985875
+  m_Center: {x: -0.007981809, y: 0.066985875, z: -0.000000003725291}

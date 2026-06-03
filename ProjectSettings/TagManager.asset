@@ -21,7 +21,7 @@ TagManager:
   - Obstacle
   - Enemy
   - Projectiles
-  - Hidden
+  - Clue
   - 
   - 
   - Ground

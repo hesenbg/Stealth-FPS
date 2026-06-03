@@ -5,23 +5,26 @@ public class EnemyAlarmState : EnemyState
 {
     EnemyStateMachine.EnemyState NextState = EnemyStateMachine.EnemyState.Alarmed;
     Vector3 PlayerDirection;
-    bool HasRolesDefined;
 
-    public enum AlarmedEnemy { Direct, Peek, Flank }
+    public enum AlarmedEnemy { Direct, Peek }
 
     enum PeekEnemy { Procces, Cover, Peek }
 
     public AlarmedEnemy Alarmed;
 
-    Vector3 LastKnownPlayerPosition;
-
     Vector3 CoverPos;
     Vector3 PeekDirection;
 
-    Vector3 FlankPos;
-
     PeekEnemy peekPhase;
     Coroutine peekCoroutine;
+
+    Vector3 PrevLKP = Vector3.zero;
+
+
+    // Rusher Enemy Params
+
+    // Peeker Enemy Params
+
 
     public EnemyAlarmState(EnemyStateMachineContext _context, EnemyStateMachine.EnemyState statekey) : base(_context, statekey)
     {
@@ -31,6 +34,11 @@ public class EnemyAlarmState : EnemyState
     public override EnemyStateMachine.EnemyState GetNextState()
     {
         return NextState;
+    }
+
+    public override void Init()
+    {
+        PrevLKP = EnemyManager.instance.LKP;
     }
 
     public override IEnumerator OnStateExit()
@@ -53,22 +61,15 @@ public class EnemyAlarmState : EnemyState
     {
         NextState = EnemyStateMachine.EnemyState.Alarmed;
 
+        UpdateRole();
+
         context.agent.updateRotation = false;
+
         context.enemySight.TargetFullySeen += OnPlayerSeen;
-        EnemyManager.instance.DefineAlarmedEnemy(context.parent.transform.position);
-        EnemyManager.instance.FindPeekSpot(EnemyManager.instance.LKP,
-            context.parent.transform.position, context.enemyAIData.CurrentAwarenessState.SightRange,
-            out Vector3 peekPos, out Vector3 peekDirection);
 
-        if (EnemyManager.instance.FindFlankPos(context.parent.transform.position, EnemyManager.instance.LKP,
-            context.enemyAIData.CurrentAwarenessState.SightRange,
-            out Vector3 Pos, 3f))
-        {
-            FlankPos = Pos;
-        }
+        if (Alarmed == AlarmedEnemy.Peek)
+            AssignPeekParams();
 
-        CoverPos = peekPos;
-        PeekDirection = peekDirection;
         yield return null;
     }
 
@@ -80,7 +81,20 @@ public class EnemyAlarmState : EnemyState
 
     void UpdateRole()
     {
-        Alarmed = EnemyManager.instance.DefineAlarmedEnemy(context.parent.transform.position);
+        if(Vector3.Distance(PrevLKP, EnemyManager.instance.LKP) >= context.enemyAIData.LKPchangeTolerance)
+        {
+            Alarmed = EnemyManager.instance.DefineAlarmedEnemy(context.parent.transform.position);
+        }
+    }
+
+    void AssignPeekParams()
+    {
+        EnemyManager.instance.FindPeekSpot(EnemyManager.instance.LKP,
+            context.parent.transform.position, context.enemyAIData.CurrentAwarenessState.SightRange,
+            out Vector3 peekPos, out Vector3 peekDirection);
+
+        CoverPos = peekPos;
+        PeekDirection = peekDirection;
     }
 
     private void ProccesAlarmedType()
@@ -98,9 +112,6 @@ public class EnemyAlarmState : EnemyState
                 break;
             case AlarmedEnemy.Peek:
                 UpdatePeeker();
-                break;
-            case AlarmedEnemy.Flank:
-                UpdateFlanker();
                 break;
         }
     }
@@ -153,14 +164,7 @@ public class EnemyAlarmState : EnemyState
 
     private void UpdatePeeker()
     {
-
-    }
-
-
-
-    private void UpdateFlanker()
-    {
-
+        Debug.Log("peeking");
     }
 
     private void LookLKP()

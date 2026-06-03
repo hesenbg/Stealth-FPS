@@ -95,7 +95,7 @@ public class VisionCone : MonoBehaviour
             if (!inCone) continue;
             if (!CheckInSight(target.gameObject)) continue;
             if (!target.TryGetComponent<ObservableObject>(out ObservableObject observable)) continue;
-            if (observable.Observability == 0) continue;
+            if (observable.GetObservability() == 0) continue;
             if(observable.HasSeen) continue;
 
             if (highestPriority == null || observable.Priority < highestPriority.Priority)
@@ -109,7 +109,7 @@ public class VisionCone : MonoBehaviour
     bool CheckInSight(GameObject InSightObject)
     {
         Vector3 direction = (InSightObject.transform.position - transform.position).normalized;
-        if (inCone && Physics.Raycast(transform.position, direction, out RaycastHit hit,
+        if (Physics.Raycast(transform.position, direction, out RaycastHit hit,
             data.CurrentAwarenessState.SightRange, CheckMask, QueryTriggerInteraction.Collide))
         {
             if (hit.collider.gameObject == InSightObject)
@@ -125,7 +125,7 @@ public class VisionCone : MonoBehaviour
         if (inSight)
         {
             if (currentAwareness < AlarmAwareness)
-                currentAwareness += data.CurrentAwarenessState.AwarenessSpeed * MainTargetedObject.Observability * Time.deltaTime;
+                currentAwareness += data.CurrentAwarenessState.AwarenessSpeed * MainTargetedObject.GetObservability() * Time.deltaTime;
         }
         else
         {

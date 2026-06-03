@@ -35,6 +35,7 @@ public class SniperIdleState : SniperState
         context.GetEvents.SuspiciosEvent += OnSuspiciousEvent;
         context.GetEvents.SearchEvent += OnClueFound;
         context.GetEvents.FightEvent += OnPlayerSeen;
+        context.GetEvents.AlarmEvent += OnPlayerSeen;
 
         TransformLocalToWorld();
         context.GetData.CurrentPatrolPosIndex = 0;

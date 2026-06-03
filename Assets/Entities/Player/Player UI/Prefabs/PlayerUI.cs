@@ -44,7 +44,7 @@ public class PlayerUI : MonoBehaviour
     void UpdateHealthAndObservability()
     {
         HealthBar.value = Mathf.Lerp(HealthBar.value, (float)HealthManager.CurrentHealth / HealthManager.MaxHealth, Time.deltaTime * 5f);
-        ObservabilityBar.value = Mathf.Lerp(ObservabilityBar.value, ObservableObject.Observability, Time.deltaTime * 5f);
+        ObservabilityBar.value = Mathf.Lerp(ObservabilityBar.value, ObservableObject.GetObservability(), Time.deltaTime * 5f);
     }
 
     private void Update()

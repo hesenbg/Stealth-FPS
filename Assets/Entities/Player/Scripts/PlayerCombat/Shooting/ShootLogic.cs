@@ -114,8 +114,6 @@ public class ShootLogic : MonoBehaviour
         }
 
         EnemyManager.instance.AlertClosestOnGunFire(transform.position, transform.forward);
-
-
     }
 
     float RecoilDamper = 1;
