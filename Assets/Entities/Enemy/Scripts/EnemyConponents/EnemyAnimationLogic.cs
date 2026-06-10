@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using static AwarenessFSM;
+
 public class EnemyAnimationLogic : MonoBehaviour
 {
     Animator animator;
@@ -8,6 +11,14 @@ public class EnemyAnimationLogic : MonoBehaviour
     [SerializeField] CapsuleCollider BaseHitBox;
     [SerializeField] CapsuleCollider CrouchHitBox;
     [SerializeField] float blendDampTime = 0.1f;
+
+    [SerializeField] EnemyStateMachine fsm;
+
+    [SerializeField] float CurrentSpeed;
+
+    [SerializeField] AwarenessFSM awareness;
+
+    NavMeshAgent agent;
 
     public event EventHandler InvestigationEnd;
     public enum MovementState {Idle, Walk, Crouch }
@@ -32,6 +43,70 @@ public class EnemyAnimationLogic : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+    private void Start()
+    {
+        fsm = GetComponentInParent<EnemyStateMachine>();
+
+        awareness = GetComponentInParent<AwarenessFSM>();
+
+        PlayIdle();
+
+        agent = fsm.context.agent;
+    }
+
+
+    private void Update()
+    {
+        CurrentSpeed = agent.velocity.magnitude;
+
+        UpdateAnimation();
+    }
+
+    private void UpdateAnimation()
+    {
+        if(awareness.CurrentAwarnessState == AwarnessState.Idle)
+        {
+            UpdateIdle();
+        }
+        else  if(awareness.CurrentAwarnessState == AwarnessState.Suspicious || awareness.CurrentAwarnessState == AwarnessState.Alarmed)
+        {
+
+            UpdatePistol(fsm.context.enemyAIData.IsHiding);
+            
+        }
+    }
+
+    void UpdatePistol(bool IsPeeking)
+    {
+        if (IsPeeking)
+        {
+            PlayCrouchPistol();
+            return;
+        }
+
+        if (CurrentSpeed < 0.1f)
+        {
+            PlayIdlePistol();
+        }
+        else
+        {
+            PlayWalkPistol();
+        }
+    }
+
+
+    void UpdateIdle()
+    {
+        if(CurrentSpeed < 0.1f)
+        {
+            PlayIdle();
+        }
+        else
+        {
+            PlayWalk();
+        }
+    }
+
     private void PlayMovementAnimation(MovementState state)
     {
         animator.SetFloat("MoveBlend", moveBlendValues[state], blendDampTime, Time.deltaTime);
@@ -41,29 +116,31 @@ public class EnemyAnimationLogic : MonoBehaviour
         animator.SetFloat("UpperBodyBlend", upperBodyBlendValues[state], blendDampTime, Time.deltaTime);
     }
 
-    public void PlayIdlePistol()
-    {
-        WholeBody(MovementState.Idle,UpperBodyState.PistolHold);
-    }
-    public void PlayWalkPistol()
-    {
-        WholeBody(MovementState.Walk, UpperBodyState.PistolHold);
-    }
-
-    public void PlayIdleLookAround()
-    {
-        WholeBody(MovementState.Idle, UpperBodyState.LookAround);
-    }
 
 
-    public void PlayWalk()
+    private void PlayIdle()
+    {
+        WholeBody(MovementState.Idle, UpperBodyState.Idle);
+    }
+
+    private void PlayWalk()
     {
         WholeBody(MovementState.Walk, UpperBodyState.Walk);
     }
 
-    public void PlayIdle()
+    private void PlayIdlePistol()
     {
-        WholeBody(MovementState.Idle, UpperBodyState.Idle);
+        WholeBody(MovementState.Idle, UpperBodyState.PistolHold);
+    }
+
+    private void PlayWalkPistol()
+    {
+        WholeBody(MovementState.Walk, UpperBodyState.PistolHold);
+    }
+
+    private void PlayCrouchPistol()
+    {
+        WholeBody(MovementState.Crouch, UpperBodyState.PistolHold);
     }
 
     private void WholeBody(MovementState moveState,UpperBodyState upperState)

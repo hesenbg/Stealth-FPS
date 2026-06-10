@@ -1510,6 +1510,15 @@ MonoBehaviour:
   TransitionSpeed: 2
   SnapAccuracy: 0.01
   UI: {fileID: 257496397}
+  CurrentParams:
+    SightRange: 0
+    AwarenessSpeed: 0
+    Angle: 0
+    AllyCallSpeed: 0
+    AllyCallNumber: 0
+    AudioDetetctionRange: 0
+    MovementSpeed: 0
+  CurrentAwarnessState: 0
 --- !u!1 &131437627
 GameObject:
   m_ObjectHideFlags: 0
@@ -2850,6 +2859,9 @@ MonoBehaviour:
   BaseHitBox: {fileID: 1516660211}
   CrouchHitBox: {fileID: 765946625}
   blendDampTime: 0.1
+  fsm: {fileID: 0}
+  CurrentSpeed: 0
+  awareness: {fileID: 0}
 --- !u!95 &283950043
 Animator:
   serializedVersion: 7
@@ -3345,8 +3357,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 348507396}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0.7071068, w: 0}
-  m_LocalPosition: {x: 0.000000439235, y: 0.49214554, z: 0.014734004}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0.7071068, w: 0}
+  m_LocalPosition: {x: 0.0000000018626451, y: 0.49214554, z: 0.014733994}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5036,8 +5048,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 474080840}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.7297532, z: -0, w: 0.6837107}
-  m_LocalPosition: {x: 10.09, y: 1.78, z: -10.17}
+  m_LocalRotation: {x: -0, y: -0.76757824, z: -0, w: -0.6409553}
+  m_LocalPosition: {x: 6.21, y: 1.78, z: -7.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5045,7 +5057,7 @@ Transform:
   - {fileID: 742772601}
   - {fileID: 1646915101}
   m_Father: {fileID: 6869610172596908202}
-  m_LocalEulerAnglesHint: {x: 0, y: -93.731, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -259.726, z: 0}
 --- !u!114 &474080842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5068,7 +5080,7 @@ MonoBehaviour:
     MovementSpeed: 0.7
   Suspicious:
     SightRange: 10
-    AwarenessSpeed: 15
+    AwarenessSpeed: 40
     Angle: 50
     AllyCallSpeed: 2
     AllyCallNumber: 2
@@ -5076,7 +5088,7 @@ MonoBehaviour:
     MovementSpeed: 1.3
   Alarmed:
     SightRange: 15
-    AwarenessSpeed: 20
+    AwarenessSpeed: 50
     Angle: 65
     AllyCallSpeed: 1
     AllyCallNumber: 3
@@ -5084,7 +5096,16 @@ MonoBehaviour:
     MovementSpeed: 1.5
   TransitionSpeed: 2
   SnapAccuracy: 0.01
-  UI: {fileID: 1646915102}
+  UI: {fileID: 1540802038}
+  CurrentParams:
+    SightRange: 0
+    AwarenessSpeed: 0
+    Angle: 0
+    AllyCallSpeed: 0
+    AllyCallNumber: 0
+    AudioDetetctionRange: 0
+    MovementSpeed: 0
+  CurrentAwarnessState: 0
 --- !u!114 &474080843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5119,7 +5140,7 @@ NavMeshAgent:
   m_Speed: 0.8
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 1350
+  m_AngularSpeed: 2700
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -8327,13 +8348,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 806794237}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.23718038, z: -0, w: 0.97146565}
-  m_LocalPosition: {x: 0.5962546, y: 0.977, z: 17.449589}
-  m_LocalScale: {x: 2.6499002, y: 1.8140364, z: 0.3}
+  m_LocalRotation: {x: -0, y: 0.47075856, z: -0, w: 0.88226205}
+  m_LocalPosition: {x: -7.32, y: 0.977, z: 0.12}
+  m_LocalScale: {x: 4.04, y: 1.8140364, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1904334888}
-  m_LocalEulerAnglesHint: {x: 0, y: -27.44, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 56.167, z: 0}
 --- !u!208 &806794239
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -8687,7 +8708,7 @@ Transform:
   m_GameObject: {fileID: 815517259}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.91, y: 1.25, z: 12.56}
+  m_LocalPosition: {x: 2.64, y: 1.25, z: 6.47}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -9631,6 +9652,9 @@ MonoBehaviour:
   BaseHitBox: {fileID: 396872019}
   CrouchHitBox: {fileID: 2003413954}
   blendDampTime: 0.1
+  fsm: {fileID: 0}
+  CurrentSpeed: 0
+  awareness: {fileID: 0}
 --- !u!95 &899699232
 Animator:
   serializedVersion: 7
@@ -10517,7 +10541,7 @@ Transform:
   m_GameObject: {fileID: 990099084}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0.7071068, w: 0}
-  m_LocalPosition: {x: 0.000000023283064, y: 0.49214554, z: 0.014733888}
+  m_LocalPosition: {x: 0.0000001238659, y: 0.49214554, z: 0.0147339525}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11584,13 +11608,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1090321176}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.8311096, z: -0, w: 0.55610865}
-  m_LocalPosition: {x: -3.99, y: 0.5, z: 6.18}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 2.21, y: 0.5, z: 3.84}
   m_LocalScale: {x: 3.65, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1904334888}
-  m_LocalEulerAnglesHint: {x: 0, y: 112.426, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!208 &1090321178
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -12459,7 +12483,7 @@ Transform:
   m_GameObject: {fileID: 1221087370}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0.7071068, w: 0}
-  m_LocalPosition: {x: 0.000000053318217, y: 0.49214554, z: 0.014734285}
+  m_LocalPosition: {x: -0.000000023981556, y: 0.49214554, z: 0.014733816}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13718,7 +13742,7 @@ Transform:
   m_GameObject: {fileID: 1354088550}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.8771473, z: -0, w: 0.48022148}
-  m_LocalPosition: {x: -4.13, y: 1.78, z: -1.7}
+  m_LocalPosition: {x: -2.7, y: 1.78, z: 10.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13749,7 +13773,7 @@ MonoBehaviour:
     MovementSpeed: 0.7
   Suspicious:
     SightRange: 10
-    AwarenessSpeed: 15
+    AwarenessSpeed: 40
     Angle: 50
     AllyCallSpeed: 2
     AllyCallNumber: 2
@@ -13757,7 +13781,7 @@ MonoBehaviour:
     MovementSpeed: 1.3
   Alarmed:
     SightRange: 15
-    AwarenessSpeed: 20
+    AwarenessSpeed: 50
     Angle: 65
     AllyCallSpeed: 1
     AllyCallNumber: 3
@@ -13766,6 +13790,15 @@ MonoBehaviour:
   TransitionSpeed: 2
   SnapAccuracy: 0.01
   UI: {fileID: 1540802038}
+  CurrentParams:
+    SightRange: 0
+    AwarenessSpeed: 0
+    Angle: 0
+    AllyCallSpeed: 0
+    AllyCallNumber: 0
+    AudioDetetctionRange: 0
+    MovementSpeed: 0
+  CurrentAwarnessState: 0
 --- !u!114 &1354088553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13783,7 +13816,7 @@ MonoBehaviour:
   EnemyHealthManager: {fileID: 1619202756}
   EnemyCombat: {fileID: 1540802039}
   agent: {fileID: 1354088554}
-  data: {fileID: 11400000, guid: 56890260bb0fdf844a67511a78f941c1, type: 2}
+  data: {fileID: 11400000, guid: f7306249080885c4480ada7f13370330, type: 2}
   Parent: {fileID: 1354088550}
   events: {fileID: 1540802040}
   anim: {fileID: 1750933845}
@@ -13836,7 +13869,7 @@ Transform:
   m_GameObject: {fileID: 1355831219}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.14, y: 1.25, z: 1.2}
+  m_LocalPosition: {x: 5.89, y: 1.25, z: 3.36}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -14217,7 +14250,7 @@ Transform:
   m_GameObject: {fileID: 1381244196}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.64792293, z: -0, w: 0.761706}
-  m_LocalPosition: {x: -11.93, y: 1.78, z: -9}
+  m_LocalPosition: {x: -4.81, y: 1.78, z: -1.06}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14239,32 +14272,41 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AwarenessFSM
   Idle:
-    SightRange: 6
-    AwarenessSpeed: 15
+    SightRange: 5
+    AwarenessSpeed: 8
     Angle: 45
     AllyCallSpeed: 2
     AllyCallNumber: 2
     AudioDetetctionRange: 2
     MovementSpeed: 0.7
   Suspicious:
-    SightRange: 15
-    AwarenessSpeed: 20
+    SightRange: 10
+    AwarenessSpeed: 40
     Angle: 50
     AllyCallSpeed: 2
     AllyCallNumber: 2
     AudioDetetctionRange: 2
     MovementSpeed: 1.3
   Alarmed:
-    SightRange: 20
-    AwarenessSpeed: 30
-    Angle: 50
+    SightRange: 15
+    AwarenessSpeed: 50
+    Angle: 65
     AllyCallSpeed: 1
     AllyCallNumber: 3
     AudioDetetctionRange: 5
-    MovementSpeed: 0.5
+    MovementSpeed: 1.5
   TransitionSpeed: 2
   SnapAccuracy: 0.01
-  UI: {fileID: 38248750}
+  UI: {fileID: 1540802038}
+  CurrentParams:
+    SightRange: 0
+    AwarenessSpeed: 0
+    Angle: 0
+    AllyCallSpeed: 0
+    AllyCallNumber: 0
+    AudioDetetctionRange: 0
+    MovementSpeed: 0
+  CurrentAwarnessState: 0
 --- !u!114 &1381244199
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14282,7 +14324,7 @@ MonoBehaviour:
   EnemyHealthManager: {fileID: 1946824288}
   EnemyCombat: {fileID: 38248751}
   agent: {fileID: 1381244200}
-  data: {fileID: 11400000, guid: 56890260bb0fdf844a67511a78f941c1, type: 2}
+  data: {fileID: 11400000, guid: 6596e934d17d9e24e9421e66444cf20a, type: 2}
   Parent: {fileID: 1381244196}
   events: {fileID: 38248752}
   anim: {fileID: 899699231}
@@ -14944,7 +14986,7 @@ MonoBehaviour:
   HorizontalAngle: 45
   Range: 6
   AngleAdjustLight: 15
-  LightObservability: 1
+  LightObservability: 6
   TargetMask:
     serializedVersion: 2
     m_Bits: 1032
@@ -17336,7 +17378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1c88528e548c3f4e848f79ae2aeb723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyEvents
-  Type: 1
+  Type: 0
 --- !u!114 &1646915105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18252,7 +18294,7 @@ GameObject:
   - component: {fileID: 1736940608}
   - component: {fileID: 1736940607}
   - component: {fileID: 1736940610}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18268,7 +18310,7 @@ Transform:
   m_GameObject: {fileID: 1736940605}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.042018425, z: -0, w: 0.99911684}
-  m_LocalPosition: {x: -9.92, y: 0.5, z: 5.06}
+  m_LocalPosition: {x: -11.8, y: 0.5, z: 11.45}
   m_LocalScale: {x: 3.65, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18614,6 +18656,9 @@ MonoBehaviour:
   BaseHitBox: {fileID: 396587433}
   CrouchHitBox: {fileID: 1741971817}
   blendDampTime: 0.1
+  fsm: {fileID: 0}
+  CurrentSpeed: 0
+  awareness: {fileID: 0}
 --- !u!95 &1750933846
 Animator:
   serializedVersion: 7
@@ -19454,7 +19499,7 @@ Transform:
   m_GameObject: {fileID: 1827149011}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12.19, y: 0.698, z: -7}
+  m_LocalPosition: {x: 5.59, y: 0.69, z: -0.15}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -19820,6 +19865,9 @@ MonoBehaviour:
   BaseHitBox: {fileID: 816464688}
   CrouchHitBox: {fileID: 1957001831}
   blendDampTime: 0.1
+  fsm: {fileID: 0}
+  CurrentSpeed: 0
+  awareness: {fileID: 0}
 --- !u!95 &1841103751
 Animator:
   serializedVersion: 7
@@ -37635,10 +37683,10 @@ MonoBehaviour:
   GunRig: {fileID: 1734843363469992120}
   RigParent: {fileID: 3669749365860076520}
   posF: 3
-  posZ: 0.45
-  posR: 2
+  posZ: 1
+  posR: 3
   rotF: 4
-  rotZ: 0.4
+  rotZ: 0.45
   rotR: 4
 --- !u!4 &5830900168292384544
 Transform:
@@ -37814,6 +37862,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bde3f9d84c4e4343b05e276e200e89f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyManager
+  enemies: []
   CoverPositions: []
   CoverLayers:
     serializedVersion: 2
@@ -37830,9 +37879,7 @@ MonoBehaviour:
   IsPlayerInSight: 0
   numberofcovers: 12
   range: 20
-  CloseDistance: 0
-  ModerateDistance: 0
-  FarDistance: 0
+  CloseDistance: 6
   PeekThreatSource: {fileID: 1355831220}
   PeekOriginSource: {fileID: 815517262}
   PeekRange: 10
@@ -40132,7 +40179,7 @@ Transform:
   m_GameObject: {fileID: 5041144844117625451}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -13.49, y: 1.51, z: -9.08}
+  m_LocalPosition: {x: -8.58, y: 1.51, z: -5.61}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -40197,7 +40244,7 @@ MonoBehaviour:
   jumpKey: 32
   crouchKey: 306
   sprintKey: 304
-  CrouchObservability: 0.5
+  CrouchObservability: 0.75
   ShootKey: 0
   ReloadKey: 114
   ADS_key: 0
@@ -45690,7 +45737,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealthManager
   MaxHealth: 100
-  SpeedDropOnDamage: 0
 --- !u!1 &9198512873785925688
 GameObject:
   m_ObjectHideFlags: 0

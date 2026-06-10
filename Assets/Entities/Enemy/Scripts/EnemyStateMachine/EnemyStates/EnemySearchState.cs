@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemySearchState : EnemyState
@@ -28,21 +26,35 @@ public class EnemySearchState : EnemyState
     public override IEnumerator OnStateEnter()
     {
         context.events.FightEvent += OnPlayerSeen;
-        context.events.AlarmEvent += OnAlarmState; ;
-
+        context.events.AlarmEvent += OnAlarmState;
+        context.events.SearchEvent += OnSearchEvent;
+        context.enemySight.TargetSuspiciousSight += OnSuspiciousTargetSeen;
 
         NextState = EnemyStateMachine.EnemyState.Search;
 
         ready = false;
         done = false;
-        covers = EnemyManager.instance.GenerateCoverPos(3, 6.5f, context.parent.transform.position);
+
+        covers = EnemyManager.instance.GenerateCoverPos(3, 8f, context.parent.transform.position);
+
+        covers.Insert(0, context.enemyAIData.CluePosition);
+
         coverIndex = 0;
 
-        covers.Insert(0,context.enemyAIData.CluePosition);
-
         yield return new WaitForSeconds(1.5f);
+
         ready = true;
         SetNextDestination();
+    }
+
+    private void OnSuspiciousTargetSeen(object sender, EventData e)
+    {
+        covers.Insert(0, e.GetPos());
+    }
+
+    private void OnSearchEvent(object sender, EventData e)
+    {
+        covers.Insert(0, e.GetPos());
     }
 
     private void OnAlarmState(object sender, EventData e)
@@ -53,24 +65,26 @@ public class EnemySearchState : EnemyState
     private void OnPlayerSeen(object sender, EventData e)
     {
         EnemyManager.instance.LKP = e.GetPos();
-        NextState = EnemyStateMachine.EnemyState.Fight;
+        NextState = EnemyStateMachine.EnemyState.Alarmed;
         context.events.FireAlarm(e);
-        EnemyManager.instance.AlertAllies();
+        EnemyManager.instance.CallAlliesOnAlarm();
     }
 
     public override IEnumerator OnStateExit()
     {
         context.events.FightEvent -= OnPlayerSeen;
-        context.events.AlarmEvent -= OnAlarmState; ;
+        context.events.AlarmEvent -= OnAlarmState;
+        context.events.SearchEvent -= OnSearchEvent;
+        context.enemySight.TargetSuspiciousSight -= OnSuspiciousTargetSeen;
 
         yield return null;
     }
 
     public override void OnStateUpdate()
     {
-        if (!ready) return;
+        Vector3 DirectionToPlayer = (EnemyManager.instance.LKP - context.parent.transform.position).normalized;
 
-        context.animationLogic.PlayWalkPistol();
+        if (!ready) return;
 
         if (context.CheckArrived(covers[coverIndex], 0.5f))
         {

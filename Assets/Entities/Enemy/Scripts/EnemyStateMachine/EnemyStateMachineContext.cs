@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 public class EnemyStateMachineContext 
@@ -37,14 +38,52 @@ public class EnemyStateMachineContext
     public NavMeshAgent agent => Agent;
 
     // helper functions for all the enemy states
-    public bool CheckArrived(Vector3 pos, float Accuracy) // assumes that distance between enemy's pivot and ground is 1.7 (taller than lulu xd)
+    public bool CheckArrived(Vector3 TargetPos, float Accuracy) // check if enemy see the destination or not
     {
-        float RealDistance = Vector3.Distance(parent.transform.position, pos);
+        Vector3 Direction = (TargetPos - parent.transform.position).normalized;
+        float Distance = Vector3.Distance(parent.transform.position, TargetPos);
 
-        float GroundDistance = Vector2.Distance(new Vector2(parent.transform.position.x, parent.transform.position.z)
-            , new Vector2(pos.x,pos.z));
+        if (Distance < Accuracy) return true; 
 
-        return (GroundDistance < Accuracy && RealDistance < 1.85);
+        if (Physics.Raycast(parent.transform.position, Direction, out RaycastHit hit, Distance))
+        {
+            return Vector3.Distance(hit.point, TargetPos) < Accuracy; 
+        }
+
+        return false; 
+    }
+
+
+    public IEnumerator LookAround(Vector3 Direction, float Duration, float Angle, float Speed)
+    {
+        float perWait = Duration / 3f;
+        Quaternion original = Quaternion.LookRotation(Direction, Vector3.up);
+        Quaternion left = Quaternion.LookRotation(Quaternion.AngleAxis(-Angle, Vector3.up) * Direction, Vector3.up);
+        Quaternion right = Quaternion.LookRotation(Quaternion.AngleAxis(Angle, Vector3.up) * Direction, Vector3.up);
+
+        yield return RotateTo(original, perWait);
+        yield return RotateTo(left, perWait);
+        yield return RotateTo(right, perWait);
+        yield return RotateTo(original, perWait);
+    }
+
+    private IEnumerator RotateTo(Quaternion target, float duration)
+    {
+        float elapsed = 0f;
+        Quaternion start = parent.transform.rotation;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            parent.transform.rotation = Quaternion.Slerp(start, target, elapsed / duration);
+            yield return null;
+        }
+        parent.transform.rotation = target;
+    }
+
+    public void ResetLookAround()
+    {
+        parent.transform.rotation = Quaternion.LookRotation(
+            new Vector3(parent.transform.forward.x, 0f, parent.transform.forward.z).normalized, Vector3.up);
     }
 
     public void ResetVelocity()

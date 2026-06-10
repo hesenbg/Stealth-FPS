@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerCombatData
   m_EditorClassIdentifier: Assembly-CSharp::CombatData
   shootDelay: 0.4
-  trace: {fileID: -5813446771995636474, guid: e7e54b6d5fbdb594f9f314d9b51ff159, type: 3}
+  trace: {fileID: 442907835465362069, guid: a0cc2fe8927ef4748949a6fb1ea926e1, type: 3}
   adsShootSpeed: 0.8
   magazine: 240
   totalAmmo: 240

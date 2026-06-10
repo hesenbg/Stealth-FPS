@@ -48,7 +48,7 @@ MonoBehaviour:
   HorizontalAngle: 180
   Range: 2.49
   AngleAdjustLight: 15
-  LightObservability: 0.4
+  LightObservability: 0
   TargetMask:
     serializedVersion: 2
     m_Bits: 1032

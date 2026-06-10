@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 public  class LightCone : MonoBehaviour
 {
-    [SerializeField] protected float VerticalAngle;
+    [SerializeField] float VerticalAngle;
 
-    [SerializeField] protected float HorizontalAngle;
+    [SerializeField] float HorizontalAngle;
 
-    [SerializeField] protected float Range;
+    [SerializeField] float Range;
 
     [SerializeField] float AngleAdjustLight;
 
@@ -16,7 +16,7 @@ public  class LightCone : MonoBehaviour
 
     [SerializeField] LayerMask ObstacleMask;
 
-    [SerializeField] protected List<Transform> targets;
+    [SerializeField] List<Transform> targets;
 
     Vector3 flatTarget;
 
@@ -45,32 +45,24 @@ public  class LightCone : MonoBehaviour
     }
 
     private HashSet<Transform> previousTargets = new HashSet<Transform>();
-    private HashSet<Transform> newThisFrame = new HashSet<Transform>();
 
     void UpdateObservability()
     {
         HashSet<Transform> currentTargets = new HashSet<Transform>(targets);
-        newThisFrame.Clear();
-
-        foreach (Transform t in currentTargets)
-        {
-            if (!previousTargets.Contains(t))
-                newThisFrame.Add(t);
-        }
 
         foreach (Transform t in previousTargets)
         {
-            if (!currentTargets.Contains(t) && t != null && !newThisFrame.Contains(t))
+            if (!currentTargets.Contains(t) && t != null)
             {
                 if (t.TryGetComponent<ObservableObject>(out ObservableObject obs))
-                    obs.RemoveModifier(t.name);
+                    obs.RemoveModifier(gameObject.name);
             }
         }
 
         foreach (Transform t in currentTargets)
         {
             if (t.TryGetComponent<ObservableObject>(out ObservableObject obs))
-                obs.AddModifier(t.name, LightObservability);
+                obs.AddModifier(gameObject.name, LightObservability);
         }
 
         previousTargets = currentTargets;

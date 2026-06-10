@@ -33,7 +33,6 @@ public class EnemyIdleState : EnemyState
 
 
         context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
-        context.animationLogic.PlayWalk();
 
         while (!context.CheckArrived(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex], 0.2f))
             yield return null;
@@ -71,11 +70,15 @@ public class EnemyIdleState : EnemyState
             Patrul();
     }
 
+    private void Hold()
+    {
+
+    }
+
     void Patrul()
     {
         if (!HasCheckAroundEnded) return;
 
-        context.animationLogic.PlayWalk();
 
         if (context.CheckArrived(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex], 0.2f))
         {
@@ -92,15 +95,10 @@ public class EnemyIdleState : EnemyState
         }
     }
 
-    void Hold()
-    {
-        context.animationLogic.PlayIdlePistol();
-    }
 
     IEnumerator CheckAround(float waitTime)
     {
         context.agent.ResetPath();
-        context.animationLogic.PlayIdleLookAround();
         yield return new WaitForSeconds(waitTime);
         context.enemyAIData.CurrentPatrolPosIndex = (context.enemyAIData.CurrentPatrolPosIndex + 1) % worldPatrolPositions.Length;
         context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
@@ -116,6 +114,9 @@ public class EnemyIdleState : EnemyState
     private void OnSearchEvent(object sender, EventData e)
     {
         NextState = EnemyStateMachine.EnemyState.Search;
+
         context.enemyAIData.CluePosition = e.GetPos();
+
+        EnemyManager.instance.CallAlliesOnClue(e.GetPos(), 2);
     }
 }

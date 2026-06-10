@@ -31,7 +31,12 @@ public class ObservableObject : MonoBehaviour
     public float GetObservability()
     {
         if (modifiers.Count == 0 ) return BaseObservability;
-        return modifiers.Values.Max();
+        float TotalMultipiler = 1f;
+        foreach(var modifier in modifiers)
+        {
+            TotalMultipiler *=  modifier.Value;
+        }
+        return TotalMultipiler*BaseObservability;
     }
 
     public void AddModifier(string key, float value) => modifiers[key] = value;

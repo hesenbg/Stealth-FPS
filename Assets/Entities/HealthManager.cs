@@ -16,7 +16,7 @@ public abstract class HealthManager : MonoBehaviour
 
     public virtual void ApplyDamage(float damage, float Multipiler,Vector3 pos)
     {
-        var totalDamage = damage * Multipiler* BaseDamageMultipiler;
+        var totalDamage = damage * Multipiler * BaseDamageMultipiler;
 
         CurrentHealth -= totalDamage;
         OnDamageDone?.Invoke(totalDamage,pos);

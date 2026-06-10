@@ -6,12 +6,6 @@ public class EventData : EventArgs
     Vector3 position;
     Vector3 direction;
 
-    public EventData(Vector3 dir)
-    {
-        direction = dir;
-        position = dir * 4.5f;
-    }
-
     public EventData(Vector3 pos, Vector3 dir)
     {
         position = pos;
@@ -25,11 +19,6 @@ public class EventData : EventArgs
     public Vector3 GetPos()
     {
         return position;
-    }
-
-    public Vector3 GetDir()
-    {
-        return direction;
     }
 }
 
@@ -75,25 +64,25 @@ public class EnemyEvents : MonoBehaviour
     private void OnTargetSpotted(object sender, EventData e)
     {
         FirePlayerSeen(e);
-        Debug.Log("full seen");
+        //Debug.Log("full seen");
     }
 
     private void OnAlarmEvent(object sender, EventData e)
     {
         FireAlarm(e);
-        Debug.Log("Alarm event");
+        //Debug.Log("Alarm event");
     }
 
     private void OnClueFound(object sender, EventData e)
     {
         FireClueFound(e);
-        Debug.Log("clue seen");
+        ///Debug.Log("clue seen");
     }
 
     private void OnSuspiciousEvent(object sender, EventData e)
     {
         FireSusEvent(e);
-        Debug.Log("Sus seen");
+        //Debug.Log("Sus seen");
     }
 
     public void FireClueFound(EventData data)

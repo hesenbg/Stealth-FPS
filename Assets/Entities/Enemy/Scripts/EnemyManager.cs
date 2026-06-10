@@ -19,24 +19,6 @@ public class YourClassNameEditor : Editor
                 , EnemyManager.instance.range, EnemyManager.instance.FlankOriginSource.position);
         }
 
-        if (GUILayout.Button("Preview Flank Pos"))
-        {
-            if (t.FlankOriginSource != null && t.FlankThreatSource != null)
-            {
-                t.GizmoFlankViable = t.FindFlankPos(
-                    t.FlankOriginSource.position,
-                    t.FlankThreatSource.position,
-                    t.FlankRange,
-                    out t.GizmoFlankPos,
-                    t.BehindDistance
-                );
-            }
-            else
-            {
-                Debug.LogWarning("Assign FlankOriginSource and FlankThreatSource to preview.");
-            }
-        }
-
         if (GUILayout.Button("Preview Peek Spot"))
         {
             if (t.PeekThreatSource != null && t.PeekOriginSource != null)
@@ -63,7 +45,7 @@ public class YourClassNameEditor : Editor
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager instance;
-    EnemyEvents[] enemies;
+    [SerializeField] EnemyEvents[] enemies;
 
     [SerializeField] public List<Vector3> CoverPositions;
     [SerializeField] LayerMask CoverLayers;
@@ -83,8 +65,6 @@ public class EnemyManager : MonoBehaviour
     public float range;
 
     [SerializeField] float CloseDistance;
-    [SerializeField] float ModerateDistance;
-    [SerializeField] float FarDistance;
 
     [Header("Peek Gizmo Preview")]
     public Transform PeekThreatSource;
@@ -289,20 +269,6 @@ public class EnemyManager : MonoBehaviour
         return closest;
     }
 
-    private static float GetNavMeshDistance(Vector3 from, Vector3 to)
-    {
-        NavMeshPath path = new NavMeshPath();
-        if (!NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path))
-            return float.MaxValue;
-        if (path.status == NavMeshPathStatus.PathInvalid)
-            return float.MaxValue;
-
-        float distance = 0f;
-        Vector3[] corners = path.corners;
-        for (int i = 1; i < corners.Length; i++)
-            distance += Vector3.Distance(corners[i - 1], corners[i]);
-        return distance;
-    }
 
     public void AlertClosestOnSuspiciousEvent(Vector3 pos, HearableObject hearable)
     {
@@ -347,8 +313,45 @@ public class EnemyManager : MonoBehaviour
         NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path);
         return path.status == NavMeshPathStatus.PathComplete;
     }
+    private static float GetNavMeshDistance(Vector3 from, Vector3 to)
+    {
+        NavMeshPath path = new NavMeshPath();
+        if (!NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path))
+            return float.MaxValue;
+        if (path.status == NavMeshPathStatus.PathInvalid)
+            return float.MaxValue;
 
-    public void AlertAllies()
+        float distance = 0f;
+        Vector3[] corners = path.corners;
+        for (int i = 1; i < corners.Length; i++)
+            distance += Vector3.Distance(corners[i - 1], corners[i]);
+        return distance;
+    }
+
+    public void CallAlliesOnClue(Vector3 pos, int NumberOfAllies)
+    {
+        CheckEnemies();
+
+        List<(EnemyEvents e, float dist)> sorted = new();
+
+        foreach (EnemyEvents e in enemies)
+        {
+            if (e.Type == EnemyType.Protector) continue;
+
+            float dist = e.Type == EnemyType.Sniper
+                ? Vector3.Distance(e.transform.position, pos)
+                : GetNavMeshDistance(e.transform.position, pos);
+
+            sorted.Add((e, dist));
+        }
+
+        sorted.Sort((a, b) => a.dist.CompareTo(b.dist));
+
+        for (int i = 0; i < Mathf.Min(NumberOfAllies, sorted.Count); i++)
+            sorted[i].e.FireClueFound(new EventData(pos, GetDirection(pos)));
+    }
+
+    public void CallAlliesOnAlarm()
     {
         CheckEnemies();
         foreach (EnemyEvents e in enemies)
@@ -358,10 +361,6 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public void AlertClosestAllies(Vector3 pos, int NumberOfAllies)
-    {
-
-    }
 
     public EnemyAlarmState.AlarmedEnemy DefineAlarmedEnemy(Vector3 pos)
     {

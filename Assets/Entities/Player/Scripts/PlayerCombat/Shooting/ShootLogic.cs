@@ -93,8 +93,7 @@ public class ShootLogic : MonoBehaviour
             }
             if (hit.collider.CompareTag("Untagged"))
             {
-                data.Trace.ApplyRandomTexture();
-                Instantiate(data.Trace, hit.point + (hit.normal * 0.001f), Quaternion.FromToRotation(Vector3.up, hit.normal));
+                Instantiate(data.Trace, hit.point + (hit.normal * 0.001f),Quaternion.FromToRotation(Vector3.up, hit.normal)* Quaternion.Euler(new Vector3(90,0,0))); //
                 return;
             }
             if (hit.collider.CompareTag("Head"))
@@ -108,7 +107,7 @@ public class ShootLogic : MonoBehaviour
             {
                 EnemyHealthManager hm = hit.collider.GetComponentInParent<EnemyHealthManager>();
                 hm.ApplyDamage(data.BaseDamage,1f,hit.point);
-                hit.collider.GetComponentInParent<EnemyStateMachine>().context.events.FireClueFound(new EventData(EnemyManager.instance.GetDirection(transform.position)));
+                hit.collider.GetComponentInParent<EnemyStateMachine>().context.events.FireClueFound(new EventData(transform.position,-transform.forward));
                 return;
             }
         }

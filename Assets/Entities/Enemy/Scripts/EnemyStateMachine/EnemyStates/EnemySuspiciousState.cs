@@ -4,8 +4,7 @@ using System;
 public class EnemySuspiciousState : EnemyState
 {
     enum InvestigationPhase { Turning, Navigating, Investigating, Done }
-    public enum SuspiciousDegree { Glance, Investigate, Search } // based on how important is the suspicous event.
-                                                                 // if event is serious or enenmy saw multiple of them it goes to search state
+    public enum SuspiciousDegree { Glance, Investigate, Search }
     InvestigationPhase phase;
     SuspiciousDegree degree;
 
@@ -23,7 +22,8 @@ public class EnemySuspiciousState : EnemyState
         return NextState;
     }
 
-    public override void Init() {
+    public override void Init()
+    {
         degree = SuspiciousDegree.Glance;
     }
 
@@ -32,7 +32,7 @@ public class EnemySuspiciousState : EnemyState
         context.events.SuspiciosEvent += OnSuspiciousTargetOnSight;
         context.events.SearchEvent += OnClueFound;
         context.events.FightEvent += OnPlayerSeen;
-        context.events.AlarmEvent += Events_AlarmEvent;
+        context.events.AlarmEvent += OnAlarmEvent;
 
         NextState = EnemyStateMachine.EnemyState.Suspicious;
 
@@ -40,45 +40,47 @@ public class EnemySuspiciousState : EnemyState
         yield break;
     }
 
-    private void Events_AlarmEvent(object sender, EventData e)
+    private void OnAlarmEvent(object sender, EventData e)
     {
         NextState = EnemyStateMachine.EnemyState.Alarmed;
     }
 
     public override IEnumerator OnStateExit()
     {
+        context.agent.updateRotation = true;
+
         context.events.SuspiciosEvent -= OnSuspiciousTargetOnSight;
         context.events.SearchEvent -= OnClueFound;
         context.events.FightEvent -= OnPlayerSeen;
-        context.events.AlarmEvent -= Events_AlarmEvent;
+        context.events.AlarmEvent -= OnAlarmEvent;
 
         context.agent.ResetPath();
-
         context.enemyAIData.ResetData();
         yield break;
     }
 
     public override void OnStateUpdate()
     {
+        Debug.Log(phase);
+
         switch (phase)
         {
             case InvestigationPhase.Turning:
                 if (context.UpdateDirection(context.enemyAIData.last.Position))
                 {
+                    context.agent.updateRotation = true;
                     phase = InvestigationPhase.Navigating;
-                    context.animationLogic.PlayIdle();
-                }  
-                break;                           
+                }
+                break;
             case InvestigationPhase.Navigating:
                 context.agent.SetDestination(context.enemyAIData.last.Position);
-                context.animationLogic.PlayWalk();
                 if (context.CheckArrived(context.enemyAIData.last.Position, 0.8f))
                 {
+                    context.agent.updateRotation = false;
                     phase = InvestigationPhase.Investigating;
                     context.coreSFM.StartCoroutine(Investigate());
                 }
                 break;
-
             case InvestigationPhase.Investigating:
                 context.ResetVelocity();
                 break;
@@ -90,12 +92,13 @@ public class EnemySuspiciousState : EnemyState
 
     IEnumerator Investigate()
     {
-        context.animationLogic.PlayIdleLookAround();
-        yield return new WaitForSeconds(context.enemyAIData.WonderTimer);
-        context.animationLogic.PlayWalk();
+        yield return context.coreSFM.StartCoroutine(context.LookAround(context.parent.transform.forward,
+            context.enemyAIData.WonderTimer,
+            45f,
+            context.enemyAIData.InterplationSpeed));
         phase = InvestigationPhase.Done;
     }
-    
+
     private void ResetState()
     {
         phase = InvestigationPhase.Turning;
@@ -110,14 +113,15 @@ public class EnemySuspiciousState : EnemyState
 
     private void OnPlayerSeen(object sender, EventData e)
     {
-        NextState = EnemyStateMachine.EnemyState.Fight;
+        NextState = EnemyStateMachine.EnemyState.Alarmed;
         EnemyManager.instance.LKP = e.GetPos();
         context.events.FireAlarm(e);
-        EnemyManager.instance.AlertAllies();
+        EnemyManager.instance.CallAlliesOnAlarm();
     }
 
-    private void OnClueFound(object sender, EventArgs e)
+    private void OnClueFound(object sender, EventData e)
     {
         NextState = EnemyStateMachine.EnemyState.Search;
+        context.enemyAIData.CluePosition = e.GetPos();
     }
 }

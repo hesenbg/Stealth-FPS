@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using static AwarenessFSM;
+using static EnemyAlarmState;
+
 [Serializable]
 
 public struct SuspiciousPoint
@@ -51,9 +53,18 @@ public class EnemyAIData : ScriptableObject
     public float TimeBetweenPeeks = 1.25f;
     public float LookAroundAngle = 50f;
 
+    public AlarmedEnemy AlarmedEnemy = AlarmedEnemy.Direct;
+
+    public bool IsHiding = false;
+    [Header("Fight State")]
+    public Vector3 CoverPos;
+    public Vector3 PeekDirection;
+    public PeekEnemy peekPhase;
+
+
     [Header("Search State")]
     public Vector3 CluePosition;
-
+        
     public float InterplationSpeed;
 
     [Header("Communication")]

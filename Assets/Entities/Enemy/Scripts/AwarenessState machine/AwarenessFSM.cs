@@ -66,8 +66,17 @@ public class AwarenessFSM : MonoBehaviour
 
     [SerializeField] EnemyUI UI;
 
-    EnemyAwarnesParams Current;
+    public EnemyAwarnesParams CurrentParams;
     EnemyStateMachine.EnemyState currentEnemyState;
+
+    public enum AwarnessState {Idle, Suspicious, Alarmed}
+
+    public AwarnessState CurrentAwarnessState= AwarnessState.Idle;
+
+    public bool IsIdle()
+    {
+        return currentEnemyState == EnemyStateMachine.EnemyState.Idle;
+    }
 
     private void Start()
     {
@@ -90,31 +99,48 @@ public class AwarenessFSM : MonoBehaviour
         if (UI.IsEffected)
             return;
 
-        if (EnemyAwarnesParams.Difference(data.CurrentAwarenessState, Current) <= SnapAccuracy)
-            data.CurrentAwarenessState = Current;
+        if (EnemyAwarnesParams.Difference(data.CurrentAwarenessState, CurrentParams) <= SnapAccuracy)
+            data.CurrentAwarenessState = CurrentParams;
         else
             data.CurrentAwarenessState = EnemyAwarnesParams.Lerp(
-                data.CurrentAwarenessState, Current, Time.deltaTime * TransitionSpeed);
+                data.CurrentAwarenessState, CurrentParams, Time.deltaTime * TransitionSpeed);
     }
 
     private void UpdateStates()
     {
-
         switch (currentEnemyState)
         {
             case EnemyStateMachine.EnemyState.Idle:
-                Current = Idle;
-                UI.IdleUI();
+                CurrentAwarnessState = AwarnessState.Idle;
                 break;
+
             case EnemyStateMachine.EnemyState.Suspicious:
-                Current = Suspicious;
-                UI.SuspiciousUI();
+                CurrentAwarnessState = AwarnessState.Suspicious;
                 break;
+
             case EnemyStateMachine.EnemyState.Alarmed:
             case EnemyStateMachine.EnemyState.Fight:
             case EnemyStateMachine.EnemyState.Search:
+                CurrentAwarnessState = AwarnessState.Alarmed;
+                break;
+        }
+
+
+        switch (CurrentAwarnessState)
+        {
+            case AwarnessState.Idle:
+                CurrentParams = Idle;
+                UI.IdleUI();
+                break;
+
+            case AwarnessState.Suspicious:
+                CurrentParams = Suspicious;
+                UI.SuspiciousUI();
+                break;
+
+            case AwarnessState.Alarmed:
                 UI.AlarmedUI();
-                Current = Alarmed;
+                CurrentParams = Alarmed;
                 break;
         }
     }

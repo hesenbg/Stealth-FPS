@@ -65,6 +65,6 @@ public class SniperSuspiciousState : SniperState
     {
         EnemyManager.instance.LKP = e.GetPos() ;
         NextState = SniperStateMachine.SniperState.Fight;
-        EnemyManager.instance.AlertAllies();
+        EnemyManager.instance.CallAlliesOnAlarm();
     }
 }

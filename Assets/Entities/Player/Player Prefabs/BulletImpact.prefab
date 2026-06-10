@@ -136,4 +136,4 @@ MonoBehaviour:
   - {fileID: 2800000, guid: a14f4ec1723669744a7f07dc99c0adab, type: 3}
   - {fileID: 2800000, guid: 27e51a01ab6d4be4fabe9be54d8878b5, type: 3}
   Hole: {fileID: 2045830702810343443}
-  BulletHoleLDuration: 7
+  BulletHoleLDuration: 1.2312312e+10
