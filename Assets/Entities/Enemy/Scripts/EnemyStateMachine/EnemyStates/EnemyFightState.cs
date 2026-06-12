@@ -75,9 +75,9 @@ public class EnemyFightState : EnemyState
     {
         if (context.enemyCombat.CanShoot())
         {
-            context.enemyCombat.Shoot((PlayerPos - context.parent.transform.position));
+            context.enemyCombat.Shoot(EnemyManager.instance.LKP);
         }
-    }
+    }   
 
     private void SampleRushPositions()
     {
@@ -111,8 +111,7 @@ public class EnemyFightState : EnemyState
     
     private void UpdateDirectRusher()
     {
-        if (rushCoroutine == null)
-            rushCoroutine = context.coreSFM.StartCoroutine(RushRoutine());
+
     }
 
     private IEnumerator RushRoutine()
@@ -145,8 +144,8 @@ public class EnemyFightState : EnemyState
     private IEnumerator PeekRoutine()
     {
         context.enemyAIData.peekPhase = PeekEnemy.Cover;
-        context.agent.SetDestination(context.enemyAIData.CoverPos);
-        yield return new WaitUntil(() => context.CheckArrived(context.enemyAIData.CoverPos, 0.1f));
+        context.agent.SetDestination(context.enemyAIData.PeekData.CoverPos);
+        yield return new WaitUntil(() => context.CheckArrived(context.enemyAIData.PeekData.CoverPos, 0.1f));
         while (true)
         {
             context.enemyAIData.peekPhase = PeekEnemy.Cover;
@@ -154,13 +153,13 @@ public class EnemyFightState : EnemyState
             yield return new WaitForSeconds(context.enemyAIData.TimeBetweenPeeks);
             context.enemyAIData.peekPhase = PeekEnemy.Peek;
             context.enemyAIData.IsHiding = false;
-            Vector3 peekPos = context.parent.transform.position + context.enemyAIData.PeekDirection;
+            Vector3 peekPos = context.parent.transform.position + context.enemyAIData.PeekData.PeekDirection;
             context.agent.SetDestination(peekPos);
             yield return new WaitForSeconds(context.enemyAIData.PeekDuration);
             context.enemyAIData.peekPhase = PeekEnemy.Cover;
             context.enemyAIData.IsHiding = true;
-            context.agent.SetDestination(context.enemyAIData.CoverPos);
-            yield return new WaitUntil(() => context.CheckArrived(context.enemyAIData.CoverPos, 0.1f));
+            context.agent.SetDestination(context.enemyAIData.PeekData.CoverPos);
+            yield return new WaitUntil(() => context.CheckArrived(context.enemyAIData.PeekData.CoverPos, 0.1f));
         }
     }
 }

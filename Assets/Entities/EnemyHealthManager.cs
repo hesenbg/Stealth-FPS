@@ -20,15 +20,12 @@ public class EnemyHealthManager : HealthManager
     protected override void Start()
     {
         if (RagdollObject != null)
+        {
             ragdoll = RagdollObject.GetComponent<EnemyRagdoll>();
+        }
         base.Start();
     }
 
-    public override void OnDeath()
-    {
-        SpawnRagdoll();
-        Destroy(CoreObjectToBeDestroyed);
-    }
 
     public override void OnDamage(float damage, Vector3 pos)
     {
@@ -44,21 +41,31 @@ public class EnemyHealthManager : HealthManager
         EnemyVisualAudios.instance.PlayHeadHit(transform.position);
     }
 
-    public void GetKnifeDamage()
+    public override void ApplyKnifeDamage()
     {
         hasKnifed = true;
-        if (ragdoll != null)
-            ragdoll.hasKnifed = hasKnifed;
+
+        ragdoll.hasKnifed = hasKnifed;
+
         ApplyLethalDamage();
     }
 
-    private void SpawnRagdoll()
+    public override void OnDeath()
     {
-        if (RagdollObject == null || OriginalHips == null) return;
+        EnemyRagdoll spawnedRagdoll = SpawnRagdoll();
+        if (spawnedRagdoll != null)
+            spawnedRagdoll.hasKnifed = hasKnifed;
+        Destroy(CoreObjectToBeDestroyed);
+    }
+
+    private EnemyRagdoll SpawnRagdoll()
+    {
+        if (RagdollObject == null || OriginalHips == null) return null;
         GameObject spawnedRagdoll = Instantiate(RagdollObject, transform.position, transform.rotation);
         EnemyRagdoll ragdollScript = spawnedRagdoll.GetComponent<EnemyRagdoll>();
         if (ragdollScript != null)
             ragdollScript.MatchRagdollToAnimation(OriginalHips);
+        return ragdollScript;
     }
 
     public override void ApplyFlashEffect(float EffectDuration, Vector3 Direction) 

@@ -45,7 +45,7 @@ public class EnemyStateMachineContext
 
         if (Distance < Accuracy) return true; 
 
-        if (Physics.Raycast(parent.transform.position, Direction, out RaycastHit hit, Distance))
+        if (Physics.Raycast(parent.transform.position, Direction, out RaycastHit hit, enemyAIData.CurrentAwarenessState.SightRange*0.75f))
         {
             return Vector3.Distance(hit.point, TargetPos) < Accuracy; 
         }

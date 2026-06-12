@@ -1,12 +1,12 @@
+using System;
 using System.Collections;
 using UnityEngine;
-using System;
 public class EnemySuspiciousState : EnemyState
 {
     enum InvestigationPhase { Turning, Navigating, Investigating, Done }
     public enum SuspiciousDegree { Glance, Investigate, Search }
     InvestigationPhase phase;
-    SuspiciousDegree degree;
+    SuspiciousDegree degree = SuspiciousDegree.Glance;
 
     EnemyStateMachine.EnemyState NextState;
 
@@ -36,9 +36,12 @@ public class EnemySuspiciousState : EnemyState
 
         NextState = EnemyStateMachine.EnemyState.Suspicious;
 
+        degree = SuspiciousDegree.Glance;
+
         ResetState();
         yield break;
     }
+
 
     private void OnAlarmEvent(object sender, EventData e)
     {
@@ -48,6 +51,8 @@ public class EnemySuspiciousState : EnemyState
     public override IEnumerator OnStateExit()
     {
         context.agent.updateRotation = true;
+
+        degree = SuspiciousDegree.Glance;
 
         context.events.SuspiciosEvent -= OnSuspiciousTargetOnSight;
         context.events.SearchEvent -= OnClueFound;
@@ -61,7 +66,10 @@ public class EnemySuspiciousState : EnemyState
 
     public override void OnStateUpdate()
     {
-        Debug.Log(phase);
+        if(degree == SuspiciousDegree.Search)
+        {
+            EnemyManager.instance.CallAlliesOnClue(context.enemyAIData.CluePosition, 2, context.events);
+        }
 
         switch (phase)
         {
@@ -109,6 +117,8 @@ public class EnemySuspiciousState : EnemyState
     private void OnSuspiciousTargetOnSight(object sender, EventArgs e)
     {
         ResetState();
+
+        degree = (SuspiciousDegree)Mathf.Min((int)degree + 1, (int)SuspiciousDegree.Search);
     }
 
     private void OnPlayerSeen(object sender, EventData e)

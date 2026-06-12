@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SniperData
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAIData
   CurrentAwarenessState:
-    SightRange: 10
+    SightRange: 15.32
     AwarenessSpeed: 6
     Angle: 55
     AllyCallSpeed: 1
@@ -30,16 +30,19 @@ MonoBehaviour:
   - Position: {x: 0.2, y: 0, z: 5.97}
     WaitTime: 0
   IdleSpeed: 1
-  CurrentPatrolPosIndex: 1
+  CurrentPatrolPosIndex: 0
   WonderTimer: 4.5
   last:
-    Position: {x: -13.49, y: 1.5000001, z: -9.08}
+    Position: {x: -8.58, y: 1.5000001, z: -5.61}
     IsActive: 0
   LKPchangeTolerance: 3
   PeekDuration: 1.5
   TimeBetweenPeeks: 1.25
   LookAroundAngle: 50
-  CluePosition: {x: -6.302481, y: 0.7818117, z: 5.3827825}
+  AlarmedEnemy: 0
+  IsHiding: 0
+  peekPhase: 0
+  CluePosition: {x: -5.3806887, y: 0.69091994, z: -1.1413507}
   InterplationSpeed: 3
   AllyCallDelay: 1
   CalledAllyNumber: 2

@@ -61,33 +61,42 @@ public class EnemyEvents : MonoBehaviour
         return null;
     }
 
+
+
     private void OnTargetSpotted(object sender, EventData e)
     {
-        FirePlayerSeen(e);
         //Debug.Log("full seen");
+        FirePlayerSeen(e);
     }
 
     private void OnAlarmEvent(object sender, EventData e)
     {
-        FireAlarm(e);
         //Debug.Log("Alarm event");
+        FireAlarm(e);
     }
 
     private void OnClueFound(object sender, EventData e)
     {
+        //Debug.Log("clue seen");
         FireClueFound(e);
-        ///Debug.Log("clue seen");
     }
 
     private void OnSuspiciousEvent(object sender, EventData e)
     {
-        FireSusEvent(e);
         //Debug.Log("Sus seen");
+        FireSusEvent(e);
     }
 
     public void FireClueFound(EventData data)
     {
         //Debug.Log("Firing Clue Found Event at: " );
+        //SearchEvent?.Invoke(this, data);
+
+        EnemyManager.instance.CallAlliesOnClue(data.GetPos(), 2, this);
+    }
+
+    public void FireSearchState(EventData data)
+    {
         SearchEvent?.Invoke(this, data);
     }
 

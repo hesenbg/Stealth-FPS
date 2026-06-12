@@ -52,6 +52,11 @@ public abstract class HealthManager : MonoBehaviour
         return false;
     }
 
+    virtual public void ApplyKnifeDamage()
+    {
+
+    }
+
     abstract public void OnDeath();
 
     abstract public void OnDamage(float Damage,Vector3 pos);

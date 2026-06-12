@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.AI;
 using static EnemyEvents;
 
-
 [CustomEditor(typeof(EnemyManager))]
 public class YourClassNameEditor : Editor
 {
@@ -31,8 +30,7 @@ public class YourClassNameEditor : Editor
                     t.PeekThreatSource.position,
                     t.PeekOriginSource.position,
                     t.PeekRange,
-                    out t.GizmoPeekPos,
-                    out t.GizmoPeekDirection
+                    out t.PeekData
                 );
             }
             else
@@ -58,8 +56,6 @@ public class EnemyManager : MonoBehaviour
 
     public Vector3 LKP;
     public bool IsPlayerInSight = false;
-    
-
 
     public int numberofcovers;
     public float range;
@@ -71,8 +67,7 @@ public class EnemyManager : MonoBehaviour
     public Transform PeekOriginSource;
     public float PeekRange = 10f;
 
-    [HideInInspector] public Vector3 GizmoPeekPos;
-    [HideInInspector] public Vector3 GizmoPeekDirection;
+    [HideInInspector] public PeekData PeekData;
     [HideInInspector] public bool GizmoPeekAvalibe;
     [HideInInspector] public Vector3 GizmoBackwardsFromPlayer;
     [HideInInspector] public Vector3 GizmoPeekSide;
@@ -104,10 +99,13 @@ public class EnemyManager : MonoBehaviour
         enemies = GetComponentsInChildren<EnemyEvents>();
     }
 
-    public bool FindPeekSpot(Vector3 ThreatPos, Vector3 OriginPos, float Range, out Vector3 PeekPos, out Vector3 PeekDirection)
+    public bool FindPeekSpot(Vector3 ThreatPos, Vector3 OriginPos, float Range, out PeekData peekData)
     {
-        PeekPos = Vector3.zero;
-        PeekDirection = Vector3.zero;
+        Vector3 PeekPos = Vector3.zero;
+        Vector3 PeekDirection = Vector3.zero;
+
+        peekData = new PeekData();
+
         bool Avalibe = false;
 
         GameObject Cover = null;
@@ -190,6 +188,8 @@ public class EnemyManager : MonoBehaviour
 
         Avalibe = true;
 
+        peekData = new PeekData(PeekPos, PeekDirection);
+
         return Avalibe;
     }
 
@@ -244,6 +244,7 @@ public class EnemyManager : MonoBehaviour
         }
         return closest;
     }
+
 
     private EnemyEvents CheckEnemyCloseAngle(Vector3 pos, Vector3 dir)
     {
@@ -328,7 +329,8 @@ public class EnemyManager : MonoBehaviour
         return distance;
     }
 
-    public void CallAlliesOnClue(Vector3 pos, int NumberOfAllies)
+
+    public void CallAlliesOnClue(Vector3 pos, int NumberOfAllies, EnemyEvents Sender)
     {
         CheckEnemies();
 
@@ -336,6 +338,8 @@ public class EnemyManager : MonoBehaviour
 
         foreach (EnemyEvents e in enemies)
         {
+            if (e == Sender || e.Type == EnemyType.Protector) continue;
+
             if (e.Type == EnemyType.Protector) continue;
 
             float dist = e.Type == EnemyType.Sniper
@@ -345,10 +349,14 @@ public class EnemyManager : MonoBehaviour
             sorted.Add((e, dist));
         }
 
+        EventData data = new EventData(pos, GetDirection(pos));
+
         sorted.Sort((a, b) => a.dist.CompareTo(b.dist));
 
         for (int i = 0; i < Mathf.Min(NumberOfAllies, sorted.Count); i++)
-            sorted[i].e.FireClueFound(new EventData(pos, GetDirection(pos)));
+            sorted[i].e.FireSearchState(data);
+
+        Sender.FireSearchState(data);
     }
 
     public void CallAlliesOnAlarm()
@@ -359,6 +367,26 @@ public class EnemyManager : MonoBehaviour
             if (e.Type == EnemyType.Protector) continue;
             e.FireAlarm(new EventData(LKP, GetDirection(LKP)));
         }
+    }
+
+    public Vector3 GetPosAroundPlayerForDirect()
+    {
+        float length = 5f;
+        NavMeshHit hit;
+        int maxAttempts = 10;
+
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            Vector3 randPos = LKP + new Vector3(
+                Random.Range(-length, length),
+                0f,
+                Random.Range(-length, length)
+            );
+            if (NavMesh.SamplePosition(randPos, out hit, 1f, NavMesh.AllAreas))
+                return hit.position;
+        }
+
+        return LKP;
     }
 
 
@@ -387,14 +415,14 @@ public class EnemyManager : MonoBehaviour
         if (GizmoPeekAvalibe)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(GizmoPeekPos, 0.3f);
-            Gizmos.DrawRay(GizmoPeekPos, GizmoPeekDirection.normalized);
+            Gizmos.DrawWireSphere(PeekData.CoverPos, 0.3f);
+            Gizmos.DrawRay(PeekData.CoverPos, PeekData.PeekDirection.normalized);
         }
         else
         {
             Gizmos.color = Color.red;
-            if (GizmoPeekPos != Vector3.zero)
-                Gizmos.DrawWireSphere(GizmoPeekPos, 0.3f);
+            if (PeekData.CoverPos != Vector3.zero)
+                Gizmos.DrawWireSphere(PeekData.CoverPos, 0.3f);
         }
     }
 }

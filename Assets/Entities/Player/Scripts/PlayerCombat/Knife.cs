@@ -38,7 +38,7 @@ public class Knife : MonoBehaviour
             if (HitInfo.collider.CompareTag("Head") || HitInfo.collider.CompareTag("Body"))
             {
                 PlayerSoundManager.instance.PlayKnifeStab(HitInfo.point);
-                HitInfo.collider.gameObject.GetComponentInParent<HealthManager>().ApplyLethalDamage();
+                HitInfo.collider.gameObject.GetComponentInParent<HealthManager>().ApplyKnifeDamage();
                 EnemyVisualAudios.instance.PlayBloodVFX(HitInfo.point);
             }
             else

@@ -42,7 +42,7 @@ public class SniperFightState : SniperState
         context.UpdateRotation( DirectionToPlayer , 6f);
         if (context.GetEnemyCombatLogic.CanShoot())
         {
-            context.GetEnemyCombatLogic.Shoot(DirectionToPlayer);
+            context.GetEnemyCombatLogic.Shoot(EnemyManager.instance.LKP);
         }
     }
 }

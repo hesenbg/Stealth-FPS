@@ -28,6 +28,18 @@ public struct PatrolPoint
     public float WaitTime;
 }
 
+public struct PeekData
+{
+    public PeekData(Vector3 coverPos, Vector3 peekDirection)
+    {
+        CoverPos = coverPos;
+        PeekDirection = peekDirection;
+    }
+
+    public Vector3 CoverPos;
+    public Vector3 PeekDirection;
+}
+
 [CreateAssetMenu(menuName = "EnemyStateMachine/Datas")]
 public class EnemyAIData : ScriptableObject
 {
@@ -57,8 +69,7 @@ public class EnemyAIData : ScriptableObject
 
     public bool IsHiding = false;
     [Header("Fight State")]
-    public Vector3 CoverPos;
-    public Vector3 PeekDirection;
+    public PeekData PeekData;
     public PeekEnemy peekPhase;
 
 

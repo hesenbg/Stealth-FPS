@@ -7,6 +7,9 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
     public enum EnemyState { Idle, Suspicious, Alarmed, Search, Fight }
     public EnemyStateMachineContext context {  get; private set; }
 
+    [SerializeField] EnemyAlarmState.AlarmedEnemy Alarmed;
+
+
     [SerializeField] VisionCone EnemySight;
 
     [SerializeField] EnemyHealthManager EnemyHealthManager;
@@ -34,6 +37,8 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
         agent.speed = data.CurrentAwarenessState.MovementSpeed;
 
         current = CurrentState.StateKey;
+
+        Alarmed = context.enemyAIData.AlarmedEnemy;
     }
 
     private void InitlizeStates()

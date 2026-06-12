@@ -95,7 +95,6 @@ public class EnemyIdleState : EnemyState
         }
     }
 
-
     IEnumerator CheckAround(float waitTime)
     {
         context.agent.ResetPath();
@@ -116,7 +115,7 @@ public class EnemyIdleState : EnemyState
         NextState = EnemyStateMachine.EnemyState.Search;
 
         context.enemyAIData.CluePosition = e.GetPos();
-
-        EnemyManager.instance.CallAlliesOnClue(e.GetPos(), 2);
     }
 }
+//Debug.Log(sorted[i].e.GetComponentInParent<EnemyStateMachine>().name);
+//sorted[i].e.FireClueFound(new EventData(pos, GetDirection(pos)));

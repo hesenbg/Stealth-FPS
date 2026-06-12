@@ -28,17 +28,11 @@ public class EnemyRagdoll : MonoBehaviour
         }
     }
 
-    private void Awake()
-    {
-        hasKnifed = false;
-    }
-
     private bool hasCleaned = false; // Guard to run logic only once
     public bool hasKnifed = false;
 
     private void Update()
     {
-        //Debug.Log(CurrRagdollDisableTimer);
         if (CurrRagdollDisableTimer < RagdollDisableTimer )
         {
             CurrRagdollDisableTimer += Time.deltaTime;
@@ -54,6 +48,7 @@ public class EnemyRagdoll : MonoBehaviour
 
     void Alert()
     {
+        Debug.Log(hasKnifed);
         if (!hasKnifed)
         {
             EnemyManager.instance.AlertClosestOnSuspiciousEvent(transform.position,HearableObject);
