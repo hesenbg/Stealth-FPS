@@ -48,7 +48,6 @@ public class InputManager : MonoBehaviour
 
     private void Start()
     {
-        playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
 
         playerObservable = GetComponent<ObservableObject>();
 
@@ -182,8 +181,6 @@ public class InputManager : MonoBehaviour
             if (!playerShootLogic.CanShoot())
                 return;
 
-            playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
-
             if (playerMovementLogic.CurrentMovementState == MovementLogic.MovementState.Run)
             {
                 playerAnimationLogic.Animator.SetTrigger("RunShoot");
@@ -199,7 +196,6 @@ public class InputManager : MonoBehaviour
     {
         if (Input.GetKeyDown(ReloadKey) && CurrentGunState == GunState.Idle && playerShootLogic.CanReload())
         {
-            playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
             CurrentGunState = GunState.Reload;
             StartCoroutine(playerShootLogic.Reload());
             playerAnimationLogic.PlayReloadAnimation(playerShootLogic.CurrentMagazineAmmo == 0);
@@ -264,7 +260,6 @@ public class InputManager : MonoBehaviour
 
     void OnReloadEnd(object sender, EventArgs a)
     {
-        playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
         CurrentGunState = GunState.Idle;
     }
 

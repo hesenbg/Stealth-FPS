@@ -32,6 +32,10 @@ public class ThrowAbleLogic : MonoBehaviour
         };
     }
 
+    public void IncreaseSmoke(int amount) => NadeCount[2] += amount;
+    public void IncreaseFlash(int amount) => NadeCount[1] += amount;
+    public void IncreaseDistraction(int amount) => NadeCount[3] += amount;
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1)) CurrentIndex = 1;

@@ -52,6 +52,11 @@ public abstract class HealthManager : MonoBehaviour
         return false;
     }
 
+    public void IncreaseHealth(float Health)
+    {
+        CurrentHealth = Mathf.Clamp(CurrentHealth + Health, 0f, MaxHealth);
+    }
+
     virtual public void ApplyKnifeDamage()
     {
 

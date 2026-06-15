@@ -10,7 +10,7 @@ public class PlayerComponents : MonoBehaviour
     [SerializeField] private MovementLogic movement;
     [SerializeField] private AnimationLogic animationLogic;
     [SerializeField] private ShootLogic shootLogic;
-    [SerializeField] private EnemyHealthManager healthManager;
+    [SerializeField] private HealthManager healthManager;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private ThrowAbleLogic throwAbleLogic;
     [SerializeField] public GameObject Player;
@@ -32,7 +32,7 @@ public class PlayerComponents : MonoBehaviour
     public WeaponWallBlock WallBlock => wallBlock;
     public AnimationLogic AnimationLogic => animationLogic;
     public ShootLogic ShootLogic => shootLogic;
-    public EnemyHealthManager HealthManager => healthManager;
+    public HealthManager HealthManager => healthManager;
     public Rig CombatAnimation => combatAnimation;
     public Camera MainCamera => playerMainCamera;
     public WeaponWallBlock PullLogic => WallBlock;

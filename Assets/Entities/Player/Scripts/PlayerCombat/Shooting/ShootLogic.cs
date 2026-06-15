@@ -42,6 +42,8 @@ public class ShootLogic : MonoBehaviour
             Time.deltaTime * data.RecoilRecoverySpeed);
 
         HandleHeatDecay();
+
+        PlayerComponents.Instance.PlayerUI.UpdateGunUI(CurrentMagazineAmmo, CurrentTotalAmmo);
     }
 
     private void HandleHeatDecay()
@@ -155,6 +157,11 @@ public class ShootLogic : MonoBehaviour
     }
 
     int toLoad;
+
+    public void AddAmmo(int ammo)
+    {
+        CurrentTotalAmmo += ammo;
+    }
 
     public IEnumerator Reload()
     {

@@ -15,8 +15,8 @@ MonoBehaviour:
   shootDelay: 0.4
   trace: {fileID: 442907835465362069, guid: a0cc2fe8927ef4748949a6fb1ea926e1, type: 3}
   adsShootSpeed: 0.8
-  magazine: 240
-  totalAmmo: 240
+  magazine: 15
+  totalAmmo: 5
   reloadTime: 1.4
   baseDamage: 40
   hsMultipiler: 3
