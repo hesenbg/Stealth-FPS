@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class LootPickup : MonoBehaviour
 {
     public enum PickUpType { Ammo, Health , FlashNade, SmokeNade, DistractionNade}

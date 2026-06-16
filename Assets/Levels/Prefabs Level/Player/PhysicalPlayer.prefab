@@ -12182,7 +12182,7 @@ MonoBehaviour:
   movement: {fileID: 9184671871183042309}
   animationLogic: {fileID: 6182668999442134669}
   shootLogic: {fileID: 1355198074880019757}
-  healthManager: {fileID: 0}
+  healthManager: {fileID: 1732199658908599666}
   inputManager: {fileID: 3604671432317506776}
   throwAbleLogic: {fileID: 2779419198043831232}
   Player: {fileID: 6284047194229294163}

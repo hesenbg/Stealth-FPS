@@ -24,6 +24,20 @@ MonoBehaviour:
   IsProtector: 0
   PatrolPositions:
   - Position: {x: 0, y: 0, z: 0}
+    WaitTime: 3
+  - Position: {x: 0, y: 0, z: 3.37}
+    WaitTime: 0
+  - Position: {x: -0.82, y: 0, z: 8.81}
+    WaitTime: 5
+  - Position: {x: -2.43, y: 0, z: 9}
+    WaitTime: 0
+  - Position: {x: -5.23, y: 0, z: 9.4}
+    WaitTime: 0
+  - Position: {x: -5.03, y: 0, z: 6.91}
+    WaitTime: 0
+  - Position: {x: -5.03, y: 0, z: 2.51}
+    WaitTime: 0
+  - Position: {x: -3.2, y: 0, z: 0.14}
     WaitTime: 0
   IdleSpeed: 0
   CurrentPatrolPosIndex: 0
@@ -35,6 +49,9 @@ MonoBehaviour:
   PeekDuration: 1.5
   TimeBetweenPeeks: 1.25
   LookAroundAngle: 50
+  AlarmedEnemy: 0
+  IsHiding: 0
+  peekPhase: 0
   CluePosition: {x: 0, y: 0, z: 0}
   InterplationSpeed: 5
   AllyCallDelay: 0

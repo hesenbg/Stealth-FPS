@@ -12,6 +12,13 @@ public class CameraController : MonoBehaviour
     float Xrotation;
     Vector3 TargetLocation;
 
+    Rigidbody rb;
+
+    private void Start()
+    {
+        rb = PlayerTransform.gameObject.GetComponent<Rigidbody>();
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(toggleLookKey))
@@ -44,6 +51,7 @@ public class CameraController : MonoBehaviour
     void UpdateRotation()
     {
         PlayerTransform.Rotate(Vector3.up * MouseX);
+
         Xrotation -= MouseY;
         Xrotation = Mathf.Clamp(Xrotation, -90f, 90f);
         TargetLocation.x = Xrotation;

@@ -39,9 +39,9 @@ public class EnemySuspiciousState : EnemyState
         degree = SuspiciousDegree.Glance;
 
         ResetState();
+
         yield break;
     }
-
 
     private void OnAlarmEvent(object sender, EventData e)
     {
