@@ -48,7 +48,6 @@ public class EnemyRagdoll : MonoBehaviour
 
     void Alert()
     {
-        Debug.Log(hasKnifed);
         if (!hasKnifed)
         {
             EnemyManager.instance.AlertClosestOnSuspiciousEvent(transform.position,HearableObject);

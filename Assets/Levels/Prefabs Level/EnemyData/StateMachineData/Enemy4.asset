@@ -20,7 +20,7 @@ MonoBehaviour:
     AllyCallNumber: 2.9969554
     AudioDetetctionRange: 4.9908676
     MovementSpeed: 1.4975648
-  IsStill: 1
+  IsStill: 0
   IsProtector: 0
   PatrolPositions:
   - Position: {x: 0, y: 0, z: 0}
@@ -41,8 +41,6 @@ MonoBehaviour:
   LookAroundAngle: 50
   AlarmedEnemy: 0
   IsHiding: 0
-  CoverPos: {x: -5.5266786, y: 0.5833334, z: -5.7096868}
-  PeekDirection: {x: -0.60693425, y: 0, z: 0.51128393}
   peekPhase: 1
   CluePosition: {x: 0, y: 0, z: 0}
   InterplationSpeed: 8

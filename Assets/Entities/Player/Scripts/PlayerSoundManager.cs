@@ -27,6 +27,8 @@ public class PlayerSoundManager : MonoBehaviour
     [SerializeField] private AudioClip KnifeSlash;
     [SerializeField] private AudioClip KnifeStab;
 
+    [SerializeField] private AudioClip Healing;
+
     [Header("Step Settings")]
     [SerializeField] private float walkStepInterval = 0.5f;
     [SerializeField] private float runStepInterval = 0.3f;
@@ -119,6 +121,11 @@ public class PlayerSoundManager : MonoBehaviour
     public void PlayLand()
     {
         playerAudioSource.PlayOneShot(Land,LandVolume);
+    }
+
+    public void PlayHeal()
+    {
+        playerAudioSource.PlayOneShot(Healing, 1f);
     }
 
     void HandleFootsteps(float speed, float baseInterval, HearableObject hearable)

@@ -1,5 +1,7 @@
 using UnityEngine;
-public class HearableObject : MonoBehaviour, IHearable
+public enum HearableType { Weak, Moderate, Strong }
+
+public class HearableObject : MonoBehaviour
 {
     [SerializeField] HearableType type;
     [SerializeField] float range;

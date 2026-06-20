@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+public enum ObservableType { Hostile, Clue }
 
 public class ObservableObject : MonoBehaviour
 {
+
+
     public Transform Transform { get; private set; }
     public ObservableType Type { get; private set; }
     public int Priority { get;private set; }

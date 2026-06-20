@@ -36,6 +36,8 @@ public class InputManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private InputType adsInputType = InputType.Hold;
+    [SerializeField] private KeyCode PickUpKey;
+    [SerializeField] private KeyCode HealKey;
 
     [Header("Combat Variables")]
     public GunState CurrentGunState;
@@ -56,9 +58,13 @@ public class InputManager : MonoBehaviour
 
         TriggerState += OnTriggerState;
 
+        playerAnimationLogic.Heal += OnHeal;
+
         lastMovementState = playerMovementLogic.CurrentMovementState;
         lastGunState = CurrentGunState;
     }
+
+
 
     private void FixedUpdate()
     {
@@ -77,6 +83,43 @@ public class InputManager : MonoBehaviour
         UpdateMovement(); 
         UpdateCombat();
         FireTriggerState();
+
+        PickUpItems();
+
+        ApplyHeal();
+    }
+
+    private void ApplyHeal()
+    {
+        if (Input.GetKeyDown(HealKey) && CurrentGunState == GunState.Idle && LootableItemInventory.Instance.HealSynringeCount>0)
+        {
+            playerAnimationLogic.PlayHealAnimation();
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying) return;
+       Gizmos.color = Color.green;
+       Gizmos.DrawRay(PlayerComponents.Instance.MainCamera.transform.position, PlayerComponents.Instance.MainCamera.transform.forward*1.5f);
+    }
+
+
+    private void PickUpItems()
+    {
+        if (Input.GetKeyDown(PickUpKey))
+        {
+            if(Physics.Raycast(PlayerComponents.Instance.MainCamera.transform.position, PlayerComponents.Instance.MainCamera.transform.forward,out RaycastHit hit, 1.5f))
+            {
+
+                Debug.Log(hit.collider.name);
+
+                if(hit.collider.gameObject.TryGetComponent<Interactable>(out Interactable interact))
+                {
+                    interact.OnInteract();
+                }
+            }
+        }
     }
 
     void InitilizeCombatVariables()
@@ -246,6 +289,12 @@ public class InputManager : MonoBehaviour
             float controlValue = Input.GetKey(KeyCode.LeftControl) ? 0f : 1f;
             playerAnimationLogic.PlayGrenedeAnimation(controlValue);
         }
+    }
+
+    private void OnHeal(object sender, EventArgs e)
+    {
+        PlayerComponents.Instance.HealthManager.IncreaseHealth(40);
+        PlayerSoundManager.instance.PlayHeal();
     }
 
     void OnKNifeStab(object sender, EventArgs a)
