@@ -102,7 +102,7 @@ public class EnemyEvents : MonoBehaviour
 
     public void FirePlayerSeen(EventData data)
     {
-        //Debug.Log("Firing Player Seen Event at: " );
+        //Debug.Log("Player Seen" );
         FightEvent?.Invoke(this, data);
     }
 

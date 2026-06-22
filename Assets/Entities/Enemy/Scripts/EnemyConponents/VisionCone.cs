@@ -8,6 +8,7 @@ public class VisionCone : MonoBehaviour
     [SerializeField] LayerMask VisionMask;
     [SerializeField] LayerMask CheckMask; // maks used to check the target item
     [SerializeField] int ChecksPerSecond = 10;
+    [SerializeField] bool HasPlayerSeen = false;
     #endregion
 
     #region Awareness Settings
@@ -151,8 +152,13 @@ public class VisionCone : MonoBehaviour
 
             if (currentAwareness >= AlarmAwareness)
             {
-                if (MainTargetedObject.Type == ObservableType.Hostile)
+                EnemyManager.instance.LKP = MainTargetedObject.transform.position;
+
+                if (MainTargetedObject.Type == ObservableType.Hostile)// && !HasPlayerSeen
+                {
                     TargetFullySeen?.Invoke(this, sightData);
+                    HasPlayerSeen = true;
+                }
                 else if (MainTargetedObject.Type == ObservableType.Clue && !alarmFired)
                 {
                     alarmFired = true;
@@ -216,6 +222,8 @@ public class VisionCone : MonoBehaviour
 
     private void OnTargetoutSight(object sender, EventArgs e)
     {
+        HasPlayerSeen = false;
+
         if (SightIndicator == null) return;
         Destroy(SightIndicator.parent);
     }

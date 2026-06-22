@@ -38,7 +38,7 @@ public class EnemyStateMachineContext
     public NavMeshAgent agent => Agent;
 
     // helper functions for all the enemy states
-    public bool CheckArrived(Vector3 TargetPos, float Accuracy) // check if enemy see the destination or not
+    public bool CheckArrivedSight(Vector3 TargetPos, float Accuracy) // check if enemy see the destination or not
     {
         Vector3 Direction = (TargetPos - parent.transform.position).normalized;
         float Distance = Vector3.Distance(parent.transform.position, TargetPos);
@@ -52,6 +52,12 @@ public class EnemyStateMachineContext
 
         return false; 
     }
+
+    public bool CheckArrivedPoint(Vector3 targetpos, float Accuracy)
+    {
+        return Vector3.Distance(parent.transform.position, targetpos)-1.7f < Accuracy;
+    }
+
 
 
     public IEnumerator LookAround(Vector3 Direction, float Duration, float Angle, float Speed)

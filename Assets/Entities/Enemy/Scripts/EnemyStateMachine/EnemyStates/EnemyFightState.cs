@@ -56,6 +56,7 @@ public class EnemyFightState : EnemyState
     {
         context.events.FightEvent -= OnPlayerSeen;
         context.enemySight.TargetoutSight -= OnTargetOutSite;
+
         EnemyManager.instance.IsPlayerInSight = false;
         IsUpdated = false;
         if (peekCoroutine != null)
@@ -122,7 +123,7 @@ public class EnemyFightState : EnemyState
         {
             Vector3 target = rushPositions[index % RUSH_POS_COUNT];
             context.agent.SetDestination(target);
-            yield return new WaitUntil(() => context.CheckArrived(target, 0.2f));
+            yield return new WaitUntil(() => context.CheckArrivedSight(target, 0.2f));
             float stopTimer = 0f;
             while (stopTimer < 1.5f)
             {
@@ -145,7 +146,7 @@ public class EnemyFightState : EnemyState
     {
         context.enemyAIData.peekPhase = PeekEnemy.Cover;
         context.agent.SetDestination(context.enemyAIData.PeekData.CoverPos);
-        yield return new WaitUntil(() => context.CheckArrived(context.enemyAIData.PeekData.CoverPos, 0.1f));
+        yield return new WaitUntil(() => context.CheckArrivedSight(context.enemyAIData.PeekData.CoverPos, 0.1f));
         while (true)
         {
             context.enemyAIData.peekPhase = PeekEnemy.Cover;
@@ -159,7 +160,7 @@ public class EnemyFightState : EnemyState
             context.enemyAIData.peekPhase = PeekEnemy.Cover;
             context.enemyAIData.IsHiding = true;
             context.agent.SetDestination(context.enemyAIData.PeekData.CoverPos);
-            yield return new WaitUntil(() => context.CheckArrived(context.enemyAIData.PeekData.CoverPos, 0.1f));
+            yield return new WaitUntil(() => context.CheckArrivedSight(context.enemyAIData.PeekData.CoverPos, 0.1f));
         }
     }
 }

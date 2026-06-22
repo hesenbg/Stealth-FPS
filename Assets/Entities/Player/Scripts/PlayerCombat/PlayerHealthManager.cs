@@ -10,6 +10,11 @@ public class PlayerHealthManager : HealthManager
         PlayerComponents.Instance.PlayerUI.SetPlayerDamageUI(1f - (float)CurrentHealth / MaxHealth);
     }
 
+    private void Update()
+    {
+        PlayerComponents.Instance.PlayerUI.SetPlayerDamageUI(1f - (float)CurrentHealth / MaxHealth);
+    }
+
     public override void OnDeath()
     {
         

@@ -35,9 +35,9 @@ public class LootPickup : MonoBehaviour
                 break;
 
             case PickUpType.Health:
-                healthManager.IncreaseHealth(amount);
+                LootableItemInventory.Instance.IncreaseSynringeCount();
+                LootableItemInventory.Instance.IncreaseSynringeCount();
                 break;
-
             case PickUpType.FlashNade:
                 throwAbleLogic.IncreaseFlash(amount);
                 break;

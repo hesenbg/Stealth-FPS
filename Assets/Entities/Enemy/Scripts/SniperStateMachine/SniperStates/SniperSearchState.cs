@@ -31,7 +31,7 @@ public class SniperSearchState : SniperState
     {
         EnemyManager.instance.LKP = e.GetPos();
         NextState = SniperStateMachine.SniperState.Fight;
-        EnemyManager.instance.CallAlliesOnAlarm();
+        EnemyManager.instance.CallAlliesOnAlarm(context.GetEvents);
     }
 
     public override IEnumerator OnStateExit()

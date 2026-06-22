@@ -18,6 +18,11 @@ public class YourClassNameEditor : Editor
                 , EnemyManager.instance.range, EnemyManager.instance.FlankOriginSource.position);
         }
 
+        if (GUILayout.Button("Preview Get Pos Around Player"))
+        {
+            t.GizmoDirectPos = t.GetPosAroundPlayerForDirect();
+        }
+
         if (GUILayout.Button("Preview Peek Spot"))
         {
             if (t.PeekThreatSource != null && t.PeekOriginSource != null)
@@ -81,6 +86,10 @@ public class EnemyManager : MonoBehaviour
 
     [HideInInspector] public Vector3 GizmoFlankPos;
     [HideInInspector] public bool GizmoFlankViable;
+
+    [Header("Direct Pos Gizmo Preview")]
+
+    [HideInInspector] public Vector3 GizmoDirectPos;
 
     private void Awake()
     {
@@ -359,11 +368,12 @@ public class EnemyManager : MonoBehaviour
         Sender.FireSearchState(data);
     }
 
-    public void CallAlliesOnAlarm()
+    public void CallAlliesOnAlarm(EnemyEvents Caller)
     {
         CheckEnemies();
         foreach (EnemyEvents e in enemies)
         {
+            if (e == Caller) continue;
             if (e.Type == EnemyType.Protector) continue;
             e.FireAlarm(new EventData(LKP, GetDirection(LKP)));
         }
@@ -383,9 +393,14 @@ public class EnemyManager : MonoBehaviour
                 Random.Range(-length, length)
             );
             if (NavMesh.SamplePosition(randPos, out hit, 1f, NavMesh.AllAreas))
-                return hit.position;
+            {
+                if(Physics.Raycast(hit.position,(LKP - hit.position).normalized,out RaycastHit rayhit ,Vector3.Distance(hit.position, LKP)))
+                {
+                    if(Vector3.Distance(rayhit.point,LKP)<0.5f)
+                        return hit.position;
+                }
+            }
         }
-
         return LKP;
     }
 
@@ -406,6 +421,14 @@ public class EnemyManager : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = GizmoFlankViable ? Color.cyan : Color.red;
+
+        if (GizmoDirectPos != Vector3.zero)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(GizmoDirectPos, 0.3f);
+
+        }
+
         if (GizmoFlankPos != Vector3.zero)
             Gizmos.DrawWireSphere(GizmoFlankPos, 0.3f);
 

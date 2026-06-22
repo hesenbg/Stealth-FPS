@@ -10,9 +10,11 @@ public class SniperFightState : SniperState
 
     Vector3 PlayerPos = Vector3.zero;
 
+    SniperStateMachine.SniperState nextState = SniperStateMachine.SniperState.Fight;
+
     public override SniperStateMachine.SniperState GetNextState()
     {
-        return StateKey;
+        return nextState;
     }
 
     public override IEnumerator OnStateEnter()

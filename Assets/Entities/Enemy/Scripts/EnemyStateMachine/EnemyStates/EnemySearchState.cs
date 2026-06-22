@@ -67,7 +67,7 @@ public class EnemySearchState : EnemyState
         EnemyManager.instance.LKP = e.GetPos();
         NextState = EnemyStateMachine.EnemyState.Alarmed;
         context.events.FireAlarm(e);
-        EnemyManager.instance.CallAlliesOnAlarm();
+        EnemyManager.instance.CallAlliesOnAlarm(context.events);
     }
 
     public override IEnumerator OnStateExit()
@@ -86,7 +86,7 @@ public class EnemySearchState : EnemyState
 
         if (!ready) return;
 
-        if (context.CheckArrived(covers[coverIndex], 0.5f))
+        if (context.CheckArrivedSight(covers[coverIndex], 0.5f))
         {
             coverIndex++;
 

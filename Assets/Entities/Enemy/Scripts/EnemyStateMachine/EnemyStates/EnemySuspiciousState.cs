@@ -82,7 +82,7 @@ public class EnemySuspiciousState : EnemyState
                 break;
             case InvestigationPhase.Navigating:
                 context.agent.SetDestination(context.enemyAIData.last.Position);
-                if (context.CheckArrived(context.enemyAIData.last.Position, 0.8f))
+                if (context.CheckArrivedSight(context.enemyAIData.last.Position, 0.8f))
                 {
                     context.agent.updateRotation = false;
                     phase = InvestigationPhase.Investigating;
@@ -126,7 +126,7 @@ public class EnemySuspiciousState : EnemyState
         NextState = EnemyStateMachine.EnemyState.Alarmed;
         EnemyManager.instance.LKP = e.GetPos();
         context.events.FireAlarm(e);
-        EnemyManager.instance.CallAlliesOnAlarm();
+        EnemyManager.instance.CallAlliesOnAlarm(context.events);
     }
 
     private void OnClueFound(object sender, EventData e)

@@ -34,7 +34,7 @@ public class EnemyIdleState : EnemyState
 
         context.agent.SetDestination(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex]);
 
-        while (!context.CheckArrived(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex], 0.2f))
+        while (!context.CheckArrivedSight(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex], 0.2f))
             yield return null;
 
         HasCheckAroundEnded = true;
@@ -80,7 +80,7 @@ public class EnemyIdleState : EnemyState
         if (!HasCheckAroundEnded) return;
 
 
-        if (context.CheckArrived(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex], 0.2f))
+        if (context.CheckArrivedSight(worldPatrolPositions[context.enemyAIData.CurrentPatrolPosIndex], 0.2f))
         {
             HasCheckAroundEnded = false;
             float waitTime = context.enemyAIData.PatrolPositions[context.enemyAIData.CurrentPatrolPosIndex].WaitTime;

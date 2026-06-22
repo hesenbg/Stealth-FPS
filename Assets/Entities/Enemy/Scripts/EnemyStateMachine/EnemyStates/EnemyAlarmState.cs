@@ -60,8 +60,9 @@ public class EnemyAlarmState : EnemyState
     public override void OnStateUpdate()
     {
         LookLKP();
-        if (context.CheckArrived(EnemyManager.instance.LKP, 0.2f))
+        if (context.CheckArrivedPoint(EnemyManager.instance.LKP, 0.2f))
         {
+            context.enemyAIData.CluePosition = EnemyManager.instance.LKP;
             NextState = EnemyStateMachine.EnemyState.Search;
         }
     }

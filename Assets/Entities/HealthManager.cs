@@ -72,9 +72,4 @@ public abstract class HealthManager : MonoBehaviour
         OnHealthZero += OnDeath;
         OnDamageDone += OnDamage;
     }
-
-    protected virtual void Update()
-    {
-
-    }
 }
