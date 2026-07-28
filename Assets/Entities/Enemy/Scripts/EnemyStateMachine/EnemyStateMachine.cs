@@ -2,44 +2,43 @@ using UnityEngine;
 using UnityEngine.AI;
 public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
 {
-    [SerializeField] EnemyStateMachine.EnemyState current;
-    public enum EnemyState { Idle, Suspicious, Alarmed, Search }
+    [SerializeField] EnemyState current;
+    public EnemyState Current => current;
+    public enum EnemyState { Idle, Suspicious, Alarmed, Search, Fight }
     public EnemyStateMachineContext context {  get; private set; }
+
+    [SerializeField] EnemyAlarmState.AlarmedEnemy Alarmed;
+
 
     [SerializeField] VisionCone EnemySight;
 
-    [SerializeField] HealthManager EnemyHealthManager;
+    [SerializeField] EnemyHealthManager EnemyHealthManager;
 
-    [SerializeField] ShootLogic EnemyCombat;
+    [SerializeField] EnemyCombatLogic EnemyCombat;
 
     [SerializeField] NavMeshAgent agent;
 
     [SerializeField] EnemyAIData data;
-
-    [SerializeField] Rigidbody rb;
-
+        
     [SerializeField] GameObject Parent;
 
     [SerializeField] EnemyEvents events;
 
+    [SerializeField] EnemyAnimationLogic anim;
+
     private void Awake()
     {
-        context = new EnemyStateMachineContext(EnemySight, EnemyHealthManager,EnemyCombat,agent,data,rb, Parent, events);
+        context = new EnemyStateMachineContext(EnemySight, EnemyHealthManager,EnemyCombat,agent,data, Parent, events, this, anim);
         InitlizeStates();
     }
 
     public override void UpdateStateMachine()
     {
-        UpdateAwarness();
-        current = CurrentState.StateKey;
-    }
+        agent.speed = data.CurrentAwarenessState.MovementSpeed;
 
-    void UpdateAwarness()
-    {
-        if(current == EnemyState.Idle)
-        {
-            context.enemyAIData.current = context.enemyAIData.Idle;
-        }
+        current = CurrentState.StateKey;
+
+        Alarmed = context.enemyAIData.AlarmedEnemy;
     }
 
     private void InitlizeStates()
@@ -48,6 +47,7 @@ public class EnemyStateMachine : StateManager<EnemyStateMachine.EnemyState>
         States.Add(EnemyState.Suspicious, new EnemySuspiciousState(context,EnemyState.Suspicious));
         States.Add(EnemyState.Idle, new EnemyIdleState(context, EnemyState.Idle));
         States.Add(EnemyState.Search, new EnemySearchState(context, EnemyState.Search));
+        States.Add(EnemyState.Fight, new EnemyFightState(context,EnemyState.Fight));
         CurrentState = States[EnemyState.Idle];
     }
 }

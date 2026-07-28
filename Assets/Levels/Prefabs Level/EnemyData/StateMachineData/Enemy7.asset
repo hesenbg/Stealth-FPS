@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f0e6e3f7c61eee47bbe7f7ddda2a6d7, type: 3}
+  m_Name: Enemy7
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAIData
+  CurrentAwarenessState:
+    SightRange: 14.698376
+    AwarenessSpeed: 19.811487
+    Angle: 64.43445
+    AllyCallSpeed: 1.037703
+    AllyCallNumber: 2.962298
+    AudioDetetctionRange: 4.8868904
+    MovementSpeed: 1.4924598
+  IsStill: 0
+  IsProtector: 0
+  PatrolPositions:
+  - Position: {x: 0, y: 0, z: 0}
+    WaitTime: 0
+  - Position: {x: -0.6, y: 0, z: 2.39}
+    WaitTime: 0
+  - Position: {x: -0.88, y: 0, z: 7.43}
+    WaitTime: 0
+  - Position: {x: 2.06, y: 0, z: 9.35}
+    WaitTime: 4
+  - Position: {x: 3.33, y: 0, z: 5.94}
+    WaitTime: 0
+  - Position: {x: 4.16, y: 0, z: 2.46}
+    WaitTime: 0
+  - Position: {x: 2.37, y: 0, z: 0.07}
+    WaitTime: 4.5
+  IdleSpeed: 0
+  CurrentPatrolPosIndex: 0
+  WonderTimer: 3
+  last:
+    Position: {x: 0, y: 0, z: 0}
+    IsActive: 0
+  LKPchangeTolerance: 3
+  PeekDuration: 1.5
+  TimeBetweenPeeks: 1.25
+  LookAroundAngle: 50
+  AlarmedEnemy: 0
+  IsHiding: 0
+  peekPhase: 1
+  CluePosition: {x: 0, y: 0, z: 0}
+  InterplationSpeed: 7
+  AllyCallDelay: 2
+  CalledAllyNumber: 2

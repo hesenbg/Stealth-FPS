@@ -1,24 +1,451 @@
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
+using static EnemyEvents;
 
+[CustomEditor(typeof(EnemyManager))]
+public class YourClassNameEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        EnemyManager t = (EnemyManager)target;
+        if (GUILayout.Button("Generate Cover Positions"))
+        {
+            EnemyManager.instance.CoverPositions = t.GenerateCoverPos(EnemyManager.instance.numberofcovers
+                , EnemyManager.instance.range, EnemyManager.instance.FlankOriginSource.position);
+        }
+
+        if (GUILayout.Button("Preview Get Pos Around Player"))
+        {
+            t.GizmoDirectPos = t.GetPosAroundPlayerForDirect();
+        }
+
+        if (GUILayout.Button("Preview Peek Spot"))
+        {
+            if (t.PeekThreatSource != null && t.PeekOriginSource != null)
+            {
+                t.CoverObjects = new GameObject[t.coverParent.transform.childCount];
+                for (int i = 0; i < t.coverParent.transform.childCount; i++)
+                    t.CoverObjects[i] = t.coverParent.transform.GetChild(i).gameObject;
+
+                t.FindPeekSpot(
+                    t.PeekThreatSource.position,
+                    t.PeekOriginSource.position,
+                    t.PeekRange,
+                    out t.PeekData
+                );
+            }
+            else
+            {
+                Debug.LogWarning("Assign PeekThreatSource and PeekOriginSource to preview.");
+            }
+        }
+    }
+}
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager instance;
+    [SerializeField] EnemyEvents[] enemies;
+
+    [SerializeField] public List<Vector3> CoverPositions;
+    [SerializeField] LayerMask CoverLayers;
+
+    public GameObject[] CoverObjects;
+
+    [SerializeField] public GameObject coverParent;
+
+    [SerializeField] float CoverDistance;
+
+    public Vector3 LKP;
+    public bool IsPlayerInSight = false;
+
+    public int numberofcovers;
+    public float range;
+
+    [SerializeField] float CloseDistance;
+
+    [Header("Peek Gizmo Preview")]
+    public Transform PeekThreatSource;
+    public Transform PeekOriginSource;
+    public float PeekRange = 10f;
+
+    [HideInInspector] public PeekData PeekData;
+    [HideInInspector] public bool GizmoPeekAvalibe;
+    [HideInInspector] public Vector3 GizmoBackwardsFromPlayer;
+    [HideInInspector] public Vector3 GizmoPeekSide;
+    [HideInInspector] public Vector3 GizmoPeekPositionSearchPosition;
+
+    [Header("Flank Gizmo Preview")]
+    public Transform FlankOriginSource;
+    public Transform FlankThreatSource;
+    public float FlankRange = 10f;
+    public float BehindDistance = 5f;
+
+    [HideInInspector] public Vector3 GizmoFlankPos;
+    [HideInInspector] public bool GizmoFlankViable;
+
+    [Header("Direct Pos Gizmo Preview")]
+
+    [HideInInspector] public Vector3 GizmoDirectPos;
+
     private void Awake()
     {
         instance = this;
     }
-    
-    Audiotary audiotary;
 
     private void Start()
     {
-        audiotary = GetComponent<Audiotary>();
+        CoverObjects = new GameObject[coverParent.transform.childCount];
+        for (int i = 0; i < coverParent.transform.childCount; i++)
+            CoverObjects[i] = coverParent.transform.GetChild(i).gameObject;
     }
 
-    public void AlertClosestEnemy(Vector3 pos)
+    void CheckEnemies()
     {
-        EnemyStateMachine detected = audiotary.CheckEnemyClose(pos);
-        detected.context.events.FireSusEvent();
-        detected.context.enemyAIData.last.SetValue(pos);
+        enemies = GetComponentsInChildren<EnemyEvents>();
+    }
+
+    public bool FindPeekSpot(Vector3 ThreatPos, Vector3 OriginPos, float Range, out PeekData peekData)
+    {
+        Vector3 PeekPos = Vector3.zero;
+        Vector3 PeekDirection = Vector3.zero;
+
+        peekData = new PeekData();
+
+        bool Avalibe = false;
+
+        GameObject Cover = null;
+        float ClosestDistance = float.MaxValue;
+
+        for (int i = 0; i < CoverObjects.Length; i++)
+        {
+            float dist = Vector3.Distance(CoverObjects[i].transform.position, OriginPos);
+            if (dist < ClosestDistance)
+            {
+                Cover = CoverObjects[i];
+                ClosestDistance = dist;
+            }
+        }
+
+        if (Cover == null || ClosestDistance > Range) return Avalibe;
+
+        Collider CoverCollider = Cover.GetComponent<Collider>();
+        if (CoverCollider == null) return Avalibe;
+
+        Vector3 DirectionToThreat = (ThreatPos - OriginPos).normalized;
+        Vector3 DirectionToCover  = (CoverCollider.transform.position - OriginPos).normalized;
+        float Dot = Vector3.Dot(DirectionToThreat, DirectionToCover);
+
+        if (!(Dot > 0.5f)) return Avalibe;
+
+        Vector3 BackwardsFromPlayer = (Cover.transform.position - ThreatPos).normalized;
+        Vector3[] localAxes = {
+            Cover.transform.forward,
+            -Cover.transform.forward,
+            Cover.transform.right,
+            -Cover.transform.right
+        };
+
+        Vector3 snapped = localAxes[0];
+        float bestDot = float.MinValue;
+        for (int i = 0; i < localAxes.Length; i++)
+        {
+            float dot = Vector3.Dot(BackwardsFromPlayer, localAxes[i]);
+            if (dot > bestDot)
+            {
+                bestDot = dot;
+                snapped = localAxes[i];
+            }
+        }
+        BackwardsFromPlayer = snapped;
+
+        GizmoBackwardsFromPlayer = BackwardsFromPlayer;
+
+        Vector3 CoverCenter = CoverCollider.bounds.center;
+
+        Vector3 CoverToOrigin = (OriginPos - CoverCenter);
+
+        float sideDot = Vector3.Dot(CoverToOrigin, Cover.transform.right);
+
+        Vector3 PeekSide = sideDot > 0 ? Cover.transform.right : -Cover.transform.right;
+
+        GizmoPeekSide = PeekSide;
+
+        Vector3 extents = CoverCollider.bounds.extents;
+
+        Vector3 absPeekSide = new Vector3(Mathf.Abs(PeekSide.x), Mathf.Abs(PeekSide.y), Mathf.Abs(PeekSide.z));
+
+        float PeekPosOffsetFromCenter = Vector3.Dot(extents, absPeekSide) * 0.8f;
+
+        Vector3 PeekPositionSearchPosition = CoverCenter + BackwardsFromPlayer * 2 + PeekSide * PeekPosOffsetFromCenter - BackwardsFromPlayer / 2;
+
+        GizmoPeekPositionSearchPosition = PeekPositionSearchPosition;
+
+        if (!NavMesh.SamplePosition(PeekPositionSearchPosition, out NavMeshHit hit, 1f, NavMesh.AllAreas)) return Avalibe;
+        if (!NavMesh.FindClosestEdge(hit.position, out hit, NavMesh.AllAreas)) return Avalibe;
+
+        PeekPos = hit.position + BackwardsFromPlayer * 0.5f;
+
+        Vector3 forward = (ThreatPos - PeekPos).normalized;
+
+        Vector3 right = Vector3.Cross(Vector3.up, forward);
+
+        PeekDirection = (Vector3.Dot(PeekSide, right) > 0 ? right : -right) * 0.85f;
+
+        Avalibe = true;
+
+        peekData = new PeekData(PeekPos, PeekDirection);
+
+        return Avalibe;
+    }
+
+    public List<Vector3> GenerateCoverPos(int NumberOfPositions, float Range, Vector3 Origin)
+    {
+        List<Vector3> coverposs = new List<Vector3>();
+        foreach (GameObject cover in CoverObjects)
+        {
+            NavMeshHit hit;
+            if (coverposs.Count >= NumberOfPositions) break;
+            if (Vector3.Distance(cover.transform.position, Origin) > Range) continue;
+
+            Vector3 DirectionToPos = (cover.transform.position - Origin).normalized;
+            Vector3 CoverSize = GetMeshSize(cover);
+            Vector3 CoverSurface = new Vector3(CoverSize.x * DirectionToPos.x, 0, CoverSize.z * DirectionToPos.z);
+
+            if (!NavMesh.SamplePosition(cover.transform.position + CoverSurface.normalized, out hit, 1.5f, NavMesh.AllAreas)) continue;
+            if (!NavMesh.FindClosestEdge(hit.position, out hit, NavMesh.AllAreas)) continue;
+
+            coverposs.Add(hit.position * CoverDistance);
+        }
+        return coverposs;
+    }
+
+    Vector3 GetMeshSize(GameObject meshObject)
+    {
+        Renderer renderer = meshObject.GetComponent<Renderer>();
+        return renderer.bounds.size;
+    }
+
+    private EnemyEvents CheckEnemyCloseDirect(Vector3 pos, float Range)
+    {
+        CheckEnemies();
+        EnemyEvents closest = null;
+        float closestDist = float.MaxValue;
+        foreach (EnemyEvents e in enemies)
+        {
+            if (e.Getdata() == null ) continue;
+            EnemyType type = e.Type;
+            if (type == EnemyType.Protector) continue;
+
+            float dist = type == EnemyType.Sniper
+                ? Vector3.Distance(e.transform.position, pos)
+                : GetNavMeshDistance(e.transform.position, pos);
+
+            if (e.Getdata().CurrentAwarenessState.AudioDetetctionRange == 0) continue;
+            if (dist < e.Getdata().CurrentAwarenessState.AudioDetetctionRange + Range && dist < closestDist)
+            {
+                closest = e;
+                closestDist = dist;
+            }
+        }
+        return closest;
+    }
+
+
+    private EnemyEvents CheckEnemyCloseAngle(Vector3 pos, Vector3 dir)
+    {
+        CheckEnemies();
+        EnemyEvents closest = null;
+        float smallestDist = float.MaxValue;
+
+        foreach (EnemyEvents e in enemies)
+        {
+            if (e.Getdata() == null) continue;
+
+            if (e.Getdata().CurrentAwarenessState.AudioDetetctionRange == 0) continue;
+
+            Vector3 toEnemy = e.transform.position - pos;
+            float perpDist = Vector3.Cross(dir, toEnemy).magnitude;
+
+            if (perpDist < smallestDist && perpDist < e.Getdata().CurrentAwarenessState.AudioDetetctionRange)
+            {
+                smallestDist = perpDist;
+                closest = e;
+            }
+        }
+        return closest;
+    }
+
+
+    public void AlertClosestOnSuspiciousEvent(Vector3 pos, HearableObject hearable)
+    {
+        EnemyEvents closest = CheckEnemyCloseDirect(pos, hearable.Range);
+        if (closest == null) return;
+        closest.FireSusEvent(new EventData(pos, GetDirection(pos)));
+    }
+
+    public void AlertClosestOnGunFire(Vector3 pos, Vector3 dir)
+    {
+        EnemyEvents closest = CheckEnemyCloseAngle(pos, dir);
+        if (closest == null) return;
+        closest.FireSusEvent(new EventData(pos,GetDirection(pos)));
+    }
+
+    public bool FindFlankPos(Vector3 Origin, Vector3 ThreatPos, float Range, out Vector3 FlankPos, float BehindDistance)
+    {
+        FlankPos = Vector3.zero;
+        NavMeshHit hit;
+        Vector3 BackWards = (ThreatPos - Origin).normalized * BehindDistance;
+        Vector3 Left = -Vector3.Cross(BackWards, Vector3.up) * BehindDistance;
+        Vector3 Right = -Left;
+
+        if (NavMesh.SamplePosition(ThreatPos + BackWards, out hit, BehindDistance, NavMesh.AllAreas))
+            if (Vector3.Distance(hit.position, ThreatPos) >= Range && IsPathViable(hit.position, ThreatPos))
+            { FlankPos = hit.position; return true; }
+
+        if (NavMesh.SamplePosition(ThreatPos + Left, out hit, BehindDistance, NavMesh.AllAreas))
+            if (Vector3.Distance(hit.position, ThreatPos) >= Range && IsPathViable(hit.position, ThreatPos))
+            { FlankPos = hit.position; return true; }
+
+        if (NavMesh.SamplePosition(ThreatPos + Right, out hit, BehindDistance, NavMesh.AllAreas))
+            if (Vector3.Distance(hit.position, ThreatPos) >= Range && IsPathViable(hit.position, ThreatPos))
+            { FlankPos = hit.position; return true; }
+
+        return false;
+    }
+
+    private bool IsPathViable(Vector3 from, Vector3 to)
+    {
+        NavMeshPath path = new NavMeshPath();
+        NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path);
+        return path.status == NavMeshPathStatus.PathComplete;
+    }
+    private static float GetNavMeshDistance(Vector3 from, Vector3 to)
+    {
+        NavMeshPath path = new NavMeshPath();
+        if (!NavMesh.CalculatePath(from, to, NavMesh.AllAreas, path))
+            return float.MaxValue;
+        if (path.status == NavMeshPathStatus.PathInvalid)
+            return float.MaxValue;
+
+        float distance = 0f;
+        Vector3[] corners = path.corners;
+        for (int i = 1; i < corners.Length; i++)
+            distance += Vector3.Distance(corners[i - 1], corners[i]);
+        return distance;
+    }
+
+
+    public void CallAlliesOnClue(Vector3 pos, int NumberOfAllies, EnemyEvents Sender)
+    {
+        CheckEnemies();
+
+        List<(EnemyEvents e, float dist)> sorted = new();
+
+        foreach (EnemyEvents e in enemies)
+        {
+            if (e == Sender || e.Type == EnemyType.Protector) continue;
+
+            if (e.Type == EnemyType.Protector) continue;
+
+            float dist = e.Type == EnemyType.Sniper
+                ? Vector3.Distance(e.transform.position, pos)
+                : GetNavMeshDistance(e.transform.position, pos);
+
+            sorted.Add((e, dist));
+        }
+
+        EventData data = new EventData(pos, GetDirection(pos));
+
+        sorted.Sort((a, b) => a.dist.CompareTo(b.dist));
+
+        for (int i = 0; i < Mathf.Min(NumberOfAllies, sorted.Count); i++)
+            sorted[i].e.FireSearchState(data);
+
+        Sender.FireSearchState(data);
+    }
+
+    public void CallAlliesOnAlarm(EnemyEvents Caller)
+    {
+        CheckEnemies();
+        foreach (EnemyEvents e in enemies)
+        {
+            if (e == Caller) continue;
+            if (e.Type == EnemyType.Protector) continue;
+            e.FireAlarm(new EventData(LKP, GetDirection(LKP)));
+        }
+    }
+
+    public Vector3 GetPosAroundPlayerForDirect()
+    {
+        float length = 5f;
+        NavMeshHit hit;
+        int maxAttempts = 10;
+
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            Vector3 randPos = LKP + new Vector3(
+                Random.Range(-length, length),
+                0f,
+                Random.Range(-length, length)
+            );
+            if (NavMesh.SamplePosition(randPos, out hit, 1f, NavMesh.AllAreas))
+            {
+                if(Physics.Raycast(hit.position,(LKP - hit.position).normalized,out RaycastHit rayhit ,Vector3.Distance(hit.position, LKP)))
+                {
+                    if(Vector3.Distance(rayhit.point,LKP)<0.5f)
+                        return hit.position;
+                }
+            }
+        }
+        return LKP;
+    }
+
+
+    public EnemyAlarmState.AlarmedEnemy DefineAlarmedEnemy(Vector3 pos)
+    {
+        float dist = Vector3.Distance(LKP, pos);
+
+        if (dist <= CloseDistance) return EnemyAlarmState.AlarmedEnemy.Direct;
+        else  return EnemyAlarmState.AlarmedEnemy.Peek;
+    }
+
+    public Vector3 GetDirection(Vector3 pos)
+    {
+        return (pos - transform.position).normalized;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = GizmoFlankViable ? Color.cyan : Color.red;
+
+        if (GizmoDirectPos != Vector3.zero)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(GizmoDirectPos, 0.3f);
+
+        }
+
+        if (GizmoFlankPos != Vector3.zero)
+            Gizmos.DrawWireSphere(GizmoFlankPos, 0.3f);
+
+        for (int i = 0; i < CoverPositions.Count; i++)
+            Gizmos.DrawWireSphere(CoverPositions[i], 0.5f);
+
+        if (GizmoPeekAvalibe)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(PeekData.CoverPos, 0.3f);
+            Gizmos.DrawRay(PeekData.CoverPos, PeekData.PeekDirection.normalized);
+        }
+        else
+        {
+            Gizmos.color = Color.red;
+            if (PeekData.CoverPos != Vector3.zero)
+                Gizmos.DrawWireSphere(PeekData.CoverPos, 0.3f);
+        }
     }
 }

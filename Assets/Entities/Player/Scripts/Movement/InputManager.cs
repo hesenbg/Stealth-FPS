@@ -16,6 +16,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] private ThrowAbleLogic playerThrowAbleLogic;
     [SerializeField] private Knife playerKnife;
     [SerializeField] Recoil PlayerRecoil;
+    [SerializeField] ObservableObject playerObservable;
 
     [Header("Movement Keys")]
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
@@ -24,6 +25,7 @@ public class InputManager : MonoBehaviour
 
     [Header("Movement Variables")]
     Vector3 CurrentDirection;
+    [SerializeField] float CrouchObservability = 0.6f;
 
     [Header("Combat Keys")]
     [SerializeField] private MouseButton ShootKey;
@@ -34,31 +36,91 @@ public class InputManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private InputType adsInputType = InputType.Hold;
+    [SerializeField] private KeyCode PickUpKey;
+    [SerializeField] private KeyCode HealKey;
 
     [Header("Combat Variables")]
     public GunState CurrentGunState;
     public enum GunState { Idle, Blocked, Reload, ADS }
 
     private bool isReverting = false;
+    private bool IsCrouching = false;
     private MovementLogic.MovementState lastMovementState;
     private GunState lastGunState;
 
     private void Start()
     {
+
+        playerObservable = GetComponent<ObservableObject>();
+
         InitilizeMovementVariables();
         InitilizeCombatVariables();
 
         TriggerState += OnTriggerState;
 
+        playerAnimationLogic.Heal += OnHeal;
+
         lastMovementState = playerMovementLogic.CurrentMovementState;
         lastGunState = CurrentGunState;
     }
 
+
+
+    private void FixedUpdate()
+    {
+        if (IsCrouching)
+        {
+            playerObservable.AddModifier(gameObject.name,CrouchObservability);
+        }
+        else
+        {
+            playerObservable.RemoveModifier(gameObject.name);
+        }
+    }
+
     private void Update()
     {
-        UpdateMovement();
+        UpdateMovement(); 
         UpdateCombat();
         FireTriggerState();
+
+        PickUpItems();
+
+        ApplyHeal();
+    }
+
+    private void ApplyHeal()
+    {
+        if (Input.GetKeyDown(HealKey) && CurrentGunState == GunState.Idle && LootableItemInventory.Instance.HealSynringeCount>0 
+            && PlayerComponents.Instance.HealthManager.CurrentHealth != PlayerComponents.Instance.HealthManager.MaxHealth)
+        {
+            playerAnimationLogic.PlayHealAnimation();
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying) return;
+       Gizmos.color = Color.green;
+       Gizmos.DrawRay(PlayerComponents.Instance.MainCamera.transform.position, PlayerComponents.Instance.MainCamera.transform.forward*1.5f);
+    }
+
+
+    private void PickUpItems()
+    {
+        if (Input.GetKeyDown(PickUpKey))
+        {
+            if(Physics.Raycast(PlayerComponents.Instance.MainCamera.transform.position, PlayerComponents.Instance.MainCamera.transform.forward,out RaycastHit hit, 1.5f))
+            {
+
+                Debug.Log(hit.collider.name);
+
+                if(hit.collider.gameObject.TryGetComponent<Interactable>(out Interactable interact))
+                {
+                    interact.OnInteract();
+                }
+            }
+        }
     }
 
     void InitilizeCombatVariables()
@@ -172,12 +234,11 @@ public class InputManager : MonoBehaviour
                 playerAnimationLogic.PlayShootAnimation(playerShootLogic.CurrentMagazineAmmo);
             }
         }
-        playerUI.UpdateGunUI(playerShootLogic.CurrentMagazineAmmo, playerShootLogic.CurrentTotalAmmo);
     }
 
     void Reload()
     {
-        if (Input.GetKeyDown(ReloadKey) && CurrentGunState == GunState.Idle)
+        if (Input.GetKeyDown(ReloadKey) && CurrentGunState == GunState.Idle && playerShootLogic.CanReload())
         {
             CurrentGunState = GunState.Reload;
             StartCoroutine(playerShootLogic.Reload());
@@ -223,11 +284,18 @@ public class InputManager : MonoBehaviour
 
     void ThrowObject()
     {
-        if (Input.GetKeyDown(ThrowObjectKey) && CurrentGunState == GunState.Idle)
-        {
+        if (Input.GetKeyDown(ThrowObjectKey) && CurrentGunState == GunState.Idle
+            && playerThrowAbleLogic.CanThrow())
+        {   
             float controlValue = Input.GetKey(KeyCode.LeftControl) ? 0f : 1f;
             playerAnimationLogic.PlayGrenedeAnimation(controlValue);
         }
+    }
+
+    private void OnHeal(object sender, EventArgs e)
+    {
+        PlayerComponents.Instance.HealthManager.IncreaseHealth(40);
+        PlayerSoundManager.instance.PlayHeal();
     }
 
     void OnKNifeStab(object sender, EventArgs a)
@@ -314,7 +382,7 @@ public class InputManager : MonoBehaviour
         if (CurrentDirection.sqrMagnitude > 0.1f && !Input.GetKey(sprintKey))
         {
             playerMovementLogic.Walk();
-            if (playerMovementLogic.IsGround)
+            if (playerMovementLogic.IsGround && !IsCrouching)
             {
                 PlayerSoundManager.instance.PlayWalk();
             }
@@ -323,7 +391,7 @@ public class InputManager : MonoBehaviour
 
     void Run()
     {
-        if (Input.GetKey(sprintKey) && CurrentDirection.magnitude > 0.01f)
+        if (Input.GetKey(sprintKey) && CurrentDirection.magnitude > 0.01f && !IsCrouching)
         {
             playerMovementLogic.Run();  
             if (playerMovementLogic.IsGround)
@@ -335,7 +403,7 @@ public class InputManager : MonoBehaviour
 
     void Crouch()
     {
-        bool IsCrouching = Input.GetKey(crouchKey);
+        IsCrouching = Input.GetKey(crouchKey);
         playerMovementLogic.Crouch(IsCrouching);
         playerAnimationLogic.CrouchAnimation(IsCrouching);
     }

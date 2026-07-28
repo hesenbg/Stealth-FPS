@@ -76,6 +76,8 @@ public class ProceduralArms : MonoBehaviour
         Vector3 bobPos = CalculateMovementBob();
         Vector3 finalPosition = new Vector3(bobPos.x , bobPos.y, bobPos.z);
 
+        
+            
         PlayerMesh.localRotation = Quaternion.Slerp(PlayerMesh.localRotation, finalRotation, swaySpeed * Time.deltaTime);
         PlayerMesh.localPosition = Vector3.Lerp(PlayerMesh.localPosition, finalPosition, Time.deltaTime * bobSpeed);
     }

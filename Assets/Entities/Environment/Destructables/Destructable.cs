@@ -4,11 +4,13 @@ public class Destructable : MonoBehaviour
 {
     [SerializeField] AudioClip SFX;
     [SerializeField] GameObject VFX;
+    [SerializeField] HearableObject hearable;
+    [SerializeField] GameObject brokenGlasses;
 
     public void DestroyObject()
     {
-        EnemyManager.instance.AlertClosestEnemy(transform.position);
-
+        EnemyManager.instance.AlertClosestOnSuspiciousEvent(transform.position,hearable);
+        Instantiate(brokenGlasses);
         Destroy(gameObject);
     }
-}
+}    

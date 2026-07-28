@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MovementData
   walkSpeed: 2
   runSpeed: 3
-  crouchSpeed: 2
+  crouchSpeed: 1
   hookSpeed: 0
-  walkAcceleration: 20
-  runAcceleration: 15
+  walkAcceleration: 15
+  runAcceleration: 20
   crouchAcceleration: 10
   jumpAcceleration: 2
   hookAcceleration: 0

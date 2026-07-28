@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2547316813589040025
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1310404475865372642}
+  - component: {fileID: 8981600484720182275}
+  - component: {fileID: 1121621966205939115}
+  - component: {fileID: 539117760409260367}
+  m_Layer: 0
+  m_Name: EnemyManager 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1310404475865372642
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2547316813589040025}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8981600484720182275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2547316813589040025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7fc74d9be0ee264f9cf6a35578fcb8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyGizmos
+  enemies:
+  - data: {fileID: 11400000, guid: 85cccf547536e1344b5bfeecefb2c721, type: 2}
+    root: {fileID: 0}
+  - data: {fileID: 11400000, guid: f7306249080885c4480ada7f13370330, type: 2}
+    root: {fileID: 0}
+  - data: {fileID: 11400000, guid: 56890260bb0fdf844a67511a78f941c1, type: 2}
+    root: {fileID: 0}
+  - data: {fileID: 0}
+    root: {fileID: 0}
+  - data: {fileID: 11400000, guid: a634e5f63dba0f045af8b851dd17d088, type: 2}
+    root: {fileID: 0}
+  - data: {fileID: 11400000, guid: 872a0cf3d71751949b60cd03ea4eae1c, type: 2}
+    root: {fileID: 0}
+  - data: {fileID: 11400000, guid: 3aa1b9a1b1d58dd47a8a68e46da0b8af, type: 2}
+    root: {fileID: 0}
+  - data: {fileID: 11400000, guid: f175fb55cb155e2489f8130b7acf1c17, type: 2}
+    root: {fileID: 0}
+  radius: 0.2
+  DrawGizmos: 1
+--- !u!114 &1121621966205939115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2547316813589040025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bde3f9d84c4e4343b05e276e200e89f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyManager
+  enemies: []
+  CoverPositions: []
+  CoverLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  CoverObjects:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  coverParent: {fileID: 0}
+  CoverDistance: 1
+  LKP: {x: 0, y: 0, z: 0}
+  IsPlayerInSight: 0
+  numberofcovers: 12
+  range: 20
+  CloseDistance: 10
+  PeekThreatSource: {fileID: 0}
+  PeekOriginSource: {fileID: 0}
+  PeekRange: 10
+  GizmoPeekAvalibe: 1
+  GizmoBackwardsFromPlayer: {x: -0, y: -0, z: -1}
+  GizmoPeekSide: {x: -1, y: -0, z: -0}
+  GizmoPeekPositionSearchPosition: {x: 7.58679, y: 1.3199999, z: 0.3406105}
+  FlankOriginSource: {fileID: 0}
+  FlankThreatSource: {fileID: 0}
+  FlankRange: 10
+  BehindDistance: 5
+  GizmoFlankPos: {x: 7.6380916, y: 0.5833334, z: -1.7583618}
+  GizmoFlankViable: 1
+--- !u!114 &539117760409260367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2547316813589040025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf878a2a98bb67846b5eb238a4dfcfa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyVisualAudios
+  BloodEffect: {fileID: 6171490706593915851, guid: 2f23776c8e5b3f8488d67d6a0b87710d, type: 3}
+  effectDestroyTime: 2
+  BodyHitSound: {fileID: 8300000, guid: 9dbd5d948a6d2d9478137c325ea48938, type: 3}
+  HeadHitSound: {fileID: 8300000, guid: e9b8b0df3b70f5c43b09b60759144be0, type: 3}
+  BodyHitVolume: 1
+  HeadHitVolume: 1

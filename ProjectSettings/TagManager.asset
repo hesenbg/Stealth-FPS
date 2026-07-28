@@ -18,10 +18,10 @@ TagManager:
   - Water
   - UI
   - Destructable
-  - 
+  - Obstacle
   - Enemy
-  - 
-  - 
+  - Projectiles
+  - Clue
   - 
   - 
   - Ground

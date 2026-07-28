@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using System;
-
 public class ShootLogic : MonoBehaviour
 {
     [SerializeField] CombatData data;
@@ -27,8 +26,8 @@ public class ShootLogic : MonoBehaviour
     private void Start()
     {
         MaxHotValue = data.RecoilPattern.Length;
-        CurrentMagazineAmmo = data.Magazine;
-        CurrentTotalAmmo = data.TotalAmmo;
+        CurrentMagazineAmmo = 0;
+        CurrentTotalAmmo =0;
     }
 
     private void Update()
@@ -43,6 +42,8 @@ public class ShootLogic : MonoBehaviour
             Time.deltaTime * data.RecoilRecoverySpeed);
 
         HandleHeatDecay();
+
+        PlayerComponents.Instance.PlayerUI.UpdateGunUI(CurrentMagazineAmmo, CurrentTotalAmmo);
     }
 
     private void HandleHeatDecay()
@@ -77,35 +78,43 @@ public class ShootLogic : MonoBehaviour
 
     public void Shoot()
     {
+        if (CurrentHotValue < MaxHotValue - 1)
+            CurrentHotValue++;
+
         lastShotTime = Time.time;
-
         Ray ray = new Ray(Origin.position, Origin.forward + TotalCurrentRecoil);
-
-        if (Physics.Raycast(ray, out RaycastHit hit,100f,mask,QueryTriggerInteraction.Collide))
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, mask, QueryTriggerInteraction.Collide))
         {
             if (hit.collider.CompareTag("Destructable"))
             {
-                hit.collider.gameObject.GetComponent<Destructable>().DestroyObject();
+                Destructable destructable = hit.collider.GetComponent<Destructable>();
+                if (destructable == null) Debug.LogWarning($"Destructable component missing on {hit.collider.name}", hit.collider.gameObject);
+                else destructable.DestroyObject();
+
+                return;
             }
             if (hit.collider.CompareTag("Untagged"))
             {
-                data.Trace.ApplyRandomTexture();
-                Instantiate(data.Trace, hit.point + (hit.normal * 0.01f), Quaternion.FromToRotation(Vector3.up, hit.normal));
+                Instantiate(data.Trace, hit.point + (hit.normal * 0.001f),Quaternion.FromToRotation(Vector3.up, hit.normal)* Quaternion.Euler(new Vector3(90,0,0))); //
+                return;
             }
             if (hit.collider.CompareTag("Head"))
             {
-                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetHeadShotDamage(data.BaseDamage, data.HsMultipiler);
+                EnemyHealthManager hm = hit.collider.GetComponentInParent<EnemyHealthManager>();
+                if (hm == null) Debug.LogWarning($"HealthManager missing on parent of {hit.collider.name}", hit.collider.gameObject);
+                else hm.ApplyDamage(data.BaseDamage,data.HsMultipiler,hit.point);
+                return;
             }
             if (hit.collider.CompareTag("Body"))
             {
-                hit.collider.gameObject.GetComponentInParent<HealthManager>().GetDamage(data.BaseDamage);
+                EnemyHealthManager hm = hit.collider.GetComponentInParent<EnemyHealthManager>();
+                hm.ApplyDamage(data.BaseDamage,1f,hit.point);
+                hit.collider.GetComponentInParent<EnemyStateMachine>().context.events.FireClueFound(new EventData(transform.position,-transform.forward));
+                return;
             }
         }
 
-        if (CurrentHotValue < MaxHotValue - 1)
-        {
-            CurrentHotValue++;
-        }
+        EnemyManager.instance.AlertClosestOnGunFire(transform.position, transform.forward);
     }
 
     float RecoilDamper = 1;
@@ -149,11 +158,21 @@ public class ShootLogic : MonoBehaviour
 
     int toLoad;
 
+    public void AddAmmo(int ammo)
+    {
+        CurrentTotalAmmo += ammo;
+    }
+
     public IEnumerator Reload()
     {
         OnReload?.Invoke(this, EventArgs.Empty);
         yield return new WaitForSeconds(data.ReloadTime);
         OnReloadEnd?.Invoke(this, EventArgs.Empty);
+    }
+
+    public bool CanReload()
+    {
+        return CurrentMagazineAmmo < data.Magazine && CurrentTotalAmmo > 0;
     }
 
     public void MagOut()

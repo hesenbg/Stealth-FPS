@@ -781,7 +781,10 @@ GameObject:
   - component: {fileID: 5856524283422090699}
   - component: {fileID: 1242098294080890528}
   - component: {fileID: 3387475247573806620}
-  m_Layer: 0
+  - component: {fileID: 1141762936253408519}
+  - component: {fileID: 8483977344144419144}
+  - component: {fileID: 7688285924396309652}
+  m_Layer: 10
   m_Name: hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -797,7 +800,7 @@ Transform:
   m_GameObject: {fileID: 1025843386265261531}
   serializedVersion: 2
   m_LocalRotation: {x: 0.06494168, y: -0.68957925, z: 0.7211703, w: 0.013283303}
-  m_LocalPosition: {x: 1.9301566, y: 0.9378756, z: 8.505877}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -854,6 +857,58 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &1141762936253408519
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025843386265261531}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 0.22
+  m_Height: 1.07
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: -0.16}
+--- !u!114 &8483977344144419144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025843386265261531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff99f8b64132ae4a8187fe3e84d9e3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObservableObject
+  Observability: 0
+  type: 1
+  priority: 1
+  BaseObservability: 0.4
+--- !u!114 &7688285924396309652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1025843386265261531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 188e3537827871b46bfb593508e34d73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DestructableHealthManager
+  MaxHealth: 100
 --- !u!1 &1611840718050926882
 GameObject:
   m_ObjectHideFlags: 0
@@ -3395,6 +3450,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2407120842938853659}
   - component: {fileID: 2361174890817792997}
+  - component: {fileID: 2767061057034663323}
   m_Layer: 0
   m_Name: EnemyRagdoll
   m_TagString: Untagged
@@ -3431,7 +3487,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyRagdoll
   ragdollHips: {fileID: 1025843386265261531}
-  RagdollDisableTimer: 5
+  RagdollDisableTimer: 1.5
+  DetectionCollider: {fileID: 1141762936253408519}
+  HearableObject: {fileID: 2767061057034663323}
+  hasKnifed: 0
+--- !u!114 &2767061057034663323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7020811005462348016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f6f74c5e42a2ef459c56227b4fb3274, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HearableObject
+  type: 1
+  range: 2
 --- !u!1 &7375837807355825084
 GameObject:
   m_ObjectHideFlags: 0

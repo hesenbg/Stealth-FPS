@@ -19,6 +19,8 @@ public class AnimationLogic : MonoBehaviour
 
     public event EventHandler GunShoot;
 
+    public event EventHandler Heal;
+
     private void Start()
     {
         Animator = GetComponent<Animator>();  
@@ -80,6 +82,11 @@ public class AnimationLogic : MonoBehaviour
     public void PlayKnifeAttackAnimation()
     {
         Animator.SetTrigger("Stab");
+    }
+
+    public void PlayHealAnimation()
+    {
+        Animator.SetTrigger("Heal");
     }
 
     public void PlayShootAnimation(int CurrentAmmo)
@@ -144,5 +151,10 @@ public class AnimationLogic : MonoBehaviour
     public void FireMagIn()
     {
         GunMagIn?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void FireHealApplied()
+    {
+        Heal?.Invoke(this, EventArgs.Empty);
     }
 }

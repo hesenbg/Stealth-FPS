@@ -5,7 +5,7 @@ public class CombatData : ScriptableObject
 {
     [Header("Shooting")]
     [SerializeField] private float shootDelay;
-    [SerializeField] private BulletHole trace;
+    [SerializeField] private GameObject trace;
     [SerializeField] private float adsShootSpeed;
 
     [Header("Ammo")]
@@ -39,7 +39,7 @@ public class CombatData : ScriptableObject
     public float RecoilBuildupSpeed => recoilBuildupSpeed;
 
     public float ShootDelay => shootDelay;
-    public BulletHole Trace => trace;
+    public GameObject Trace => trace;
 
     public int Magazine => magazine;
     public int TotalAmmo => totalAmmo;

@@ -18,6 +18,8 @@ public class MovementLogic : MonoBehaviour
     [HideInInspector] public bool IsSprinting;
     [SerializeField] public float SlopeDampMultipiler;
 
+    public float SpeedMultipiler = 1f;
+
     [Header("Detection")]
     [SerializeField] float RayDistance = 1.5f;
 
@@ -44,7 +46,7 @@ public class MovementLogic : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        DefoultCollider = GetComponent<CapsuleCollider>();
+
         OnStepOnGround += HandleLanding;
     }
     #endregion
@@ -174,7 +176,7 @@ public class MovementLogic : MonoBehaviour
         {
             if (horizontalVel.magnitude > currMaxVelocity && currMaxVelocity != 0)
             {
-                horizontalVel = horizontalVel.normalized * currMaxVelocity;
+                horizontalVel = horizontalVel.normalized * currMaxVelocity*SpeedMultipiler;
                 CurrentVelocity = new Vector3(
                     horizontalVel.x,
                     verticalVel,

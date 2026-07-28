@@ -55,6 +55,7 @@ public class WeaponWallBlock : MonoBehaviour
             out lastHit,
             maxDistance
             ,BlockAble
+            ,QueryTriggerInteraction.Ignore
         );
 
         //Weight Calculation

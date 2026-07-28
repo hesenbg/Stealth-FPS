@@ -1,27 +1,57 @@
 using UnityEngine;
-
+using System;
 public class EnemyGizmos : MonoBehaviour
 {
-    [SerializeField] EnemyAIData[] data;
+    [Serializable]
+    struct EnemyEntry
+    {
+        public EnemyAIData data;
+        public Transform root;
+    }
+
+    [SerializeField] EnemyEntry[] enemies;
     [SerializeField] float radius;
+    [SerializeField] bool DrawGizmos = true;
+
+    Vector3[][] SpherePos;
+
+    private void Start()
+    {
+        SpherePos = new Vector3[enemies.Length][];
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            EnemyAIData data = enemies[i].data;
+            Transform root = enemies[i].root;
+            if (data == null || root == null || data.PatrolPositions == null) continue;
+            SpherePos[i] = new Vector3[data.PatrolPositions.Length];
+            for (int j = 0; j < data.PatrolPositions.Length; j++)
+            {
+                SpherePos[i][j] = root.TransformPoint(data.PatrolPositions[j].Position);
+            }
+        }
+    }
 
     private void OnDrawGizmos()
     {
-        if (data == null) return;
-
-        for (int i = 0; i < data.Length; i++)
+        if (!DrawGizmos)
+            return;
+        if (enemies == null) return;
+        for (int i = 0; i < enemies.Length; i++)
         {
-            if (data[i] == null || data[i].PatrolPositions == null) continue;
-
-            for (int j = 0; j < data[i].PatrolPositions.Length; j++)
+            EnemyAIData data = enemies[i].data;
+            Transform root = enemies[i].root;
+            if (data == null || root == null || data.PatrolPositions == null) continue;
+            for (int j = 0; j < data.PatrolPositions.Length; j++)
             {
+                Vector3 worldPos = root.TransformPoint(data.PatrolPositions[j].Position);
+                Vector3 pos = SpherePos == null ? worldPos : SpherePos[i][j];
                 Gizmos.color = Color.yellow;
-                Gizmos.DrawWireSphere(data[i].PatrolPositions[j], radius);
+                Gizmos.DrawWireSphere(pos, radius);
 
-                if (j < data[i].PatrolPositions.Length - 1)
-                {
-                    Gizmos.DrawLine(data[i].PatrolPositions[j], data[i].PatrolPositions[j + 1]);
-                }
+                int next = (j + 1) % data.PatrolPositions.Length;
+                Vector3 nextWorldPos = root.TransformPoint(data.PatrolPositions[next].Position);
+                Vector3 nextPos = SpherePos == null ? nextWorldPos : SpherePos[i][next];
+                Gizmos.DrawLine(pos, nextPos);
             }
         }
     }

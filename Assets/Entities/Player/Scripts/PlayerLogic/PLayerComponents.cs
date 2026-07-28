@@ -14,6 +14,7 @@ public class PlayerComponents : MonoBehaviour
     [SerializeField] private InputManager inputManager;
     [SerializeField] private ThrowAbleLogic throwAbleLogic;
     [SerializeField] public GameObject Player;
+    [SerializeField] public Recoil recoil;
 
     [Header("Technical/Visual")]
     [SerializeField] private Rig combatAnimation;
@@ -36,6 +37,7 @@ public class PlayerComponents : MonoBehaviour
     public Camera MainCamera => playerMainCamera;
     public WeaponWallBlock PullLogic => WallBlock;
 
+
     private void Awake()
     {
         // Check if an instance already exists to ensure only one "PlayerComponents" exists
@@ -46,4 +48,7 @@ public class PlayerComponents : MonoBehaviour
         }
         Instance = this;
     }
+
+
+    public int KeyCount = 0;
 }

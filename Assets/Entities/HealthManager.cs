@@ -1,63 +1,75 @@
+using System;
 using UnityEngine;
-public class HealthManager : MonoBehaviour
+public abstract class HealthManager : MonoBehaviour
 {
-    [SerializeField] float MaxHealth;
-    [SerializeField] float CurrentHealth;
+    public float MaxHealth ;
 
-    [SerializeField] Transform Head;
-    [SerializeField] Transform Body;
+    public float CurrentHealth {  get; private set; }
 
-    [SerializeField] GameObject OriginalHips;
-    [SerializeField] GameObject CoreObjectToBeDestroyed;
-    [SerializeField] GameObject Ragdoll;
+    protected float BaseDamageMultipiler = 1f;
 
-    private void Start()
+    protected Action OnHealthZero;
+
+    protected Action<float,Vector3> OnDamageDone;
+
+    public event EventHandler OnEffectEnds;
+
+    public virtual void ApplyDamage(float damage, float Multipiler,Vector3 pos)
+    {
+        var totalDamage = damage * Multipiler * BaseDamageMultipiler;
+
+        CurrentHealth -= totalDamage;
+        OnDamageDone?.Invoke(totalDamage,pos);
+
+        CheckDie();
+    }
+
+    public void InvokeOnEffectEnds()
+    {
+        OnEffectEnds?.Invoke(this, EventArgs.Empty);
+    }
+
+    public abstract void ApplyFlashEffect(float EffectDuration, Vector3 Direction);
+
+    public abstract void ApplyDamageEffect(float EffectDuration);
+
+    public abstract void ApplyShockEffect(float EffectDuration);
+
+    public void ApplyLethalDamage()
+    {
+        CurrentHealth = 0;
+        CheckDie();
+    }
+
+    bool CheckDie()
+    {
+        if (CurrentHealth <= 0f)
+        {
+            OnHealthZero?.Invoke();
+            OnHealthZero = null;
+            return true;
+        }
+        return false;
+    }
+
+    public void IncreaseHealth(float Health)
+    {
+        CurrentHealth = Mathf.Clamp(CurrentHealth + Health, 0f, MaxHealth);
+    }
+
+    virtual public void ApplyKnifeDamage()
+    {
+
+    }
+
+    abstract public void OnDeath();
+
+    abstract public void OnDamage(float Damage,Vector3 pos);
+
+    protected virtual void Start()
     {
         CurrentHealth = MaxHealth;
-    }
-
-    public void GetDamage(float damage)
-    {
-        CurrentHealth -= damage;
-        EnemyEffects.instance.PlayBodyHit(transform.position);
-        CheckDie();
-    }
-
-    public void GetHeadShotDamage(float damage, float HeadShotMultipiler)
-    {
-        CurrentHealth -= damage*HeadShotMultipiler;
-        EnemyEffects.instance.PlayHeadHit(transform.position);
-        EnemyEffects.instance.PlayBloodVFX(Head.position);
-        CheckDie();
-    }
-
-    public void GetGrenadeDamage(float DropOut) // how far away nade exploded from our enemy
-    {
-        DropOut = 1 - DropOut;
-        CurrentHealth -= MaxHealth*DropOut;
-        CheckDie();
-    }
-
-    public void GetKnifeDamage()
-    {
-        CurrentHealth-= MaxHealth;
-        CheckDie();
-    }
-
-    private void CheckDie()
-    {
-        if (CurrentHealth <= 0)
-        {
-            SpawnRagdoll();
-            Destroy(CoreObjectToBeDestroyed);
-        }
-    }
-
-    private void SpawnRagdoll()
-    {
-        GameObject spawnedRagdoll = Instantiate(Ragdoll, transform.position, transform.rotation);
-
-        EnemyRagdoll ragdollScript = spawnedRagdoll.GetComponent<EnemyRagdoll>();
-        ragdollScript.MatchRagdollToAnimation(OriginalHips);
+        OnHealthZero += OnDeath;
+        OnDamageDone += OnDamage;
     }
 }

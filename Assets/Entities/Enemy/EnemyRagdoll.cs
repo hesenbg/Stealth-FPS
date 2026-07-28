@@ -5,8 +5,10 @@ public class EnemyRagdoll : MonoBehaviour
     [Header("References")]
     [SerializeField] GameObject ragdollHips;
     [SerializeField] float RagdollDisableTimer = 5f;
-    private float CurrRagdollDisableTimer =0;
+    [SerializeField] CapsuleCollider DetectionCollider;
+    [SerializeField] HearableObject HearableObject;
 
+    private float CurrRagdollDisableTimer =0;
     public void MatchRagdollToAnimation(GameObject originalHips)
     {
         CopyTransformRecursively(originalHips.transform, ragdollHips.transform);
@@ -27,10 +29,10 @@ public class EnemyRagdoll : MonoBehaviour
     }
 
     private bool hasCleaned = false; // Guard to run logic only once
+    public bool hasKnifed = false;
 
     private void Update()
     {
-        //Debug.Log(CurrRagdollDisableTimer);
         if (CurrRagdollDisableTimer < RagdollDisableTimer )
         {
             CurrRagdollDisableTimer += Time.deltaTime;
@@ -38,7 +40,17 @@ public class EnemyRagdoll : MonoBehaviour
         else if (!hasCleaned)
         {
             CleanHip();
+            Alert();
+            DetectionCollider.enabled = true;
             hasCleaned = true;
+        }
+    }
+
+    void Alert()
+    {
+        if (!hasKnifed)
+        {
+            EnemyManager.instance.AlertClosestOnSuspiciousEvent(transform.position,HearableObject);
         }
     }
 
