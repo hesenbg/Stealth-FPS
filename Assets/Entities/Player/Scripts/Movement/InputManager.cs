@@ -91,7 +91,8 @@ public class InputManager : MonoBehaviour
 
     private void ApplyHeal()
     {
-        if (Input.GetKeyDown(HealKey) && CurrentGunState == GunState.Idle && LootableItemInventory.Instance.HealSynringeCount>0)
+        if (Input.GetKeyDown(HealKey) && CurrentGunState == GunState.Idle && LootableItemInventory.Instance.HealSynringeCount>0 
+            && PlayerComponents.Instance.HealthManager.CurrentHealth != PlayerComponents.Instance.HealthManager.MaxHealth)
         {
             playerAnimationLogic.PlayHealAnimation();
         }

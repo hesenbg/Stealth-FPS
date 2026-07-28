@@ -13,18 +13,30 @@ MonoBehaviour:
   m_Name: Enemy7
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAIData
   CurrentAwarenessState:
-    SightRange: 15
-    AwarenessSpeed: 20
-    Angle: 65
-    AllyCallSpeed: 1
-    AllyCallNumber: 3
-    AudioDetetctionRange: 5
-    MovementSpeed: 1.5
-  IsStill: 1
+    SightRange: 14.698376
+    AwarenessSpeed: 19.811487
+    Angle: 64.43445
+    AllyCallSpeed: 1.037703
+    AllyCallNumber: 2.962298
+    AudioDetetctionRange: 4.8868904
+    MovementSpeed: 1.4924598
+  IsStill: 0
   IsProtector: 0
   PatrolPositions:
   - Position: {x: 0, y: 0, z: 0}
     WaitTime: 0
+  - Position: {x: -0.6, y: 0, z: 2.39}
+    WaitTime: 0
+  - Position: {x: -0.88, y: 0, z: 7.43}
+    WaitTime: 0
+  - Position: {x: 2.06, y: 0, z: 9.35}
+    WaitTime: 4
+  - Position: {x: 3.33, y: 0, z: 5.94}
+    WaitTime: 0
+  - Position: {x: 4.16, y: 0, z: 2.46}
+    WaitTime: 0
+  - Position: {x: 2.37, y: 0, z: 0.07}
+    WaitTime: 4.5
   IdleSpeed: 0
   CurrentPatrolPosIndex: 0
   WonderTimer: 3
@@ -35,8 +47,8 @@ MonoBehaviour:
   PeekDuration: 1.5
   TimeBetweenPeeks: 1.25
   LookAroundAngle: 50
-  AlarmedEnemy: 1
-  IsHiding: 1
+  AlarmedEnemy: 0
+  IsHiding: 0
   peekPhase: 1
   CluePosition: {x: 0, y: 0, z: 0}
   InterplationSpeed: 7

@@ -26,8 +26,8 @@ public class ShootLogic : MonoBehaviour
     private void Start()
     {
         MaxHotValue = data.RecoilPattern.Length;
-        CurrentMagazineAmmo = data.Magazine;
-        CurrentTotalAmmo = data.TotalAmmo;
+        CurrentMagazineAmmo = 0;
+        CurrentTotalAmmo =0;
     }
 
     private void Update()

@@ -131,7 +131,7 @@ public class EnemySuspiciousState : EnemyState
 
     private void OnClueFound(object sender, EventData e)
     {
-        NextState = EnemyStateMachine.EnemyState.Search;
         context.enemyAIData.CluePosition = e.GetPos();
+        NextState = EnemyStateMachine.EnemyState.Search;
     }
 }

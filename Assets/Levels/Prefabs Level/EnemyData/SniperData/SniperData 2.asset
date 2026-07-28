@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f0e6e3f7c61eee47bbe7f7ddda2a6d7, type: 3}
-  m_Name: SniperData
+  m_Name: SniperData 2
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAIData
   CurrentAwarenessState:
     SightRange: 25
