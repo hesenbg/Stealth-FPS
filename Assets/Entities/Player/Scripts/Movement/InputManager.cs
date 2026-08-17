@@ -64,8 +64,6 @@ public class InputManager : MonoBehaviour
         lastGunState = CurrentGunState;
     }
 
-
-
     private void FixedUpdate()
     {
         if (IsCrouching)
@@ -95,6 +93,7 @@ public class InputManager : MonoBehaviour
             && PlayerComponents.Instance.HealthManager.CurrentHealth != PlayerComponents.Instance.HealthManager.MaxHealth)
         {
             playerAnimationLogic.PlayHealAnimation();
+            LootableItemInventory.Instance.DecreaseSyringeCount();
         }
     }
 
@@ -105,14 +104,12 @@ public class InputManager : MonoBehaviour
        Gizmos.DrawRay(PlayerComponents.Instance.MainCamera.transform.position, PlayerComponents.Instance.MainCamera.transform.forward*1.5f);
     }
 
-
     private void PickUpItems()
     {
         if (Input.GetKeyDown(PickUpKey))
         {
             if(Physics.Raycast(PlayerComponents.Instance.MainCamera.transform.position, PlayerComponents.Instance.MainCamera.transform.forward,out RaycastHit hit, 1.5f))
             {
-
                 Debug.Log(hit.collider.name);
 
                 if(hit.collider.gameObject.TryGetComponent<Interactable>(out Interactable interact))

@@ -34,8 +34,6 @@ public class EnemyEvents : MonoBehaviour
 
     public event EventHandler<EventData> FightEvent;
 
-    public enum EnemyType { Guard, Protector, Sniper}
-
     public EnemyType Type;
 
     private void Start()

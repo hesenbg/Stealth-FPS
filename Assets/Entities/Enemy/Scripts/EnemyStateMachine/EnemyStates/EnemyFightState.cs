@@ -76,7 +76,7 @@ public class EnemyFightState : EnemyState
     {
         if (context.enemyCombat.CanShoot())
         {
-            context.enemyCombat.Shoot(EnemyManager.instance.LKP);
+            context.enemyCombat.Shoot(EnemyManager.instance.LKP,EnemyType.Guard);
         }
     }   
 

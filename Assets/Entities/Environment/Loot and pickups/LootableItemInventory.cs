@@ -12,7 +12,7 @@ public class LootableItemInventory : MonoBehaviour
 
     public int IntelCount { get; private set; }
 
-    public int HealSynringeCount { get; private set; }
+    public int HealSynringeCount;
 
 
     public void IncreaseKeyCount()
@@ -29,6 +29,12 @@ public class LootableItemInventory : MonoBehaviour
     {
         HealSynringeCount++;
     }
+
+    public void IncreaseSynringeCount(int count)
+    {
+        HealSynringeCount += count;
+    }
+
     public void DecreaseKeyCount()
     {
         keyCount--;

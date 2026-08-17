@@ -117,7 +117,6 @@ public class EnemyAnimationLogic : MonoBehaviour
     }
 
 
-
     private void PlayIdle()
     {
         WholeBody(MovementState.Idle, UpperBodyState.Idle);
@@ -163,5 +162,10 @@ public class EnemyAnimationLogic : MonoBehaviour
     public void FireInvestigationEnd()
     {
         InvestigationEnd?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void OnFootPressed()
+    {
+        EnemyVisualAudios.instance.PlayFootStep(transform.position);
     }
 }

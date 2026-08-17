@@ -6,7 +6,7 @@ public class EnemyCombatLogic : MonoBehaviour
     [SerializeField] LayerMask TargetLayer;
     [SerializeField] int damage;
      Vector3 _lastShotDirection = Vector3.zero;
-    public void Shoot(Vector3 Pos)
+    public void Shoot(Vector3 Pos, EnemyType Type)
     {
         Vector3 Direction = (Pos - transform.position);
 
@@ -19,6 +19,11 @@ public class EnemyCombatLogic : MonoBehaviour
                 healthmanager.ApplyDamage(damage, 1f, hit.point);
             }
         }
+
+        if (Type == EnemyType.Sniper)
+            EnemyVisualAudios.instance.PlaySniperFireSound(transform.position);
+        else
+            EnemyVisualAudios.instance.PlayPistolFireSound(transform.position);
     }
 
     void Update()

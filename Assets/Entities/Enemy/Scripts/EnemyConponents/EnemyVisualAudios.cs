@@ -15,6 +15,17 @@ public class EnemyVisualAudios : MonoBehaviour
     [Range(0f, 1f)][SerializeField] float BodyHitVolume = 1f;
     [Range(0f, 1f)][SerializeField] float HeadHitVolume = 1f;
 
+    [SerializeField] AudioClip EnemyFootStep;
+
+    [SerializeField] AudioClip GuardShoot;
+
+    [SerializeField] AudioClip SniperShoot;
+
+    public void PlayFootStep(Vector3 pos)
+    {
+        AudioSource.PlayClipAtPoint(EnemyFootStep, pos,1f);
+    }
+
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -37,18 +48,18 @@ public class EnemyVisualAudios : MonoBehaviour
         AudioSource.PlayClipAtPoint(HeadHitSound, WorldPos, HeadHitVolume);
     }
 
-    public void PlayPistolFireSound()
+    public void PlayPistolFireSound(Vector3 pos)
     {
-
+        AudioSource.PlayClipAtPoint(GuardShoot, pos);
     }
 
 
-    public void PlaySniperFireSound()
+    public void PlaySniperFireSound(Vector3 pos)
     {
-
+        AudioSource.PlayClipAtPoint(SniperShoot, pos);
     }
 
-    public void PlayDeathSound()
+    public void PlayDeathSound(Vector3 pos)
     {
 
     }

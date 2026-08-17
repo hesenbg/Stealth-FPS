@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1121621966205939115}
   - component: {fileID: 539117760409260367}
   m_Layer: 0
-  m_Name: EnemyManager 1
+  m_Name: EnemyManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -90,7 +90,6 @@ MonoBehaviour:
   - {fileID: 0}
   coverParent: {fileID: 0}
   CoverDistance: 1
-  LKP: {x: 0, y: 0, z: 0}
   IsPlayerInSight: 0
   numberofcovers: 12
   range: 20
@@ -108,6 +107,7 @@ MonoBehaviour:
   BehindDistance: 5
   GizmoFlankPos: {x: 7.6380916, y: 0.5833334, z: -1.7583618}
   GizmoFlankViable: 1
+  GizmoDirectPos: {x: 0, y: 0, z: 0}
 --- !u!114 &539117760409260367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,3 +126,6 @@ MonoBehaviour:
   HeadHitSound: {fileID: 8300000, guid: e9b8b0df3b70f5c43b09b60759144be0, type: 3}
   BodyHitVolume: 1
   HeadHitVolume: 1
+  EnemyFootStep: {fileID: 0}
+  GuardShoot: {fileID: 0}
+  SniperShoot: {fileID: 0}

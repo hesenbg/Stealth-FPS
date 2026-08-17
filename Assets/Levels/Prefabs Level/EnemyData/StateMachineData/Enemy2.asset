@@ -12,7 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f0e6e3f7c61eee47bbe7f7ddda2a6d7, type: 3}
   m_Name: Enemy2
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAIData
+  CurrentAwarenessState:
+    SightRange: 0
+    AwarenessSpeed: 0
+    Angle: 0
+    AllyCallSpeed: 0
+    AllyCallNumber: 0
+    AudioDetetctionRange: 0
+    MovementSpeed: 0
   IsStill: 1
+  IsProtector: 0
   PatrolPositions:
   - Position: {x: 0, y: 0, z: 0}
     WaitTime: 0
@@ -26,41 +35,20 @@ MonoBehaviour:
     WaitTime: 0
   - Position: {x: 1.9, y: 0, z: 1.26}
     WaitTime: 0
-  IdleSpeed: 1
-  CurrentPatrolPosIndex: 1
+  IdleSpeed: 2
+  CurrentPatrolPosIndex: 0
   WonderTimer: 3
   last:
     Position: {x: 0, y: 0, z: 0}
     IsActive: 0
-  Range: 12
+  LKPchangeTolerance: 3
+  PeekDuration: 1.5
+  TimeBetweenPeeks: 1.25
+  LookAroundAngle: 50
+  AlarmedEnemy: 0
+  IsHiding: 0
+  peekPhase: 0
+  CluePosition: {x: 0, y: 0, z: 0}
   InterplationSpeed: 8
-  BulletHearMaxAngle: 1
-  CurrentAwareness: 0
-  Idle:
-    Range: 5
-    AwarenessSpeed: 8
-    Speed: 6
-    AroundCheckAngle: 35
-    AroundCheckSpeed: 15
-    AroundCheckDelay: 0.5
-  Suspicious:
-    Range: 0
-    AwarenessSpeed: 0
-    Speed: 0
-    AroundCheckAngle: 0
-    AroundCheckSpeed: 0
-    AroundCheckDelay: 0
-  Alarmed:
-    Range: 0
-    AwarenessSpeed: 0
-    Speed: 0
-    AroundCheckAngle: 0
-    AroundCheckSpeed: 0
-    AroundCheckDelay: 0
-  current:
-    Range: 5
-    AwarenessSpeed: 8
-    Speed: 6
-    AroundCheckAngle: 35
-    AroundCheckSpeed: 15
-    AroundCheckDelay: 0.5
+  AllyCallDelay: 0
+  CalledAllyNumber: 0

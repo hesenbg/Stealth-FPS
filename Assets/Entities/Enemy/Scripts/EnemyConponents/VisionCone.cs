@@ -152,10 +152,11 @@ public class VisionCone : MonoBehaviour
 
             if (currentAwareness >= AlarmAwareness)
             {
-                EnemyManager.instance.LKP = MainTargetedObject.transform.position;
 
                 if (MainTargetedObject.Type == ObservableType.Hostile)// && !HasPlayerSeen
                 {
+                    EnemyManager.instance.LKP = MainTargetedObject.transform.position;
+
                     TargetFullySeen?.Invoke(this, sightData);
                     HasPlayerSeen = true;
                 }

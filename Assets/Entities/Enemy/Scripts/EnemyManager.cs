@@ -45,6 +45,9 @@ public class YourClassNameEditor : Editor
         }
     }
 }
+
+public enum EnemyType { Guard, Protector, Sniper }
+
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager instance;
@@ -59,7 +62,8 @@ public class EnemyManager : MonoBehaviour
 
     [SerializeField] float CoverDistance;
 
-    public Vector3 LKP;
+    public Vector3 LKP {  get;  set; }
+
     public bool IsPlayerInSight = false;
 
     public int numberofcovers;
