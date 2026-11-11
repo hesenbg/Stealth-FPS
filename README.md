@@ -24,8 +24,8 @@ A tactical first-person shooter built in Unity. The objective is to eliminate al
 | N | Toggle night vision |
 | M | Open / close map |
 | V | Use heal |
-| Right Mause Button | Shoot |
-| Left Mause Button | Aim Down Sights |
+| Left Mause Button | Shoot |
+| Right Mause Button | Aim Down Sights |
 | G | Throw selected nade |
 | 1 2 3 | Select nade |
 
